@@ -9,7 +9,7 @@ const Header=()=>{
        <div className="headerWrapper">
         <div className="top-strip bg-blue ">
             <div className="container">
-                <p className="mb-0 mt-0" >Due to the <b> ONTIME </b> Delivery</p>
+                <p className="mb-0 mt-0" >Due the <b> ONTIME </b> Delivery</p>
             </div>
         </div>
         <div className="header">
