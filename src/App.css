@@ -1,6 +1,6 @@
-*{margin:0px;padding: 0px;}
 @import url('https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&display=swap');
- body{font-family: "Lato", sans-serif; font-size: 14px;}
+*{margin:0px;padding: 0px;} 
+body{font-family: "Lato", sans-serif; font-size: 14px;}
 
  .bg-blue{background-color: #2623f4;}
 
@@ -10,4 +10,14 @@
  .headerWrapper .header{width:65%;height: auto; padding:15px 0px;}
  .logoWrapper img{width: 65%;}
 
- .headerWrapper .header .part2 .countryDrop{width:150px; height:80px;min-width: 150px;}
+ .headerWrapper .header .part2 .countryDrop{width:150px; height:60px;min-width: 150px;color: #000 !important;}
+ .headerWrapper .header .part2 .countryDrop{text-align: left;justify-content: flex-start !important;}
+
+
+ .headerWrapper .header .part2 .countryDrop .label{
+    font-size: 12px !important;text-transform: capitalize !important;color: rgba(0,0,0,0.7) !important;
+}
+.headerWrapper .header .part2 .countryDrop .name{
+    font-size: 14px !important;text-transform: capitalize !important;color: rgba(0,0,0,0.8) !important;font-weight: 700;
+}
+
