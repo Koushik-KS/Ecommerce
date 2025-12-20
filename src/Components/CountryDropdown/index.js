@@ -12,7 +12,7 @@ const CountryDropdown = () => {
         <FaAngleDown />
       </span>
     </Button>
-  );
+  )
 };
 
 export default CountryDropdown;

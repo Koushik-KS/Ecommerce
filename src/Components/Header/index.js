@@ -2,9 +2,11 @@ import { Link } from 'react-router-dom';
 import Logo from '../../assets/images/eshop.png';
 import Button from "@mui/material/Button";
 import CountryDropdown  from '../CountryDropdown';
-import { FaSearch } from "react-icons/fa";
+
 import { FaRegCircleUser } from "react-icons/fa6";
 import { IoBagOutline } from "react-icons/io5";
+import SearchBox from './SearcBox';
+import Navigation from './Navigation';
 
 const Header=()=>{
     return(
@@ -26,14 +28,7 @@ const Header=()=>{
 
                         <CountryDropdown/>
 
-                    {/* Header search starts here */}
-                    <div className="headerSearch   ml-3 mr-3">
-                        <input type='text' placeholder='Search  for Products... '/>
-                      <Button>  <FaSearch/></Button>
-                        </div>
-
-
-                    {/* header seach end */}
+                    <SearchBox/>
 
                     <div className="part3 d-flex align-items-center ml-auto">
                         <Button className='circle mr-3'><FaRegCircleUser /></Button>
@@ -59,6 +54,13 @@ const Header=()=>{
             </div>  
         
         </header>
+
+       <header className='header'>
+      
+
+       </header>
+  <Navigation/>
+
         </div>
     )
             
