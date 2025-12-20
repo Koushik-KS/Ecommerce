@@ -4,6 +4,7 @@ import Button from "@mui/material/Button";
 import CountryDropdown  from '../CountryDropdown';
 import { FaSearch } from "react-icons/fa";
 import { FaRegCircleUser } from "react-icons/fa6";
+import { IoBagOutline } from "react-icons/io5";
 
 const Header=()=>{
     return(
@@ -34,16 +35,20 @@ const Header=()=>{
 
                     {/* header seach end */}
 
-                    
+                    <div className="part3 d-flex align-items-center ml-auto">
+                        <Button className='circle mr-3'><FaRegCircleUser /></Button>
+                        <div className='ml-auto cartTab  d-flex align-items-center '>
+                            <span>RS 1000</span>
+                            <div className='position-relative ml-2'>
+                             <Button className='circle '><IoBagOutline /></Button>
+                             <span className='count d-flex align-items-center justify-content-center'>1</span>
+                             
+                             </div>
 
-                    <div className='part3   d-flex align-items-center ml-auto '> 
-                        <Button className='circle'><FaRegCircleUser /> </Button>
 
-                        
-                        
                         </div>
 
-
+                   </div>
 
 
                     </div>
