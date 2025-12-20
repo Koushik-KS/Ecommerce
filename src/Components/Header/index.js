@@ -3,6 +3,7 @@ import Logo from '../../assets/images/eshop.png';
 import Button from "@mui/material/Button";
 import CountryDropdown  from '../CountryDropdown';
 import { FaSearch } from "react-icons/fa";
+import { FaRegCircleUser } from "react-icons/fa6";
 
 const Header=()=>{
     return(
@@ -21,16 +22,26 @@ const Header=()=>{
                     <Link to={"/"}><img src={Logo} alt="Logo"/></Link>
                     </div>
                     <div className='col-sm-10   d-flex align-items-center part2'>
+
                         <CountryDropdown/>
 
                     {/* Header search starts here */}
-                    <div className="headerSearch ml-3 mr-3">
-                        <input type='text'/>
+                    <div className="headerSearch   ml-3 mr-3">
+                        <input type='text' placeholder='Search  for Products... '/>
                       <Button>  <FaSearch/></Button>
                         </div>
 
 
                     {/* header seach end */}
+
+                    
+
+                    <div className='part3   d-flex align-items-center ml-auto '> 
+                        <Button className='circle'><FaRegCircleUser /> </Button>
+
+                        
+                        
+                        </div>
 
 
 
