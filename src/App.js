@@ -10,6 +10,7 @@ const MyContext = createContext();
 
 function App() {
   const [countryList, setCountryList] = useState([]);
+  const [selectCountry, setSelectCountry] = useState("");
 
   useEffect(() => {
     getCountry("https://countriesnow.space/api/v0.1/countries/");
@@ -18,8 +19,7 @@ function App() {
   const getCountry = async (url) => {
     try {
       const res = await axios.get(url);
-      setCountryList(res.data.data);
-      console.log(res.data.data);
+      setCountryList(res.data.data); // API gives { country: "India" }
     } catch (error) {
       console.error(error);
     }
@@ -27,6 +27,8 @@ function App() {
 
   const values = {
     countryList,
+    selectCountry,      // ✅ used in CountryDropdown
+    setSelectCountry,   // ✅ used in CountryDropdown
   };
 
   return (
