@@ -28,19 +28,31 @@ const Navigation  =()=>{
                     <div className='col-sm-10 navPart2 d-flex align-items-center-center '>
                         <ul className="list list-inline m-auto">
                             <li className="list-inline-item"><Link to="/"></Link></li>
-                            <li className="list-inline-item"><Link to="/"><Button> Home</Button></Link></li>
+                            <li className="list-inline-item"><Link to="/"><Button> HOME</Button></Link></li>
                             
-                            <li className="list-inline-item"><Link to="/"><Button>Fashion</Button></Link></li>
-                            <li className="list-inline-item"><Link to="/"><Button>Electronic</Button></Link></li>
-                            <li className="list-inline-item"><Link to="/"><Button>Bakery</Button></Link></li>
+                            <li className="list-inline-item"><Link to="/"><Button>MEN</Button></Link>
+                            <div className="submenu shadow">
+                                <Link to="/"><Button>clothing</Button></Link>
+                                <Link to="/"><Button>footwear</Button></Link>
+                                <Link to="/"><Button>clothing</Button></Link>
+                                <Link to="/"><Button>clothing</Button></Link>
+                                <Link to="/"><Button>clothing</Button></Link>
+                                
+                                
+                                </div>
+                            
+                            </li>
 
-                            <li className="list-inline-item"><Link to="/"><Button>Grocery</Button></Link></li>
+                            <li className="list-inline-item"><Link to="/"><Button>WOMEN</Button></Link></li>
+                            <li className="list-inline-item"><Link to="/"><Button>BEAUTY</Button></Link></li>
 
-                             <li className="list-inline-item"><Link to="/"><Button>mobiles</Button></Link></li>
-                              <li className="list-inline-item"><Link to="/"><Button>mobiles</Button></Link></li>
+                            <li className="list-inline-item"><Link to="/"><Button>WATCHES</Button></Link></li>
 
-                            <li className="list-inline-item"><Link to="/"><Button>Blog</Button></Link></li>
-                             <li className="list-inline-item"><Link to="/"><Button>Contact Us</Button></Link></li>
+                             <li className="list-inline-item"><Link to="/"><Button>KIDS</Button></Link></li>
+                              <li className="list-inline-item"><Link to="/"><Button>GIFT</Button></Link></li>
+
+                            <li className="list-inline-item"><Link to="/"><Button>BLOG</Button></Link></li>
+                             <li className="list-inline-item"><Link to="/"><Button>CONTACT</Button></Link></li>
                         </ul>
 
                     </div>

@@ -97,6 +97,7 @@ nav .allcatTab{background: #2bbef9;padding: 8px 15px !important;border-radius:30
    nav .allcatTab .icon1 svg{font-size: 20px !important;}
     nav .allcatTab .icon2 svg{font-size: 20px !important;} 
     nav .navPart2 ul{margin-bottom: 0px;}
+     nav .navPart2 ul li{padding-bottom: 20px;}
 
          nav .navPart2 ul li a button{text-decoration: none;}
      nav .navPart2 ul li a button{font-size: 14px !important;font-weight: 600;text-decoration: none;color: rgba(0,0,0,0.7);
@@ -106,5 +107,10 @@ nav .allcatTab{background: #2bbef9;padding: 8px 15px !important;border-radius:30
    nav .navPart2 ul li a svg{font-size: 20px;}
 
       nav .navPart2 ul li a:hover{background: #f0faff;color:#2bbef9}  
+   
+
+      nav .navPart2 ul li{position: relative;}
+      nav .navPart2 ul li .submenu{position: absolute;top: 100%;left: 0px;min-width: 150px;background: #fff;}
+      nav .navPart2 ul li .submenu li .submenu a{display: block;width:}
 
       
