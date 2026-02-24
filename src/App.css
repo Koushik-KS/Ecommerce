@@ -1,5 +1,9 @@
 @import url('https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&display=swap');
 *{margin:0px;padding: 0px;} 
+
+@import url('https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick.min.css');
+@import url('https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick-theme.min.css');
+
 body{font-family: "Lato", sans-serif; font-size: 14px;}
 
 
@@ -92,9 +96,9 @@ nav .navPart2{max-width: 80%;flex: 0 0 80%;}
 
 nav .navPart1 .catWapper{position: relative;}
 nav .navPart1 .catWapper .sidebarNav{width: 100%;height: 0px ;opacity:0;background:  #fff;position: absolute;top: 170%;left: 0px;
-border: 1px solid rgba(0,0,0,0.1);padding: 15px 0px;transition: all 0.2s;visibility: hidden;}
+border: 1px solid rgba(0,0,0,0.1);padding: 15px 0px;transition: all 0.2s;visibility: hidden;z-index: 100;}
 
-nav .navPart1 .catWapper .sidebarNav.open{height: 100%;opacity: 1;visibility: inherit;}
+nav .navPart1 .catWapper .sidebarNav.open{height: auto;opacity: 1;visibility: inherit;}
 
 nav .navPart1 .catWapper .sidebarNav ul li{width: 100%; list-style: none;padding: 0px 15px;text-transform: capitalize !important;}
 
@@ -124,7 +128,7 @@ nav .allcatTab{background: #2bbef9;padding: 8px 15px !important;border-radius:30
 
       nav .navPart2 ul li{position: relative;}
       nav .navPart2 ul li .submenu{position: absolute;top: 150%;left: 0px;min-width: 200px;background: #fff;
-        opacity: 0;visibility: hidden;transition: all 0.2s ease-in-out;}
+        opacity: 0;visibility: hidden;transition: all 0.2s ease-in-out;z-index: 100;}
 
       nav .navPart2 ul li .submenu li .submenu a{display: block;width:100%;}
       nav .navPart2 ul li .submenu li .submenu a button{width:100%;justify-content: flex-start !important;
@@ -134,4 +138,13 @@ nav .allcatTab{background: #2bbef9;padding: 8px 15px !important;border-radius:30
 
         nav .navPart2 ul li:hover .submenu{opacity: 1;visibility: inherit;top: 100%;}
 
-      
+      .homeBannerSection {position: relative;overflow: hidden;}
+
+       .homeBannerSection *{outline: none !important;}
+
+
+      .homeBannerSection .slick-arrow{position: absolute;top: 45%;z-index: 100;display: flex;align-items: center;justify-content: center;
+    width: 40px !important;height: 40px !important ; background: #000;border-radius: 100%;}
+
+      .homeBannerSection .slick-arrow.slick-next{right: 25px !important;}
+      .homeBannerSection .slick-arrow.slick-prev{left: 25px !important;}

@@ -6,7 +6,7 @@ import React, { useState } from "react";
 
 const Navigation  =()=>{
 
-    const [isopenSidebarVal,setisopenSidebarVal] = useState(true);
+    const [isopenSidebarVal,setisopenSidebarVal] = useState(false);
 
     return(
 
@@ -49,17 +49,9 @@ const Navigation  =()=>{
                     </div>
                     <div className='col-sm-10 navPart2 d-flex align-items-center-center '>
                         <ul className="list list-inline m-auto">
-                            <li className="list-inline-item"><Link to="/"></Link></li>
-                            <li className="list-inline-item"><Link to="/"><Button> HOME</Button></Link>
-                              <div className="submenu shadow">
-                                <Link to="/"><Button>clothing</Button></Link>
-                                <Link to="/"><Button>footwear</Button></Link>
-                                <Link to="/"><Button>clothing</Button></Link>
-                                <Link to="/"><Button>clothing</Button></Link>
-                                <Link to="/"><Button>clothing</Button></Link>
-                                
-                                
-                                </div></li>
+                           
+                            <li className="list-inline-item"><Link to="/"><Button> HOME</Button></Link></li>
+                              
                             
                             <li className="list-inline-item"><Link to="/"><Button>MEN</Button></Link>
                             <div className="submenu shadow">
