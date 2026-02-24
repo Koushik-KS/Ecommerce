@@ -90,6 +90,19 @@ min-width: 40px !important;width: 40px !important; height: 40px !important;borde
 nav .navPart1{max-width: 20%;flex: 0 0 20%;}
 nav .navPart2{max-width: 80%;flex: 0 0 80%;}
 
+nav .navPart1 .catWapper{position: relative;}
+nav .navPart1 .catWapper .sidebarNav{width: 100%;height: 0px ;opacity:0;background:  #fff;position: absolute;top: 170%;left: 0px;
+border: 1px solid rgba(0,0,0,0.1);padding: 15px 0px;transition: all 0.2s;visibility: hidden;}
+
+nav .navPart1 .catWapper .sidebarNav.open{height: 100%;opacity: 1;visibility: inherit;}
+
+nav .navPart1 .catWapper .sidebarNav ul li{width: 100%; list-style: none;padding: 0px 15px;text-transform: capitalize !important;}
+
+nav .navPart1 .catWapper .sidebarNav  ul li button{color: #000;width: 100%;justify-content: flex-start;}
+nav .navPart1 .catWapper .sidebarNav  ul li button:hover{background: transparent !important;}
+
+
+
 nav .allcatTab{background: #2bbef9;padding: 8px 15px !important;border-radius:30px !important;}
  nav .allcatTab *{color: #fff;} 
  nav .allcatTab :hover{background: #2bbef9;}
@@ -110,7 +123,15 @@ nav .allcatTab{background: #2bbef9;padding: 8px 15px !important;border-radius:30
    
 
       nav .navPart2 ul li{position: relative;}
-      nav .navPart2 ul li .submenu{position: absolute;top: 100%;left: 0px;min-width: 150px;background: #fff;}
-      nav .navPart2 ul li .submenu li .submenu a{display: block;width:}
+      nav .navPart2 ul li .submenu{position: absolute;top: 150%;left: 0px;min-width: 200px;background: #fff;
+        opacity: 0;visibility: hidden;transition: all 0.2s ease-in-out;}
+
+      nav .navPart2 ul li .submenu li .submenu a{display: block;width:100%;}
+      nav .navPart2 ul li .submenu li .submenu a button{width:100%;justify-content: flex-start !important;
+        border-radius: 0px !important;text-transform: capitalize !important;font-weight: 600 !important;}
+
+        nav .navPart2 ul li .submenu li .submenu a button{background: #f1eeee !important;}
+
+        nav .navPart2 ul li:hover .submenu{opacity: 1;visibility: inherit;top: 100%;}
 
       
