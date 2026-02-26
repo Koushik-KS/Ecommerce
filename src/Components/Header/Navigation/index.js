@@ -3,7 +3,7 @@ import { IoMdMenu } from "react-icons/io";
 import { FaAngleDown } from "react-icons/fa6";
 import { Link } from "react-router-dom";
 import React, { useState } from "react";
-
+import { FaAngleRight } from "react-icons/fa6";
 const Navigation  =()=>{
 
     const [isopenSidebarVal,setisopenSidebarVal] = useState(false);
@@ -29,8 +29,27 @@ const Navigation  =()=>{
                         </Button>
                         <div className={`sidebarNav ${isopenSidebarVal===true ? 'open' : ''}`}>
                             <ul>
-                                <li><Link to="/"><Button>men</Button></Link></li>
-                              <li><Link to="/"><Button>women</Button></Link></li>  
+                                <li><Link to="/"><Button>men <FaAngleRight className="ml-auto"/></Button></Link>
+
+                                <div className="submenu">
+                                <Link to="/"><Button>clothing</Button></Link>
+                                <Link to="/"><Button>footwear</Button></Link>
+                                <Link to="/"><Button>clothing</Button></Link>
+                                <Link to="/"><Button>clothing</Button></Link>
+                                <Link to="/"><Button>clothing</Button></Link>
+                                </div></li>
+
+
+
+                              <li><Link to="/"><Button>women <FaAngleRight className="ml-auto"/></Button></Link>
+                              <div className="submenu">
+                                <Link to="/"><Button>clothing</Button></Link>
+                                <Link to="/"><Button>footwear</Button></Link>
+                                <Link to="/"><Button>clothing</Button></Link>
+                                <Link to="/"><Button>clothing</Button></Link>
+                                <Link to="/"><Button>clothing</Button></Link>
+                                </div>
+                              </li>  
                               <li><Link to="/"><Button>beauty</Button></Link></li>  
                               <li><Link to="/"><Button>watches</Button></Link></li>  
                               <li><Link to="/"><Button>kids</Button></Link></li>  

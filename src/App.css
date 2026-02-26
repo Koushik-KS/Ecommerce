@@ -101,10 +101,16 @@ border: 1px solid rgba(0,0,0,0.1);padding: 15px 0px;transition: all 0.2s;visibil
 nav .navPart1 .catWapper .sidebarNav.open{height: auto;opacity: 1;visibility: inherit;}
 
 nav .navPart1 .catWapper .sidebarNav ul li{width: 100%; list-style: none;padding: 0px 15px;text-transform: capitalize !important;}
+nav .navPart1 .catWapper .sidebarNav  ul li button svg{font-size: 12px ;opacity: 0.6;}
 
 nav .navPart1 .catWapper .sidebarNav  ul li button{color: #000;width: 100%;justify-content: flex-start;}
 nav .navPart1 .catWapper .sidebarNav  ul li button:hover{background: transparent !important;}
+nav .navPart1 .catWapper .sidebarNav  ul li {position: static;}
+nav .navPart1 .catWapper .sidebarNav  ul li .submenu{position: absolute;top: 0px;left: 102%;width: 250px;height:100%;
+  background: #fff;z-index: 100;opacity: 0;visibility: hidden;transition: all 0.2s ease-in-out;border-left: 1px solid rgba(0,0,0,0.1);}
 
+  nav .navPart1 .catWapper .sidebarNav  ul li:hover .submenu{opacity: 1;visibility: inherit;left: 100%;padding: 20px;}
+nav .navPart1 .catWapper .sidebarNav  ul li:hover .submenu button{border-radius: 0px !important;}
 
 
 nav .allcatTab{background: #2bbef9;padding: 8px 15px !important;border-radius:30px !important;}
@@ -148,3 +154,5 @@ nav .allcatTab{background: #2bbef9;padding: 8px 15px !important;border-radius:30
 
       .homeBannerSection .slick-arrow.slick-next{right: 25px !important;}
       .homeBannerSection .slick-arrow.slick-prev{left: 25px !important;}
+.homeProducts{padding: 25px 0px ;width: 100%;}
+.homeProducts .banner{width: 100%;border-radius: 7px ;overflow: hidden;}
