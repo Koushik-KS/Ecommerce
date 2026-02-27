@@ -4,7 +4,7 @@
 @import url('https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick.min.css');
 @import url('https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick-theme.min.css');
 
-body{font-family: "Lato", sans-serif; font-size: 14px;}
+body{font-family: "Lato", sans-serif; font-size: 14px;color: rgba(0,0,0,0.8);}
 
 
 
@@ -16,7 +16,9 @@ body{font-family: "Lato", sans-serif; font-size: 14px;}
      max-width: 1200px;
  }
  }
- 
+ .cursor{cursor: pointer;}
+ .text-light{color :#756e6e !important;}
+  .text-sml{font-size: 14px !important;}
 
  ::-webkit-scrollbar{width: 8px !important;height: 8px !important;}
    ::-webkit-scrollbar-thumb{background: #ccc !important;}
@@ -154,5 +156,35 @@ nav .allcatTab{background: #2bbef9;padding: 8px 15px !important;border-radius:30
 
       .homeBannerSection .slick-arrow.slick-next{right: 25px !important;}
       .homeBannerSection .slick-arrow.slick-prev{left: 25px !important;}
-.homeProducts{padding: 25px 0px ;width: 100%;}
-.homeProducts .banner{width: 100%;border-radius: 7px ;overflow: hidden;}
+/* .homeProducts{padding: 25px 0px ;width: 100%;}
+.homeProducts .banner{width: 100%;border-radius: 10px; overflow: hidden;}
+*/
+
+.homeProducts {
+  padding: 25px 0;
+  width: 100%;
+}
+
+.homeProducts .banner {
+  width: 100%;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+/* ⭐ Add this to fix image cropping/stretching */
+.homeProducts .banner img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;     /* This keeps the original look like image 2 */
+  border-radius: 10px;   /* Smooth corners */
+  display: block;
+}
+.productRow .hd{font-size: 25px;font-weight: 600;}
+
+ .viewAllBtn{padding: 5px 25px !important;background: #fff;
+  border: 1px solid rgba(0,0,0,0.1) !important ; border-radius:30px !important ;
+   color:#000 !important;font-weight: 600;text-transform: capitalize !important;}
+  
+   .viewAllBtn svg{font-size: 20px;}
+
+   .productItem{width: 100%;height: auto;border:1px solid rgba(0,0,0,0.1);}
