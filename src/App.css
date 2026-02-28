@@ -211,7 +211,7 @@ nav .allcatTab{background: #2bbef9;padding: 8px 15px !important;border-radius:30
 }
 
 
-.productRow .hd{font-size: 25px;font-weight: 600;}
+.productRow .hd{font-size: 2px;font-weight: 600;}
 
  .customArrow {
   position: absolute;
@@ -243,11 +243,34 @@ nav .allcatTab{background: #2bbef9;padding: 8px 15px !important;border-radius:30
   position: relative;
 }
 
-.productItem {width: 100%;height: auto;border: 1px solid rgba(0,0,0,0.1);cursor: pointer;}
+.productItem {width: 100%;height: auto;border: 1px solid rgba(0,0,0,0.1);
+  cursor: pointer;position: relative;}
+
+.productItem .badge{ display: inline-block;padding: 7px 10px;position: absolute;top: 20px;left: 20px;z-index: 100;}
+.badge-primary{background: #2bbef9 !important;}
+
 .productItem  {padding: 15px;}
 .productItem  h4 {font-size: 15px;font-weight: 600;}
 .productItem .oldPrice{font-size:16px ;font-weight: bold;color: rgba(0,0,0,0.2);text-decoration: line-through;}
 .productItem .netPrice{font-size:16px ;font-weight: bold;}
+
+.productItem .actions{position: absolute;top: 20px;
+  right: -100%;z-index: 1000;display: flex;flex-direction:
+   column;gap: 10px;transition:all 0.3s ease-in-out ;}
+.productItem .actions button{display: flex;align-items: center;justify-content: center;min-width: 40px !important;height: 40px !important;border: 1px solid rgba(0,0,0,0.1) !important;
+  border-radius: 50% !important;background: #fff;
+  box-shadow: 0 1px 3px rgb(0 0 0 / 12%),0 1px 2px rgb(0 0 0 / 24%) !important;transition: all 0.0s !important;}
+.productItem .actionsbutton svg{color: #000 !important; opacity: 0.8;
+  pointer-events: none; font-size: 15px !important;}
+
+  .productItem .actions button:hover{background: #2d089b !important;}
+    .productItem .actions button:hover svg{color: #fff !important;}
+
+    .productItem .imgWrapper{overflow: hidden;}
+
+     .productItem .imgWrapper img{transition: all 0.3s ease-in-out;}
+.productItem .imgWrapper:hover .actions{opacity: 1;right: 10px;}
+.productItem .imgWrapper:hover img {transform: scale(1.1);}
 
 .product_row .item{border-right:1px solid transparent !important ;}
 .product_row .Slider:last-child .productItem{border: 1px solid rgba(0,0,0,0.1) !important;}
@@ -273,7 +296,4 @@ nav .allcatTab{background: #2bbef9;padding: 8px 15px !important;border-radius:30
    transition: 0.3s ease; 
 } 
 
-.imgWrapper img:hover {
-  transform: scale(1.05);
-} 
 
