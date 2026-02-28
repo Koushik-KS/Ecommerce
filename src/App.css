@@ -171,20 +171,109 @@ nav .allcatTab{background: #2bbef9;padding: 8px 15px !important;border-radius:30
   overflow: hidden;
 }
 
-/* ⭐ Add this to fix image cropping/stretching */
+/* ===== LONG LEFT BANNER IMAGE ===== */
+
+.homeProducts .banner {
+  width: 100%;
+  height: 520px;          /* Increase height here */
+  overflow: hidden;
+  border-radius: 10px;
+}
+
 .homeProducts .banner img {
   width: 100%;
   height: 100%;
-  object-fit: cover;     /* This keeps the original look like image 2 */
-  border-radius: 10px;   /* Smooth corners */
-  display: block;
+  object-fit: cover;
+  image-rendering: auto;
 }
+
+.viewAllBtn {
+  margin-left: auto;            /* push to right */
+  background:rgb(240, 239, 239) !important;
+  color: #0c0c0c !important;
+  padding: 8px 20px !important;
+  border-radius: 20px !important;
+  text-transform: capitalize !important;
+  font-weight: 600 !important;
+  box-shadow: none !important;
+}
+
+
+
+.viewAllBtn svg {
+  font-size: 22px;
+  margin-left: 5px;
+  transition: all 0.3s ease;
+}
+
+.viewAllBtn:hover svg {
+  transform: translateX(5px);   /* arrow move effect */
+}
+
+
 .productRow .hd{font-size: 25px;font-weight: 600;}
 
- .viewAllBtn{padding: 5px 25px !important;background: #fff;
-  border: 1px solid rgba(0,0,0,0.1) !important ; border-radius:30px !important ;
-   color:#000 !important;font-weight: 600;text-transform: capitalize !important;}
+ .customArrow {
+  position: absolute;
+  top: 40%;
+   transform: translateY(-50%); 
   
-   .viewAllBtn svg{font-size: 20px;}
+  color: #0f0f0f;
+  font-size: 30px;
+  width: 20px;
+  height: 20px;
+  border-radius: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 1000;
+}
 
-   .productItem{width: 100%;height: auto;border:1px solid rgba(0,0,0,0.1);}
+.prevArrow {
+  left: -30px;
+}
+
+.nextArrow {
+  right: -30px;
+}
+
+/* ===== PRODUCT SLIDER IMAGE FIX =====  */
+.product_row {
+  position: relative;
+}
+
+.productItem {width: 100%;height: auto;border: 1px solid rgba(0,0,0,0.1);cursor: pointer;}
+.productItem  {padding: 15px;}
+.productItem  h4 {font-size: 15px;font-weight: 600;}
+.productItem .oldPrice{font-size:16px ;font-weight: bold;color: rgba(0,0,0,0.2);text-decoration: line-through;}
+.productItem .netPrice{font-size:16px ;font-weight: bold;}
+
+.product_row .item{border-right:1px solid transparent !important ;}
+.product_row .Slider:last-child .productItem{border: 1px solid rgba(0,0,0,0.1) !important;}
+.Slider{padding-right:1px !important;}
+
+
+
+.imgWrapper {
+  width: 100%; 
+  height: 250px;              
+  overflow: hidden;
+  border-radius: 10px;
+  background: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.imgWrapper img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;        
+   transition: 0.3s ease; 
+} 
+
+.imgWrapper img:hover {
+  transform: scale(1.05);
+} 
+
