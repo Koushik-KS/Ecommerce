@@ -1,49 +1,25 @@
 import React from "react";
 import HomeBanner from "../../Components/HomeBanner";
 import banner1 from "../../assets/images/banner1.jpg";
+import banner2 from "../../assets/images/banner2.jpg";
 import Button from "@mui/material/Button";
 import { IoIosArrowRoundForward } from "react-icons/io";
-import Slider from "react-slick";
-import Rating from '@mui/material/Rating';
-
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import ProductItem from "../../Components/ProductItem";
+import HomeCat from "../../Components/HomeCat";
 
-/* Custom Previous Arrow */
-const PrevArrow = ({ onClick }) => {
-  return (
-    <div className="customArrow prevArrow" onClick={onClick}>
-      &#10094;
-    </div>
-  );
-};
-
-/* Custom Next Arrow */
-const NextArrow = ({ onClick }) => {
-  return (
-    <div className="customArrow nextArrow" onClick={onClick}>
-      &#10095;
-    </div>
-  );
-};
 
 const Home = () => {
 
-  const productSliderOptions = {
-    dots: false,
-    infinite: true,
-    speed: 500,
-    slidesToShow: 4,
-    slidesToScroll: 1,
-    arrows: true,
-    prevArrow: <PrevArrow />,
-    nextArrow: <NextArrow />
-  };
 
   return (
     <>
       <HomeBanner />
+
+      <HomeCat />
+
+
 
       <section className="homeProducts">
         <div className="container">
@@ -57,7 +33,16 @@ const Home = () => {
                   className="cursor w-100"
                 />
               </div>
+              <div className="banner mt-3">
+                <img
+                  src={banner2}
+                  alt="Fashion banner"
+                  className="cursor w-100"
+                />
+              </div>
+
             </div>
+            
 
             <div className="col-md-9 productRow">
 
@@ -81,7 +66,7 @@ const Home = () => {
 
               <div className="d-flex align-items-center justify-content-between mb-2 w-100">
                 <div className="info">
-                  <h3 className="mb-0 hd">NEW PRODUCTS</h3>
+                  <h3 className="mt-5 hd">NEW PRODUCTS</h3>
                   <p className="text-light text-sml mb-0">New product with updated  stocks.
                     
                   </p>

@@ -52,8 +52,13 @@ const ProductItem = () => {
           <img 
             src="https://m.media-amazon.com/images/I/71sXG9x1bSL._AC_UY327_FMwebp_QL65_.jpg" 
             alt="product2"
-            className="w-100"
-          />
+            className="w-100"/>
+            <span className="badge badge-primary">28%</span>
+          <div className="actions">
+            <Button><TfiFullscreen /></Button>
+             <Button><CiHeart style={{fontSize:'20px'}}/></Button>
+            
+          </div>
         </div>
         <h4>Vedaka Whole Cashews | 200 Gram | Grade W320 Kaju | Firm Texture, Rich Taste | Healthy Snack</h4>
         <span className="text-success d-block">In Stock</span>
@@ -69,8 +74,13 @@ const ProductItem = () => {
           <img 
             src="https://m.media-amazon.com/images/I/81u0Uo4nQdL._AC_UY327_FMwebp_QL65_.jpg" 
             alt="product3"
-            className="w-100"
-          />
+            className="w-100"/>
+            <span className="badge badge-primary">28%</span>
+          <div className="actions">
+            <Button><TfiFullscreen /></Button>
+             <Button><CiHeart style={{fontSize:'20px'}}/></Button>
+            
+          </div>
         </div>
         <h4>Vedaka Whole Cashews | 200 Gram | Grade W320 Kaju | Firm Texture, Rich Taste | Healthy Snack</h4>
         <span className="text-success d-block">In Stock</span>
@@ -87,6 +97,12 @@ const ProductItem = () => {
             src="https://m.media-amazon.com/images/I/71AHZUc7CFL._AC_UY327_FMwebp_QL65_.jpg" 
             alt="product4"
             className="w-100"/>
+            <span className="badge badge-primary">28%</span>
+          <div className="actions">
+            <Button><TfiFullscreen /></Button>
+             <Button><CiHeart style={{fontSize:'20px'}}/></Button>
+            
+          </div>
         </div>
         <h4>Vedaka Whole Cashews | 200 Gram | Grade W320 Kaju | Firm Texture, Rich Taste | Healthy Snack</h4>
         <span className="text-success d-block">In Stock</span>
@@ -104,6 +120,12 @@ const ProductItem = () => {
             alt="product5"
             className="w-100"
           />
+          <span className="badge badge-primary">28%</span>
+          <div className="actions">
+            <Button><TfiFullscreen /></Button>
+             <Button><CiHeart style={{fontSize:'20px'}}/></Button>
+            
+          </div>
         </div>
         <h4>Vedaka Whole Cashews | 200 Gram | Grade W320 Kaju | Firm Texture, Rich Taste | Healthy Snack</h4>
         <span className="text-success d-block">In Stock</span>

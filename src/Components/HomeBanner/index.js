@@ -22,7 +22,7 @@ const HomeBanner = () => {
   return (
     <div className="homeBannerSection">
       <Slider {...settings}>
-        <div className="item">
+        <div className="item ">
           <img src="https://images-eu.ssl-images-amazon.com/images/G/31/INSLGW/af_unrec_h1._CB786855017_.jpg" className="w-100" alt="banner" />
         </div>
         <div className="item">
