@@ -361,7 +361,7 @@ nav .allcatTab{background: #2bbef9;padding: 8px 15px !important;border-radius:30
 .homeCat .swiper-button-prev,
 .homeCat .swiper-button-next {
   position: absolute;
-  top: -50% !important;
+  top: -30px !important;
   transform: translateY(-50%) !important;
   width: 30px !important;
   height: 30px !important;}
@@ -369,6 +369,7 @@ nav .allcatTab{background: #2bbef9;padding: 8px 15px !important;border-radius:30
 .homeCat .swiper-button-next {
   right: 0 !important;} 
  
-.homeCat .swiper-button-prev{right: 100px !important;left: inherit !important;}
-
+.homeCat .swiper-button-prev{right: 68px !important;left: inherit !important;}
+.homeCat .swiper-button-prev::after,
+.homeCat .swiper-button-next::after{font-size: 12px !important;}
 

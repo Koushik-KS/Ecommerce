@@ -5,7 +5,7 @@ import {Navigation} from "swiper/modules";
 
 const HomeCat = () => {
 
-    const [itemBg,setItemBg]=useState([
+    const [itemBg]=useState([
         '#fffceb',
         '#ecffec',
         '#feefea',
@@ -26,7 +26,7 @@ const HomeCat = () => {
   return (
       <section className="homeCat">
         <div className="container">
-          <h3 className="mb-4 hd">Featured Categories</h3>
+          <h3 className="mb-3 hd">Featured Categories</h3>
             <Swiper 
             slidesPerView={10}
             spaceBetween={8}

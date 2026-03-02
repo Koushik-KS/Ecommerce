@@ -4,27 +4,21 @@ import banner1 from "../../assets/images/banner1.jpg";
 import banner2 from "../../assets/images/banner2.jpg";
 import Button from "@mui/material/Button";
 import { IoIosArrowRoundForward } from "react-icons/io";
-import "slick-carousel/slick/slick.css";
-import "slick-carousel/slick/slick-theme.css";
 import ProductItem from "../../Components/ProductItem";
 import HomeCat from "../../Components/HomeCat";
 
-
 const Home = () => {
-
-
   return (
     <>
       <HomeBanner />
 
       <HomeCat />
 
-
-
       <section className="homeProducts">
         <div className="container">
           <div className="row">
 
+            {/* LEFT BANNERS */}
             <div className="col-md-3">
               <div className="banner">
                 <img
@@ -40,12 +34,12 @@ const Home = () => {
                   className="cursor w-100"
                 />
               </div>
-
             </div>
-            
 
+            {/* RIGHT PRODUCTS */}
             <div className="col-md-9 productRow">
 
+              {/* BEST SELLER */}
               <div className="d-flex align-items-center justify-content-between mb-2 w-100">
                 <div className="info">
                   <h3 className="mb-0 hd">BEST SELLER</h3>
@@ -59,16 +53,15 @@ const Home = () => {
                 </Button>
               </div>
 
-              <div className="product_row w-100">
-                <ProductItem />
-              </div>
+              {/* ProductItem is already a Swiper → DON'T WRAP */}
+              <ProductItem />
 
-
-              <div className="d-flex align-items-center justify-content-between mb-2 w-100">
+              {/* NEW PRODUCTS */}
+              <div className="d-flex align-items-center justify-content-between mb-2 w-100 mt-5">
                 <div className="info">
-                  <h3 className="mt-5 hd">NEW PRODUCTS</h3>
-                  <p className="text-light text-sml mb-0">New product with updated  stocks.
-                    
+                  <h3 className="mb-0 hd">NEW PRODUCTS</h3>
+                  <p className="text-light text-sml mb-0">
+                    New product with updated stocks.
                   </p>
                 </div>
 
@@ -77,13 +70,10 @@ const Home = () => {
                 </Button>
               </div>
 
-              <div className="product_row w-100">
-                <ProductItem />
-              </div>
-
-
-
+              {/* Again, just render the ProductItem */}
+              <ProductItem />
             </div>
+
           </div>
         </div>
       </section>
