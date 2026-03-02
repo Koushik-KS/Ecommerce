@@ -70,7 +70,7 @@ const Home = () => {
                 </Button>
               </div>
 
-              {/* Again, just render the ProductItem */}
+              
               <ProductItem />
             </div>
 
