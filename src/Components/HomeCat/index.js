@@ -26,106 +26,34 @@ const HomeCat = () => {
   return (
       <section className="homeCat">
         <div className="container">
+          <h3 className="mb-4 hd">Featured Categories</h3>
             <Swiper 
             slidesPerView={10}
-            spaceBetween={5}
+            spaceBetween={8}
             navigation={true}
-            slidesPerGroup={1}
+            slidesPerGroup={3}
             modules={[Navigation]}
             className="mySwiper"
             >
+              {
+                itemBg?.map((item,index)=>{
+
+                  return(
+                    <SwiperSlide>
+                    <div className="item text-center cursor"style={{background:item}}>
+                  <img src="https://nest-frontend-v6.netlify.app/assets/imgs/shop/cat-9.png" 
+                  alt="category"/>
+                  <h6>Red Apple</h6>
+                        </div>
+                </SwiperSlide>
                 
-                <SwiperSlide>
-                    <div className="item text-center">
-                  <img src="https://nest-frontend-v6.netlify.app/assets/imgs/shop/cat-9.png" 
-                  alt="category"/>
-                  <h6>Red Apple</h6>
-                        </div>
-                </SwiperSlide>
-                <SwiperSlide>
-                    <div className="item text-center">
-                  <img src="https://nest-frontend-v6.netlify.app/assets/imgs/shop/cat-9.png" 
-                  alt="category"/>
-                  <h6>Red Apple</h6>
-                        </div>
-                </SwiperSlide>
-                <SwiperSlide>
-                    <div className="item text-center">
-                  <img src="https://nest-frontend-v6.netlify.app/assets/imgs/shop/cat-9.png" 
-                  alt="category"/>
-                  <h6>Red Apple</h6>
-                        </div>
-                </SwiperSlide>
-                <SwiperSlide>
-                    <div className="item text-center">
-                  <img src="https://nest-frontend-v6.netlify.app/assets/imgs/shop/cat-9.png" 
-                  alt="category"/>
-                  <h6>Red Apple</h6>
-                        </div>
-                </SwiperSlide>
-                <SwiperSlide>
-                    <div className="item text-center">
-                  <img src="https://nest-frontend-v6.netlify.app/assets/imgs/shop/cat-9.png" 
-                  alt="category"/>
-                  <h6>Red Apple</h6>
-                        </div>
-                </SwiperSlide>
-                <SwiperSlide>
-                    <div className="item text-center">
-                  <img src="https://nest-frontend-v6.netlify.app/assets/imgs/shop/cat-9.png" 
-                  alt="category"/>
-                  <h6>Red Apple</h6>
-                        </div>
-                </SwiperSlide>
-                <SwiperSlide>
-                    <div className="item text-center">
-                  <img src="https://nest-frontend-v6.netlify.app/assets/imgs/shop/cat-9.png" 
-                  alt="category"/>
-                  <h6>Red Apple</h6>
-                        </div>
-                </SwiperSlide>
-                <SwiperSlide>
-                    <div className="item text-center">
-                  <img src="https://nest-frontend-v6.netlify.app/assets/imgs/shop/cat-9.png" 
-                  alt="category"/>
-                  <h6>Red Apple</h6>
-                        </div>
-                </SwiperSlide>
-                <SwiperSlide>
-                    <div className="item text-center">
-                  <img src="https://nest-frontend-v6.netlify.app/assets/imgs/shop/cat-9.png" 
-                  alt="category"/>
-                  <h6>Red Apple</h6>
-                        </div>
-                </SwiperSlide>
-                <SwiperSlide>
-                    <div className="item text-center">
-                  <img src="https://nest-frontend-v6.netlify.app/assets/imgs/shop/cat-9.png" 
-                  alt="category"/>
-                  <h6>Red Apple</h6>
-                        </div>
-                </SwiperSlide>
-                <SwiperSlide>
-                    <div className="item text-center">
-                  <img src="https://nest-frontend-v6.netlify.app/assets/imgs/shop/cat-9.png" 
-                  alt="category"/>
-                  <h6>Red Apple</h6>
-                        </div>
-                </SwiperSlide>
-                <SwiperSlide>
-                    <div className="item text-center">
-                  <img src="https://nest-frontend-v6.netlify.app/assets/imgs/shop/cat-9.png" 
-                  alt="category"/>
-                  <h6>Red Apple</h6>
-                        </div>
-                </SwiperSlide>
-                <SwiperSlide>
-                    <div className="item text-center">
-                  <img src="https://nest-frontend-v6.netlify.app/assets/imgs/shop/cat-9.png" 
-                  alt="category"/>
-                  <h6>Red Apple</h6>
-                        </div>
-                </SwiperSlide>
+                  )
+                    
+
+                  
+                })
+              }
+                
                 
 
                 </Swiper>
