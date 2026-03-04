@@ -252,7 +252,12 @@ nav .allcatTab{background: #2bbef9;padding: 8px 15px !important;border-radius:30
 .productItem  {padding: 15px;}
 .productItem  h4 {font-size: 15px;font-weight: 600;}
 .productItem .oldPrice{font-size:16px ;font-weight: bold;color: rgba(0,0,0,0.2);text-decoration: line-through;}
-.productItem .netPrice{font-size:16px ;font-weight: bold;}
+.productItem .info .netPrice{font-size:16px ;font-weight: bold;}
+.product_row  .item{border-right: 1px solid transparent  !important;}
+.product_row .swiper-slide:last-child .productItem{border: 1px solid rgba(0,0,0,0.1) !important;}
+.swiper{padding-right:1px  !important;}
+
+
 
 .productItem .actions {
   position: absolute;
