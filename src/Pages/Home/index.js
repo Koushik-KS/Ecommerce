@@ -10,8 +10,12 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
 import "swiper/css/navigation";
 import { Navigation } from "swiper/modules";
-import banner3 from "../../assets/images/banner3.png";
+import banner3 from "../../assets/images/banner3.jpg";
 import banner4 from "../../assets/images/banner4.png";
+import newsLetterImg from "../../assets/images/coupon.png";
+import { height } from "@mui/system";
+import { MdOutlineMail } from "react-icons/md";
+
 const Home = () => {
     var productSliderOptions={
       dots:true,
@@ -131,7 +135,7 @@ const Home = () => {
                 <img
                   src={banner4}
                   alt="Fashion banner"
-                  className="cursor w-100"/>
+                  className="cursor w-100 "/>
               </div>
               </div>
  </div>
@@ -139,6 +143,41 @@ const Home = () => {
         </div>
         
       </section>
+
+      <section className="newsLetterSection mt-3 mb-3 d-flex align-items-center">
+        <div className="container">
+          <div className="row">
+            <div className="col-md-6">
+              <p className="text-white mb-1">20% discount for your first order
+                  
+              </p>
+              <h3 className="text-white">Join our newsletter and get....</h3>
+             <p className="text-light">Join  our email subscription now to get updates on <br/> promotions and coupons.</p>
+             
+
+             <form>
+              <MdOutlineMail />
+              <input type="text"/>
+              <Button>Subscribe</Button>
+             </form>
+             
+              </div>
+           <div className="col-md-6  d-flex justify-content-end align-items-end">
+  <img 
+    src={newsLetterImg} 
+    alt="newsletter"
+    className="img-fluid"
+    style={{ maxWidth: "180px", height: "180px" }}
+  />
+</div>
+            </div>
+          </div>
+   
+
+      </section>
+
+      <br/><br/><br/><br/><br/>
+
     </>
   );
 };
