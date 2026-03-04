@@ -2,147 +2,66 @@ import React from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
 import "swiper/css/navigation";
-import { Navigation } from "swiper/modules";
 
 import Rating from "@mui/material/Rating";
 import Button from "@mui/material/Button";
 import { TfiFullscreen } from "react-icons/tfi";
 import { CiHeart } from "react-icons/ci";
+import { Navigation } from "swiper/modules";
 
 const ProductItem = () => {
   return (
-   <Swiper
-      slidesPerView={5}
-      spaceBetween={20}
-      navigation={true}
-      modules={[Navigation]}
-      className="productSlider"
-    >
-      <SwiperSlide>
-        <div className="item productItem">
-          <div className="imgWrapper">
+    <div className="item productItem">
+      
+      <div className="imgWrapper">
+
+        <Swiper
+          slidesPerView={1}
+          spaceBetween={0}
+          navigation={true}
+          modules={[Navigation]}
+           slidesPerGroup={1}
+          className="mySwiper"
+        >
+          
+          <SwiperSlide>
             <img
               src="https://m.media-amazon.com/images/I/71386F6rF+L._AC_UY327_FMwebp_QL65_.jpg"
               alt="product1"
               className="w-100"
             />
-            <span className="badge badge-primary">28%</span>
-            <div className="actions">
-              <Button><TfiFullscreen /></Button>
-              <Button><CiHeart style={{ fontSize: "20px" }} /></Button>
-            </div>
-          </div>
+          </SwiperSlide>
 
-          <h4>Vedaka Whole Cashews | 200 Gram | Grade W320 Kaju</h4>
-          <span className="text-success d-block">In Stock</span>
-          <Rating value={5} readOnly size="small" precision={0.5} />
-          <div className="d-flex">
-            <span className="oldPrice">₹350</span>
-            <span className="netPrice text-danger ml-3">₹299</span>
-          </div>
+         
+
+          
+
+       </Swiper>
+       
+
+        <span className="badge badge-primary">28%</span>
+
+        <div className="actions">
+          <Button><TfiFullscreen /></Button>
+          <Button><CiHeart /></Button>
         </div>
-      </SwiperSlide>
 
-      <SwiperSlide>
-        <div className="item productItem">
-          <div className="imgWrapper">
-            <img
-              src="https://m.media-amazon.com/images/I/71sXG9x1bSL._AC_UY327_FMwebp_QL65_.jpg"
-              alt="product2"
-              className="w-100"
-            />
-            <span className="badge badge-primary">28%</span>
-            <div className="actions">
-              <Button><TfiFullscreen /></Button>
-              <Button><CiHeart style={{ fontSize: "20px" }} /></Button>
-            </div>
-          </div>
+      </div>
 
-          <h4>Vedaka Whole Cashews | 200 Gram | Grade W320 Kaju</h4>
-          <span className="text-success d-block">In Stock</span>
-          <Rating value={5} readOnly size="small" />
-          <div className="d-flex">
-            <span className="oldPrice">₹350</span>
-            <span className="netPrice text-danger ml-3">₹299</span>
-          </div>
-        </div>
-      </SwiperSlide>
+      <h4>Vedaka Whole Cashews | 200 Gram | Grade W320 Kaju</h4>
 
-      <SwiperSlide>
-        <div className="item productItem">
-          <div className="imgWrapper">
-            <img
-              src="https://m.media-amazon.com/images/I/81u0Uo4nQdL._AC_UY327_FMwebp_QL65_.jpg"
-              alt="product3"
-              className="w-100"
-            />
-            <span className="badge badge-primary">28%</span>
-            <div className="actions">
-              <Button><TfiFullscreen /></Button>
-              <Button><CiHeart style={{ fontSize: "20px" }} /></Button>
-            </div>
-          </div>
+      <span className="text-success d-block">In Stock</span>
 
-          <h4>Vedaka Whole Cashews | 200 Gram | Grade W320 Kaju</h4>
-          <span className="text-success d-block">In Stock</span>
-          <Rating value={5} readOnly size="small" />
-          <div className="d-flex">
-            <span className="oldPrice">₹350</span>
-            <span className="netPrice text-danger ml-3">₹299</span>
-          </div>
-        </div>
-      </SwiperSlide>
+      <Rating value={5} readOnly size="small" />
 
-      <SwiperSlide>
-        <div className="item productItem">
-          <div className="imgWrapper">
-            <img
-              src="https://m.media-amazon.com/images/I/71AHZUc7CFL._AC_UY327_FMwebp_QL65_.jpg"
-              alt="product4"
-              className="w-100"
-            />
-            <span className="badge badge-primary">28%</span>
-            <div className="actions">
-              <Button><TfiFullscreen /></Button>
-              <Button><CiHeart style={{ fontSize: "20px" }} /></Button>
-            </div>
-          </div>
-
-          <h4>Vedaka Whole Cashews | 200 Gram | Grade W320 Kaju</h4>
-          <span className="text-success d-block">In Stock</span>
-          <Rating value={5} readOnly size="small" />
-          <div className="d-flex">
-            <span className="oldPrice">₹350</span>
-            <span className="netPrice text-danger ml-3">₹299</span>
-          </div>
-        </div>
-      </SwiperSlide>
-
-      <SwiperSlide>
-        <div className="item productItem">
-          <div className="imgWrapper">
-            <img
-              src="https://m.media-amazon.com/images/I/71D96ykEFNL._AC_UY327_FMwebp_QL65_.jpg"
-              alt="product5"
-              className="w-100"
-            />
-            <span className="badge badge-primary">28%</span>
-            <div className="actions">
-              <Button><TfiFullscreen /></Button>
-              <Button><CiHeart style={{ fontSize: "20px" }} /></Button>
-            </div>
-          </div>
-
-          <h4>Vedaka Whole Cashews | 200 Gram | Grade W320 Kaju</h4>
-          <span className="text-success d-block">In Stock</span>
-          <Rating value={5} readOnly size="small" />
-          <div className="d-flex">
-            <span className="oldPrice">₹350</span>
-            <span className="netPrice text-danger ml-3">₹299</span>
-          </div>
-        </div>
-      </SwiperSlide>
-    </Swiper>
+      <div className="d-flex">
+        <span className="oldPrice">₹350</span>
+        <span className="netPrice text-danger ml-3">₹299</span>
+     
+      
+</div>
+</div>
+    
   );
 };
 

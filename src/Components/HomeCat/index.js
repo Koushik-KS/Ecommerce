@@ -30,7 +30,7 @@ const HomeCat = () => {
                        slidesPerGroup={3}
                        modules={[Navigation]}
                        className="mySwiper">
-                        {
+                        { 
                           itemBg?.map((item,index)=>{
                             return(
                                <SwiperSlide>
