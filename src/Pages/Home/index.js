@@ -10,7 +10,8 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
 import "swiper/css/navigation";
 import { Navigation } from "swiper/modules";
-
+import banner3 from "../../assets/images/banner3.png";
+import banner4 from "../../assets/images/banner4.png";
 const Home = () => {
     var productSliderOptions={
       dots:true,
@@ -49,11 +50,6 @@ const Home = () => {
 
               </div>
 
-              
-
-            
-
-          
             <div className="col-md-9 productRow">
 
               <div className="d-flex align-items-center ">
@@ -69,6 +65,7 @@ const Home = () => {
                   View All <IoIosArrowRoundForward />
                 </Button>
               </div>
+
               <div className="product_row w-100 mt-4 ">
                  <Swiper 
             slidesPerView={3}
@@ -98,7 +95,6 @@ const Home = () => {
               <ProductItem />
               </SwiperSlide>
                </Swiper>
-             
                
 </div>
 
@@ -115,51 +111,29 @@ const Home = () => {
                   View All <IoIosArrowRoundForward />
                 </Button>
               </div>
-              <div className="product_row w-100 mt-4 ">
-                 <Swiper 
-            slidesPerView={4}
-            spaceBetween={0}
-            navigation={true}
-            slidesPerGroup={1}
-            modules={[Navigation]}
-            className="mySwiper">
-             
-              <SwiperSlide>
-              <ProductItem />
-              </SwiperSlide>
 
-               <SwiperSlide>
-              <ProductItem />
-              </SwiperSlide>
-
-               <SwiperSlide>
-              <ProductItem />
-              </SwiperSlide>
-
-               <SwiperSlide>
-              <ProductItem />
-              </SwiperSlide>
-
-               <SwiperSlide>
-              <ProductItem />
-              </SwiperSlide>
-               </Swiper>
-             
-               
-
-
-              
-            
-             
+              <div className="product_row productRow2 w-75 mt-4 d-flex"> 
+                  <ProductItem />
+                   <ProductItem />
+                    <ProductItem />
+                     <ProductItem />
+                      <ProductItem />
+                       <ProductItem />
 </div>
-                 
-
-            
-
-
-
-
-              
+                <div className="d-flex mt-4 mb-5 bannerSec">
+                  <div className="banner ">
+                <img
+                  src={banner3}
+                  alt="Fashion banner"
+                  className="cursor w-100"/>
+              </div>
+              <div className="banner ">
+                <img
+                  src={banner4}
+                  alt="Fashion banner"
+                  className="cursor w-100"/>
+              </div>
+              </div>
  </div>
 </div>
         </div>

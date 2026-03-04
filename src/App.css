@@ -4,7 +4,8 @@
 @import url('https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick.min.css');
 @import url('https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick-theme.min.css');
 
-body{font-family: "Lato", sans-serif; font-size: 14px;color: rgba(0,0,0,0.8);}
+body{font-family: "Lato", sans-serif; font-size: 14px;
+  color: rgba(0,0,0,0.8);overflow-x: hidden;}
 
 
 
@@ -211,7 +212,7 @@ nav .allcatTab{background: #2bbef9;padding: 8px 15px !important;border-radius:30
 }
 
 
- .hd{font-size: 20px;font-weight: 600;text-transform: uppercase;}
+ .hd{font-size: 20px;font-weight: 600;text-transform: uppercase; }
 
  .customArrow {
   position: absolute;
@@ -311,7 +312,7 @@ nav .allcatTab{background: #2bbef9;padding: 8px 15px !important;border-radius:30
 
 /* Hover color effect */
 .productItem .actions button:hover {
-  background: #7f7fe6 !important;
+  background: #f53f3c !important;
 }
 
 .productItem .actions button:hover svg {
@@ -376,7 +377,6 @@ nav .allcatTab{background: #2bbef9;padding: 8px 15px !important;border-radius:30
 .homeCat .swiper-button-next {
   color: #000;
   background-color: #ccc;
- 
   position: absolute;
   top: -30px !important;
   transform: translateY(-50%) !important;
@@ -390,3 +390,10 @@ nav .allcatTab{background: #2bbef9;padding: 8px 15px !important;border-radius:30
 .homeCat .swiper-button-prev::after,
 .homeCat .swiper-button-next::after{font-size: 1px !important;}
 
+.productRow2 {flex-wrap: wrap;gap: 25px;}
+
+.productRow2 .productItem{width: 30%;overflow: hidden;
+  border-right: 1px solid rgba(0,0,0,0.1) !important;}
+
+
+  .bannerSec{gap:15px ;}
