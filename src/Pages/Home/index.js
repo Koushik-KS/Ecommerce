@@ -8,9 +8,18 @@ import ProductItem from "../../Components/ProductItem";
 import HomeCat from "../../Components/HomeCat";
 import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
+import "swiper/css/navigation";
 import { Navigation } from "swiper/modules";
 
 const Home = () => {
+    // var productSliderOptions={
+    //   dots:true,
+    //   infinite:false,
+    //   speed:500,
+    //   slidesToShow:4,
+    //   slidesToScroll:1,
+      
+    // };
   return (
     <>
       <HomeBanner />
@@ -30,6 +39,7 @@ const Home = () => {
                   className="cursor w-100"
                 />
               </div>
+              </div>
               <div className="banner mt-4">
                 <img
                   src={banner2}
@@ -42,7 +52,7 @@ const Home = () => {
           
             <div className="col-md-9 productRow">
 
-              {/* BEST SELLER */}
+              
               <div className="d-flex align-items-center ">
              
                 <div className="info w-75">
@@ -56,7 +66,7 @@ const Home = () => {
                   View All <IoIosArrowRoundForward />
                 </Button>
               </div>
-              <div className="product_row w-100 ">
+              <div className="product_row w-100 mt-4 ">
                  <Swiper 
             slidesPerView={4}
             spaceBetween={0}
@@ -64,6 +74,7 @@ const Home = () => {
             slidesPerGroup={3}
             modules={[Navigation]}
             className="mySwiper">
+             
               <SwiperSlide>
               <ProductItem />
               </SwiperSlide>
@@ -87,15 +98,15 @@ const Home = () => {
                </Swiper>
                
 
-</div>
+              </div>
 
 
-            
 
+
+                 <div className="d-flex align-items-center ">
              
-              <div className="d-flex align-items-center ">
-                <div className="info">
-                  <h3 className="mb-0 hd">NEW PRODUCTS</h3>
+                <div className="info w-75">
+                  <h3 className="mb-0 hd">NEW PRODUCT</h3>
                   <p className="text-light text-sml mb-0">
                     New product with updated stocks.
                   </p>
@@ -105,8 +116,7 @@ const Home = () => {
                   View All <IoIosArrowRoundForward />
                 </Button>
               </div>
-
-              <div className="product_row w-100 ">
+              <div className="product_row w-100 mt-4 ">
                  <Swiper 
             slidesPerView={4}
             spaceBetween={0}
@@ -114,6 +124,7 @@ const Home = () => {
             slidesPerGroup={3}
             modules={[Navigation]}
             className="mySwiper">
+             
               <SwiperSlide>
               <ProductItem />
               </SwiperSlide>
@@ -136,10 +147,12 @@ const Home = () => {
               
                </Swiper>
                
-          </div>
+
+              </div>
+ </div>
 </div>
-          </div>
-        </div>
+        
+        
       </section>
     </>
   );
