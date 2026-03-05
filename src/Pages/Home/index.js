@@ -15,6 +15,7 @@ import banner4 from "../../assets/images/banner4.png";
 import newsLetterImg from "../../assets/images/coupon.png";
 import { height } from "@mui/system";
 import { MdOutlineMail } from "react-icons/md";
+import Footer from "../../Components/Footer";
 
 const Home = () => {
     var productSliderOptions={
@@ -144,7 +145,7 @@ const Home = () => {
         
       </section>
 
-      <section className="newsLetterSection mt-3 mb-3 d-flex align-items-center">
+      <section className="newsLetterSection mt-0 mb-1 d-flex align-items-center">
         <div className="container">
           <div className="row">
             <div className="col-md-6">
@@ -157,7 +158,7 @@ const Home = () => {
 
              <form>
               <MdOutlineMail />
-              <input type="text"/>
+              <input type="text "placeholder="Your Email Address"/>
               <Button>Subscribe</Button>
              </form>
              
@@ -176,7 +177,7 @@ const Home = () => {
 
       </section>
 
-      <br/><br/><br/><br/><br/>
+      
 
     </>
   );
