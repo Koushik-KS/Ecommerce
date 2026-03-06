@@ -147,19 +147,30 @@ nav .allcatTab{background: #2bbef9;padding: 8px 15px !important;border-radius:30
 
         nav .navPart2 ul li:hover .submenu{opacity: 1;visibility: inherit;top: 100%;}
 
-      .homeBannerSection {position: relative;overflow: hidden;}
 
-       .homeBannerSection *{outline: none !important;}
+.homeBannerSection{position: relative;}
+.homeBannerSection .swiper{overflow: inherit !important;}
+homeBannerSection{position: relative;}
+.homeBannerSection .swiper .item{overflow: hidden;border-radius: 10px;}
+.homeBannerSection *{outline: none !important;}
+
+/* Navigation Buttons */
+.homeBannerSection .swiper-button-next,
+.homeBannerSection .swiper-button-prev{
+  width: 20px;
+  height:20px;
+  color: #000;
+  background:#fff;
+  border-radius:50%;
+   font-weight:1000;
+  
+}
 
 
-      .homeBannerSection .slick-arrow{position: absolute;top: 45%;z-index: 100;display: flex;align-items: center;justify-content: center;
-    width: 40px !important;height: 40px !important ; background: #000;border-radius: 100%;}
 
-      .homeBannerSection .slick-arrow.slick-next{right: 25px !important;}
-      .homeBannerSection .slick-arrow.slick-prev{left: 25px !important;}
-/* .homeProducts{padding: 25px 0px ;width: 100%;}
-.homeProducts .banner{width: 100%;border-radius: 10px; overflow: hidden;}
-*/
+
+
+
 
 .homeProducts {
   padding: 25px 0;
@@ -441,3 +452,85 @@ footer .linkssWrap h5{font-size: 15px;margin-bottom: 20px;font-weight: 600;}
 footer .linkssWrap ul li {list-style: none;margin-bottom: 10px;}
 footer .linkssWrap ul li a{color: #71778e;font-size: 13px;}
 footer .linkssWrap ul li a:hover{text-decoration: none;}
+
+footer .copyright ul li a{display: flex;align-items: center;justify-content: center;
+width: 35px;height:35px;border-radius: 50%;  border: 1px solid rgba(0,0,0,0.2);
+}
+footer .copyright ul li a svg{font-size: 16px;color: rgba(0,0,0,0.8);}
+footer .copyright ul li a:hover{background: #2bbef9 !important;}
+footer .copyright ul li a:hover svg{color: #fff !important;}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

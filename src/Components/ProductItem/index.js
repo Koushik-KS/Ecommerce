@@ -8,9 +8,11 @@ import Button from "@mui/material/Button";
 import { TfiFullscreen } from "react-icons/tfi";
 import { CiHeart } from "react-icons/ci";
 import { Navigation } from "swiper/modules";
+import ProductModal from "../ProductModal";
 
 const ProductItem = () => {
   return (
+    <>
     <div className="item productItem">
       
       <div className="imgWrapper">
@@ -52,7 +54,8 @@ const ProductItem = () => {
 
       <span className="text-success d-block">In Stock</span>
 
-      <Rating value={5} readOnly size="small" />
+      <Rating value={5} readOnly size="small"   precision={0.5}/>
+    
 
       <div className="d-flex">
         <span className="oldPrice">₹350</span>
@@ -61,7 +64,8 @@ const ProductItem = () => {
       
 </div>
 </div>
-    
+  
+    </>
   );
 };
 

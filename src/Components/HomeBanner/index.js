@@ -1,40 +1,54 @@
-import React from "react";
-import Slider from "react-slick";
+import { Swiper, SwiperSlide } from "swiper/react";
+import "swiper/css";
+import "swiper/css/navigation";
 
-import "slick-carousel/slick/slick.css";
-import "slick-carousel/slick/slick-theme.css";
+import { Navigation, Autoplay } from "swiper/modules";
+
+import slide1 from "../../assets/images/slide1.jpg";
+import slide2 from "../../assets/images/slide2.jpg";
+import slide3 from "../../assets/images/slide3.jpg";
+import slide4 from "../../assets/images/slide4.jpg";
 
 const HomeBanner = () => {
-
-  const settings = {
-    dots: true,
-    infinite: true,
-    speed: 800,
-    slidesToShow: 1,
-    slidesToScroll: 1,
-    arrows: true,
-    autoplay: true,
-    autoplaySpeed: 2000,
-    pauseOnHover: true,
-    pauseOnFocus: true
-  };
-
   return (
-    <div className="homeBannerSection">
-      <Slider {...settings}>
-        <div className="item ">
-          <img src="https://images-eu.ssl-images-amazon.com/images/G/31/INSLGW/af_unrec_h1._CB786855017_.jpg" className="w-100" alt="banner" />
-        </div>
-        <div className="item">
-          <img src="https://images-eu.ssl-images-amazon.com/images/G/31/2026/GW/PC/Unrec/Frame_2147205289._CB786510766_.jpg" className="w-100" alt="banner" />
-        </div>
-        <div className="item">
-          <img src="https://images-eu.ssl-images-amazon.com/images/G/31/CookwareDining/tdhruvko/GW/BAU/Feb26/1_GW-Hero-Pc-HDFC-KOTAK-ONE-YES-Bank._CB787666247_.jpg" className="w-100" alt="banner" />
-        </div>
-        <div className="item">
-          <img src="https://images-eu.ssl-images-amazon.com/images/G/31/img22/Unrec/TallHero_3000X1200_Unrec._CB593464763_.jpg" className="w-100" alt="banner" />
-        </div>
-      </Slider>
+    <div className="container mt-3">
+      <div className="homeBannerSection">
+        <Swiper
+          modules={[Navigation, Autoplay]}
+          slidesPerView={1}
+          spaceBetween={15}
+          navigation={true}
+          loop={false}
+          autoplay={{
+            delay: 8000,
+            disableOnInteraction: false,
+          }}
+        >
+          <SwiperSlide>
+            <div className="item">
+              <img src={slide1} className="w-100" alt="slide1" />
+            </div>
+          </SwiperSlide>
+
+          <SwiperSlide>
+            <div className="item">
+              <img src={slide2} className="w-100" alt="slide2" />
+            </div>
+          </SwiperSlide>
+
+          <SwiperSlide>
+            <div className="item">
+              <img src={slide3} className="w-100" alt="slide3" />
+            </div>
+          </SwiperSlide>
+
+          <SwiperSlide>
+            <div className="item">
+              <img src={slide4} className="w-100" alt="slide4" />
+            </div>
+          </SwiperSlide>
+        </Swiper>
+      </div>
     </div>
   );
 };
