@@ -460,7 +460,8 @@ footer .copyright ul li a:hover{background: #2bbef9 !important;}
 footer .copyright ul li a:hover svg{color: #fff !important;}
 
 
-
+ .productModal .MuiPaper-elevation{padding: 25px;position: relative;max-width: 900px !important;width: 1000px !important;}
+ .productModal h4{font-size: 22px !important;}
 
 
 
