@@ -2,6 +2,7 @@ import React from "react";
 import HomeBanner from "../../Components/HomeBanner";
 import banner1 from "../../assets/images/banner1.jpg";
 import banner2 from "../../assets/images/banner2.jpg";
+import banner5 from "../../assets/images/banner5.jpg";
 import Button from "@mui/material/Button";
 import { IoIosArrowRoundForward } from "react-icons/io";
 import ProductItem from "../../Components/ProductItem";
@@ -12,6 +13,8 @@ import "swiper/css/navigation";
 import { Navigation } from "swiper/modules";
 import banner3 from "../../assets/images/banner3.jpg";
 import banner4 from "../../assets/images/banner4.png";
+
+
 import newsLetterImg from "../../assets/images/coupon.png";
 import { height } from "@mui/system";
 import { MdOutlineMail } from "react-icons/md";
@@ -49,6 +52,13 @@ const Home = () => {
                <div className="banner mt-4">
                 <img
                   src={banner2}
+                  alt="Fashion banner"
+                  className="cursor w-100"/>
+              </div>
+
+              <div className="banner mt-4">
+                <img
+                  src={banner5}
                   alt="Fashion banner"
                   className="cursor w-100"/>
               </div>

@@ -17,6 +17,13 @@ body{font-family: "Lato", sans-serif; font-size: 14px;
      max-width: 1200px;
  }
  }
+.badge{display: inline-block;padding: 7px 10px;}
+.badge.bg-success{background: #e5f8ed !important;color: #16b858 !important;}
+
+.btn-blue{background: #233a95 !important;color: #fff !important;text-transform: capitalize !important;}
+.btn-big {font-size: 15px !important;padding: 7px 30px !important;min-width: auto !important;}
+.btn-round{border-radius: 30px !important;}
+
  .cursor{cursor: pointer;}
  .text-light{color :#756e6e !important;}
   .text-sml{font-size: 14px !important;}
@@ -261,9 +268,14 @@ homeBannerSection{position: relative;}
 .badge-primary{background: #2bbef9 !important;}
 
 .productItem  {padding: 15px;}
-.productItem  h4 {font-size: 15px;font-weight: 600;}
-.productItem .oldPrice{font-size:16px ;font-weight: bold;color: rgba(0,0,0,0.2);text-decoration: line-through;}
-.productItem  .netPrice{font-size:16px ;font-weight: bold;}
+
+ .productItem  h4 {font-size: 15px;font-weight: 600;}
+
+.info .oldPrice{font-size:16px ;font-weight: bold;color: rgba(0,0,0,0.2);text-decoration: line-through;}
+.info .oldPrice.lg{font-size:20px ;}
+.info  .netPrice{font-size:16px ;font-weight: bold;}
+.info  .netPrice.lg{font: size 20px;}
+
 .product_row  .item{border-right: 1px solid transparent  !important;}
 .product_row .swiper-slide:last-child .productItem{border: 1px solid rgba(0,0,0,0.1) !important;}
 .swiper{padding-right:1px  !important;}
@@ -467,7 +479,7 @@ footer .copyright ul li a:hover svg{color: #fff !important;}
 .productZoom{
   width: 100%;
   height: auto;
-  border: 1px solid rgba(0,0,0,0.1);
+ 
   padding: 0px;
   overflow: hidden;
   border-radius: 15px;
@@ -514,7 +526,10 @@ footer .copyright ul li a:hover svg{color: #fff !important;}
 }
 
 
-
+.quantityDrop{width: 150px;gap:10px}
+.quantityDrop button{min-width: 40px !important;background: #edeef5 !important;border: 1px solid rgba(0,0,0,0.1) !important;color:#000}
+.quantityDrop button svg{color: #000 !important;}
+.quantityDrop input{width: 30px;border: 0px;background: transparent;outline: none !important;}
 
 
 

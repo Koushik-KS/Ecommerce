@@ -37,7 +37,7 @@ const ProductItem = () => {
           >
             <SwiperSlide>
               <img
-                src="https://m.media-amazon.com/images/I/71386F6rF+L._AC_UY327_FMwebp_QL65_.jpg"
+                src="https://m.media-amazon.com/images/I/81xoauWxgjL._SL1500_.jpg"
                 alt="product1"
                 className="w-100"
               />
@@ -59,15 +59,15 @@ const ProductItem = () => {
 
         </div>
 
-        <h4>Vedaka Whole Cashews | 200 Gram | Grade W320 Kaju</h4>
+        <h4>Vedaka Whole Almonds | 1 Kg | Dried California Almonds,Grade Non-Pareil | Purely Natural Badam | </h4>
 
         <span className="text-success d-block">In Stock</span>
 
         <Rating value={5} readOnly size="small" precision={0.5} />
 
-        <div className="d-flex">
-          <span className="oldPrice">₹350</span>
-          <span className="netPrice text-danger ml-3">₹299</span>
+        <div className="d-flex info">
+          <span className="oldPrice">₹1729</span>
+          <span className="netPrice text-danger ml-3">₹1529</span>
         </div>
 
       </div>
