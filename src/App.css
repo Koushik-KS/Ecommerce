@@ -10,7 +10,7 @@ body{font-family: "Lato", sans-serif; font-size: 14px;
 
 
 
- .bg-blue{background-color: #4444f3;}
+ .bg-blue{background-color: #7a55c1;}
  @media(min-width: 1300px){
  .container, .container-lg, .container-md, .container-sm, .container-xl, .container-xxl {
 
@@ -541,7 +541,23 @@ footer .copyright ul li a:hover svg{color: #fff !important;}
 .productModal .actions button svg{font-size: 15px !important;}
 
 
+.zoomSliderBig .swiper-button-prev,
+.zoomSliderBig .swiper-button-next{
+width:26px;
+height:26px;
+background:#fff;
+border-radius:50%;
+display:flex;
+align-items:center;
+justify-content:center;
+}
 
+.zoomSliderBig .swiper-button-prev:after,
+.zoomSliderBig .swiper-button-next:after{
+font-size:12px;
+color:#000;
+font-weight:bold;
+}
 
 
 
