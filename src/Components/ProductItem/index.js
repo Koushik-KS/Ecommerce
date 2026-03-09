@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
 import "swiper/css/navigation";
@@ -13,67 +13,64 @@ import { MyContext } from "../../App";
 
 const ProductItem = () => {
 
-  const contex=useContext(MyContext);
+  const context = useContext(MyContext);
 
-  const viewProductDetails = (id) => {
-    contex.setisOpenProductModal(true);
+  const viewProductDetails = () => {
+    context.setisOpenProductModal(true);
   };
 
- 
-
   return (
-    <>
-      <div className="item productItem">
-        <div className="imgWrapper">
+    <div className="item productItem">
 
-          <Swiper
-            slidesPerView={1}
-            spaceBetween={0}
-            navigation={true}
-            modules={[Navigation]}
-            slidesPerGroup={1}
-            className="mySwiper"
-          >
-            <SwiperSlide>
-              <img
-                src="https://m.media-amazon.com/images/I/81xoauWxgjL._SL1500_.jpg"
-                alt="product1"
-                className="w-100"
-              />
-            </SwiperSlide>
+      <div className="imgWrapper">
 
-          </Swiper>
+        <Swiper
+          slidesPerView={1}
+          navigation={true}
+          modules={[Navigation]}
+          className="mySwiper"
+        >
 
-          <span className="badge badge-primary">28%</span>
+          <SwiperSlide>
+            <img
+              src="https://m.media-amazon.com/images/I/81xoauWxgjL._SL1500_.jpg"
+              alt="product"
+              className="w-100"
+            />
+          </SwiperSlide>
 
-          <div className="actions">
-            <Button onClick={() => viewProductDetails(1)}>
-              <TfiFullscreen />
-            </Button>
+        </Swiper>
 
-            <Button>
-              <CiHeart />
-            </Button>
-          </div>
+        <span className="badge badge-primary">28%</span>
 
-        </div>
+        <div className="actions">
 
-        <h4>Vedaka Whole Almonds | 1 Kg | Dried California Almonds,Grade Non-Pareil | Purely Natural Badam | </h4>
+          <Button onClick={viewProductDetails}>
+            <TfiFullscreen />
+          </Button>
 
-        <span className="text-success d-block">In Stock</span>
+          <Button>
+            <CiHeart />
+          </Button>
 
-        <Rating value={5} readOnly size="small" precision={0.5} />
-
-        <div className="d-flex info">
-          <span className="oldPrice">₹1729</span>
-          <span className="netPrice text-danger ml-3">₹1529</span>
         </div>
 
       </div>
 
-     
+      <h4>
+        Vedaka Whole Almonds | 1 Kg | Dried California Almonds
+      </h4>
 
-    </>
+      <span className="text-success d-block">In Stock</span>
+
+      <Rating value={5} readOnly size="small" precision={0.5} />
+
+      <div className="d-flex info">
+        <span className="oldPrice">₹1729</span>
+        <span className="netPrice text-danger ml-3">₹1529</span>
+      </div>
+
+    </div>
   );
 };
 

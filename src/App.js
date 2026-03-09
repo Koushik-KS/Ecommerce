@@ -6,14 +6,15 @@ import Header from "./Components/Header";
 import { createContext, useEffect, useState } from "react";
 import axios from "axios";
 import Footer from "./Components/Footer";
-import ProductModal from "./ProductModal";
+import ProductModal from "./Components/ProductModal";
 
 const MyContext = createContext();
 
 function App() {
   const [countryList, setCountryList] = useState([]);
   const [selectCountry, setSelectCountry] = useState("");
-const [isOpenProductModal, setisOpenProductModal] = useState(false);
+  const [isOpenProductModal, setisOpenProductModal] = useState(false);
+
   useEffect(() => {
     getCountry("https://countriesnow.space/api/v0.1/countries/");
   }, []);
@@ -21,7 +22,7 @@ const [isOpenProductModal, setisOpenProductModal] = useState(false);
   const getCountry = async (url) => {
     try {
       const res = await axios.get(url);
-      setCountryList(res.data.data); // API gives { country: "India" }
+      setCountryList(res.data.data);
     } catch (error) {
       console.error(error);
     }
@@ -29,22 +30,23 @@ const [isOpenProductModal, setisOpenProductModal] = useState(false);
 
   const values = {
     countryList,
-    selectCountry,      // ✅ used in CountryDropdown
+    selectCountry,
     setSelectCountry,
     setisOpenProductModal
-       // ✅ used in CountryDropdown
   };
 
   return (
     <BrowserRouter>
       <MyContext.Provider value={values}>
         <Header />
+
         <Routes>
           <Route path="/" element={<Home />} />
         </Routes>
-        <Footer/>
- {isOpenProductModal === true &&  <ProductModal />
-      }
+
+        <Footer />
+
+        {isOpenProductModal === true && <ProductModal />}
 
       </MyContext.Provider>
     </BrowserRouter>
