@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import React, { useContext, useRef } from "react";
 import Dialog from "@mui/material/Dialog";
 import Button from "@mui/material/Button";
 import { IoClose } from "react-icons/io5";
@@ -9,11 +9,19 @@ import InnerImageZoom from "react-inner-image-zoom";
 import "react-inner-image-zoom/lib/styles.min.css";
 
 import QuantityBox from "../QuantityBox";
+import { IoMdHeart } from "react-icons/io";
+import { MdCompareArrows } from "react-icons/md";
+import { MyContext } from "../../App";
+import "slick-carousel/slick/slick.css";
+import "slick-carousel/slick/slick-theme.css";
 
 const ProductModal = (props) => {
 
   const zoomSliderBig = useRef();
   const zoomSlider = useRef();
+
+
+  const context=useContext(MyContext);
 
   var settings = {
     dots: false,
@@ -42,9 +50,9 @@ const ProductModal = (props) => {
 
   return (
     <>
-      <Dialog open={true} className="productModal" onClose={() => props.closeProductModal()}>
+      <Dialog open={true} className="productModal" onClose={()=>context.setisOpenProductModal(false)}>
 
-        <Button className="close_" onClick={() => props.closeProductModal()}>
+        <Button className="close_" onClick={()=>context.setisOpenProductModal(false)}>
           <IoClose />
         </Button>
 
@@ -65,7 +73,8 @@ const ProductModal = (props) => {
 
         <div className="row mt-2 productDetaileModal">
           <div className="col-md-5">
-            <div className="productZoom">
+            <div className="productZoom position-relative">
+              <div className="badge badge-primary">28%</div>
 
               <Slider {...settings2} className="zoomSliderBig" ref={zoomSliderBig}>
                 <div className="item">
@@ -153,12 +162,16 @@ const ProductModal = (props) => {
                   <Button className="btn-blue btn-lg btn-big btn-round ml-3">Add to Cart</Button>
                 </div>
 
+                <div className="d-flex align-items-center mt-5 actions" >
+                  <Button className='btn-round btn-sml' variant='outlined'><IoMdHeart />  &nbsp; ADD TO WISHLIST</Button>
+              
+               
+                  <Button className='btn-round btn-sml' variant='outlined'><MdCompareArrows />  &nbsp; compare</Button>
+                
+                  </div>
 
 
 
-
-
-                 
 
           </div>
         </div>

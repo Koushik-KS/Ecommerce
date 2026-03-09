@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
 import "swiper/css/navigation";
@@ -8,19 +8,18 @@ import Button from "@mui/material/Button";
 import { TfiFullscreen } from "react-icons/tfi";
 import { CiHeart } from "react-icons/ci";
 import { Navigation } from "swiper/modules";
-import ProductModal from "../ProductModal";
+
+import { MyContext } from "../../App";
 
 const ProductItem = () => {
 
-  const [isOpenProductModal, setisOpenProductModal] = useState(false);
+  const contex=useContext(MyContext);
 
   const viewProductDetails = (id) => {
-    setisOpenProductModal(true);
+    contex.setisOpenProductModal(true);
   };
 
-  const closeProductModal = () => {
-    setisOpenProductModal(false);
-  };
+ 
 
   return (
     <>
@@ -72,9 +71,7 @@ const ProductItem = () => {
 
       </div>
 
-      {isOpenProductModal === true && (
-        <ProductModal closeProductModal={closeProductModal} />
-      )}
+     
 
     </>
   );
