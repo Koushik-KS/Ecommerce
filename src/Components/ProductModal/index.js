@@ -119,7 +119,7 @@ const ProductModal = () => {
           </div>
 
 
-          {/* THUMBNAIL SWIPER */}
+          
 
           <Swiper
             slidesPerView={4}
