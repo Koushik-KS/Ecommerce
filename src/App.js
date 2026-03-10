@@ -42,7 +42,7 @@ function App() {
       <MyContext.Provider value={values}>
         <Header />
 
-        <Routes>
+     <Routes>
           <Route path="/" exact={true} element={<Home />} />
            <Route path="/cat/:id" exact={true} element={<Listing/>} />
         </Routes>

@@ -559,7 +559,13 @@ color:#000;
 font-weight:bold;
 }
 
+.product_Listing_Page{padding: 35px 0px;}
+.product_Listing_Page .productListing{gap: 20px;}
+.product_Listing_Page .productListing .sidebar{width: 20%;flex: 0 0 20%;}
+.product_Listing_Page .productListing .sidebar .filterBox h6{font-weight: 700;font-size: 14px;}
 
+
+.product_Listing_Page .productListing .contet_right{width: 80%;flex: 0 0 80%;}
 
 
 
