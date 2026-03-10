@@ -559,18 +559,41 @@ color:#000;
 font-weight:bold;
 }
 
-.product_Listing_Page{padding: 35px 0px;}
+.product_Listing_Page{padding: 45px 0px;}
 .product_Listing_Page .productListing{gap: 20px;}
 .product_Listing_Page .productListing .sidebar{width: 20%;flex: 0 0 20%;}
-.product_Listing_Page .productListing .sidebar .filterBox h6{font-weight: 700;font-size: 14px;}
 
+.product_Listing_Page .productListing .sidebar .filterBox {margin-bottom: 35PX;}
 
-.product_Listing_Page .productListing .contet_right{width: 80%;flex: 0 0 80%;}
+.product_Listing_Page .productListing .sidebar .filterBox h6{font-weight: 700;font-size: 14px;
+margin-bottom: 15px;}
 
+.product_Listing_Page .productListing .sidebar .scroll::-webkit-scrollbar{width: 5px !important;
+height: 5px !important;}
 
+.product_Listing_Page .productListing .sidebar .scroll ul{margin-bottom: 0px;}
 
+.product_Listing_Page .productListing .sidebar .scroll ul li{list-style: none;
+  margin-bottom: 0px;width: 100%;}
+  .product_Listing_Page .productListing .sidebar .scroll{padding-left: 10px ;
+    max-height: 180px;overflow-y: scroll;overflow-x: hidden;}
 
+.sidebar .MuiCheckbox-root{padding: 2px !important;}
 
+.product_Listing_Page .productListing .contet_right{width: 80%;flex: 0 0 80%;
+padding-left:  50px;}
+
+.sidebar .MuiCheckbox-root.Mui-checked {
+  color: #390699;   
+}
+.sidebar .filterBox .MuiFormControlLabel-label{
+  font-size: 16px;   
+}
+.range-slider{height: 5px !important;}
+.range-slider .range-slider__thumb, .range-slider .range-slider__range{
+  background: #390699 !important ;}
+
+  .range-slider .range-slider__thumb{width: 15px !important; height: 15px !important;}
 
 
 
