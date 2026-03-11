@@ -11,7 +11,7 @@ import { Navigation } from "swiper/modules";
 
 import { MyContext } from "../../App";
 
-const ProductItem = () => {
+const ProductItem = (props) => {
 
   const context = useContext(MyContext);
 
@@ -20,7 +20,7 @@ const ProductItem = () => {
   };
 
   return (
-    <div className="item productItem">
+    <div className={`productItem ${props.itemView}`}>
 
       <div className="imgWrapper">
 
