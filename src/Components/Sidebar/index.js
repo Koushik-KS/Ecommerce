@@ -21,6 +21,7 @@ const Sidebar =()=>{
     return(
         <>
         <div className="sidebar">
+         
             <div className="filterBox">
                 <h6>PRODUCT CATEGORIES</h6>
                  <div className='scroll'>
@@ -103,7 +104,7 @@ const Sidebar =()=>{
          
           <div className="filterBox">
                 <h6>BRANDS</h6>
-                 <div className='scroll'>
+                 <div className='scroll'> 
                 <ul>
                     <li>
     <FormControlLabel className='w-100' control={<Checkbox  />} label="Frito Lay" />
@@ -138,6 +139,7 @@ const Sidebar =()=>{
 
 
             <Link to="#"><img src='https://i.pinimg.com/736x/f6/19/29/f61929f31c464cca506c96260495dfbc.jpg'className='w-100'/></Link>
+
 
 </div>
         

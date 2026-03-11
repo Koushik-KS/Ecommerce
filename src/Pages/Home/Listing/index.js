@@ -9,6 +9,9 @@ import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import { useState } from "react";
 import ProductItem from "../../../Components/ProductItem";
+import Pagination from '@mui/material/Pagination';
+
+
 
 const Listing = () => {
 
@@ -50,17 +53,17 @@ const Listing = () => {
               <div className="showBy mt-3 mb-3 d-flex align-items-center">
                 <div className="d-flex btnWrapper">
 
-                  <Button onClick={()=>setProductView('one')}>
+                  <Button className={productView==='one' && 'act'} onClick={()=>setProductView('one')}>
                     <IoMdMenu />
                   </Button>
 
-                  <Button onClick={()=>setProductView('three')}>
+                  <Button className={productView==='three' && 'act'} onClick={()=>setProductView('three')}>
                     <CgMenuGridR />
                   </Button>
 
                   
 
-                  <Button onClick={()=>setProductView('four')}>
+                  <Button className={productView==='four' && 'act'} onClick={()=>setProductView('four')}>
                     <IoGridOutline />
                   </Button>
 
@@ -100,7 +103,59 @@ const Listing = () => {
                   <ProductItem itemView={productView}/>
                  <ProductItem itemView={productView}/>
                 
+                 <ProductItem itemView={productView}/>
+                 <ProductItem itemView={productView}/>
+               <ProductItem itemView={productView}/>
+                 <ProductItem itemView={productView}/>
+                <ProductItem itemView={productView}/>
+                 <ProductItem itemView={productView} />
+                  <ProductItem itemView={productView}/>
+                 <ProductItem itemView={productView}/>
+                
+                 <ProductItem itemView={productView}/>
+                 <ProductItem itemView={productView}/>
+               <ProductItem itemView={productView}/>
+                 <ProductItem itemView={productView}/>
+                <ProductItem itemView={productView}/>
+                 <ProductItem itemView={productView} />
+                  <ProductItem itemView={productView}/>
+                 <ProductItem itemView={productView}/>
+                
+                 <ProductItem itemView={productView}/>
+                 <ProductItem itemView={productView}/>
+               <ProductItem itemView={productView}/>
+                 <ProductItem itemView={productView}/>
+                <ProductItem itemView={productView}/>
+                 <ProductItem itemView={productView} />
+                  <ProductItem itemView={productView}/>
+                 <ProductItem itemView={productView}/>
+                
               </div>
+
+
+
+
+              <div className="d-flex align-items-center justify-content-center mt-5">
+                  <Pagination count={10} color="primary" size="large"/>
+              </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
             </div>
 

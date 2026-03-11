@@ -633,7 +633,9 @@ padding-left:  50px;}
 .productListing .productItem.four{width: 23%;}
 .productListing .productItem.three{width: 31.5%;}
 .productListing .productItem.two{width: 48%;}
-.productListing .productItem.one{width: 50%;}
+.productListing .productItem.one{width: 100%;display: flex;align-items: center;}
+
+.productListing .productItem.one .img_rapper{width: 25%;}
 
 
 
