@@ -3,31 +3,23 @@ import Dialog from "@mui/material/Dialog";
 import Button from "@mui/material/Button";
 import { IoClose } from "react-icons/io5";
 import Rating from "@mui/material/Rating";
-import InnerImageZoom from "react-inner-image-zoom";
 
-import "react-inner-image-zoom/lib/styles.min.css";
 
 import QuantityBox from "../QuantityBox";
 import { IoMdHeart } from "react-icons/io";
 import { MdCompareArrows } from "react-icons/md";
 import { MyContext } from "../../App";
 
-import { Swiper, SwiperSlide } from "swiper/react";
-import { Navigation } from "swiper/modules";
 
-import "swiper/css";
-import "swiper/css/navigation";
+
+import ProductZoom from "../ProductZoom";
 
 const ProductModal = () => {
 
   const context = useContext(MyContext);
-  const [bigSwiper, setBigSwiper] = useState(null);
+ 
 
-  const goto = (index) => {
-    if (bigSwiper) {
-      bigSwiper.slideTo(index);
-    }
-  };
+ 
 
   return (
 
@@ -63,110 +55,16 @@ const ProductModal = () => {
 
       <div className="row mt-2 productDetaileModal">
 
-        {/* LEFT IMAGE SECTION */}
+   
 
         <div className="col-md-5">
 
-          <div className="productZoom position-relative">
-
-            <div className="badge badge-primary">28%</div>
-
-            {/* BIG IMAGE SWIPER */}
-
-            <Swiper
-              slidesPerView={1}
-              spaceBetween={10}
-              navigation={true}
-              modules={[Navigation]}
-              onSwiper={setBigSwiper}
-              className="zoomSliderBig"
-            >
-
-              <SwiperSlide>
-                <InnerImageZoom
-                  zoomType="hover"
-                  zoomScale={1.5}
-                  src="https://m.media-amazon.com/images/I/818LBp+THNL._SX679_.jpg"
-                />
-              </SwiperSlide>
-
-              <SwiperSlide>
-                <InnerImageZoom
-                  zoomType="hover"
-                  zoomScale={1.5}
-                  src="https://m.media-amazon.com/images/I/71gWT+vYaqL._SL1500_.jpg"
-                />
-              </SwiperSlide>
-
-              <SwiperSlide>
-                <InnerImageZoom
-                  zoomType="hover"
-                  zoomScale={1.5}
-                  src="https://m.media-amazon.com/images/I/71q1-LfcioL._SL1500_.jpg"
-                />
-              </SwiperSlide>
-
-              <SwiperSlide>
-                <InnerImageZoom
-                  zoomType="hover"
-                  zoomScale={1.5}
-                  src="https://m.media-amazon.com/images/I/718Q5UqorUL._SL1500_.jpg"
-                />
-              </SwiperSlide>
-
-            </Swiper>
-
-          </div>
-
-
-          
-
-          <Swiper
-            slidesPerView={4}
-            spaceBetween={10}
-            navigation={true}
-            modules={[Navigation]}
-            className="zoomSlider mt-3"
-          >
-
-            <SwiperSlide>
-              <img
-                src="https://m.media-amazon.com/images/I/818LBp+THNL._SX679_.jpg"
-                className="w-100"
-                onClick={() => goto(0)}
-              />
-            </SwiperSlide>
-
-            <SwiperSlide>
-              <img
-                src="https://m.media-amazon.com/images/I/71gWT+vYaqL._SL1500_.jpg"
-                className="w-100"
-                onClick={() => goto(1)}
-              />
-            </SwiperSlide>
-
-            <SwiperSlide>
-              <img
-                src="https://m.media-amazon.com/images/I/71q1-LfcioL._SL1500_.jpg"
-                className="w-100"
-                onClick={() => goto(2)}
-              />
-            </SwiperSlide>
-
-            <SwiperSlide>
-              <img
-                src="https://m.media-amazon.com/images/I/718Q5UqorUL._SL1500_.jpg"
-                className="w-100"
-                onClick={() => goto(3)}
-              />
-            </SwiperSlide>
-
-          </Swiper>
+       <ProductZoom/>
 
         </div>
 
 
-        {/* RIGHT SIDE DETAILS */}
+    
 
         <div className="col-md-7">
 
