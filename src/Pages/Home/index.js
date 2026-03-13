@@ -49,7 +49,36 @@ const Home = () => {
             {/* PRODUCT SECTION */}
             <div className="col-md-9 productRow">
 
-              
+              {/* BEST PRODUCT */}
+              <div className="d-flex align-items-center">
+                <div className="info w-75">
+                  <h3 className="mb-0 hd">BEST PRODUCT</h3>
+                  <p className="text-light text-sml mb-0">
+                    Do not miss this offer in this month.
+                  </p>
+                </div>
+
+                <Button className="viewAllBtn">
+                  View All <IoIosArrowRoundForward />
+                </Button>
+              </div>
+
+              {/* PRODUCT SLIDER */}
+              <div className="product_row w-100 mt-2">
+                <Swiper
+                  slidesPerView={4}
+                  spaceBetween={10}
+                  navigation={true}
+                  modules={[Navigation]}
+                  className="mySwiper"
+                >
+                  <SwiperSlide><ProductItem /></SwiperSlide>
+                  <SwiperSlide><ProductItem /></SwiperSlide>
+                  <SwiperSlide><ProductItem /></SwiperSlide>
+                  <SwiperSlide><ProductItem /></SwiperSlide>
+                  <SwiperSlide><ProductItem /></SwiperSlide>
+                </Swiper>
+              </div>
 
               {/* NEW PRODUCT */}
               <div className="d-flex align-items-center mt-4">
@@ -74,6 +103,48 @@ const Home = () => {
                 <ProductItem />
                 <ProductItem />
               </div>
+
+                <div className="d-flex align-items-center mt-3">
+        <div className="info w-75">
+          <h3 className="mb-0 hd">RELATED PRODUCTS</h3>
+        </div>
+      </div>
+
+      {/* PRODUCT SLIDER */}
+      <div className="product_row w-100 mt-3">
+        <Swiper
+          slidesPerView={5}
+          spaceBetween={0}
+          navigation={true}
+          modules={[Navigation]}
+          className="mySwiper"
+         
+        >
+          <SwiperSlide>
+            <ProductItem />
+          </SwiperSlide>
+
+          <SwiperSlide>
+            <ProductItem />
+          </SwiperSlide>
+
+          <SwiperSlide>
+            <ProductItem />
+          </SwiperSlide>
+
+          <SwiperSlide>
+            <ProductItem />
+          </SwiperSlide>
+
+          <SwiperSlide>
+            <ProductItem />
+          </SwiperSlide>
+
+          <SwiperSlide>
+            <ProductItem />
+          </SwiperSlide>
+        </Swiper>
+      </div>
 
               {/* BANNERS */}
               <div className="d-flex mt-4 mb-5 bannerSec">
