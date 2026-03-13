@@ -80,35 +80,19 @@ const Home = () => {
                 </Swiper>
               </div>
 
-              {/* NEW PRODUCT */}
-              <div className="d-flex align-items-center mt-4">
-                <div className="info w-75">
-                  <h3 className="mb-0 hd">NEW PRODUCT</h3>
-                  <p className="text-light text-sml mb-0">
-                    New product with updated stocks.
-                  </p>
-                </div>
-
-                <Button className="viewAllBtn">
-                  View All <IoIosArrowRoundForward />
-                </Button>
-              </div>
-
-              {/* PRODUCT GRID */}
-              <div className="product_row productRow2 w-100 mt-4 d-flex flex-wrap">
-                <ProductItem />
-                <ProductItem />
-                <ProductItem />
-                <ProductItem />
-                <ProductItem />
-                <ProductItem />
-              </div>
+             {/* new product */}
 
                 <div className="d-flex align-items-center mt-3">
         <div className="info w-75">
-          <h3 className="mb-0 hd">RELATED PRODUCTS</h3>
-        </div>
+          <h3 className="mb-0 hd">NEW PRODUCTS</h3>
+          <p className="text-light text-sml mb-0">
+                    New product with updated stocks.</p>
+        
       </div>
+       <Button className="viewAllBtn">
+                  View All <IoIosArrowRoundForward />
+                </Button>
+              </div>
 
       {/* PRODUCT SLIDER */}
       <div className="product_row w-100 mt-3">

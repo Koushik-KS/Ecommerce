@@ -269,6 +269,7 @@ homeBannerSection{position: relative;}
   position: relative;
 }
 
+
 .productItem {width: 100%;height: auto;border: 1px solid rgba(0,0,0,0.1);
   cursor: pointer;position: relative;}
 
@@ -279,9 +280,9 @@ homeBannerSection{position: relative;}
 
  .productItem  h4 {font-size: 15px;font-weight: 600;}
 
-.info .oldPrice{font-size:16px ;font-weight: bold;color: rgba(0,0,0,0.2);text-decoration: line-through;}
+.info .oldPrice{font-size:16px !important ;font-weight: bold;color: rgba(0,0,0,0.2);text-decoration: line-through;}
 .info .oldPrice.lg{font-size:20px ;}
-.info  .netPrice{font-size:16px ;font-weight: bold;}
+.info  .netPrice{font-size:16px !important ;font-weight: bold;}
 .info  .netPrice.lg{font: size 20px;}
 
 .product_row  .item{border-right: 1px solid transparent  !important;}
@@ -645,7 +646,8 @@ padding-left:  50px;}
 
 .section{padding: 45px 0px;}
 
-.productDetails h3 .hd{font-size: 26px;}
+.productDetails h2 .hd{font-size: 26px;}
+.productDetails h3 .hd{font-size: 18px !important;}
 .productDetails .oldPrice{font-size: 20px;}
 .productDetails .netPrice{font-size: 22px;}
 

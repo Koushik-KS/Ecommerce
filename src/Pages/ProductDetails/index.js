@@ -327,7 +327,9 @@ const ProductDetails = () => {
           </div>
           <br/>
 
-          <RelatedProducts/>
+          <RelatedProducts title="RELATED PRODUCTS"/>
+
+           <RelatedProducts title="RECENTLY VIEWED PRODUCTS"/>
 
         </div>
       </section>

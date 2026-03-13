@@ -8,20 +8,20 @@ import { Navigation } from "swiper/modules";
 
 import ProductItem from "../../../Components/ProductItem";
 
-const RelatedProducts = () => {
+const RelatedProducts = (props) => {
   return (
     <>
       {/* TITLE */}
       <div className="d-flex align-items-center mt-3">
         <div className="info w-75">
-          <h3 className="mb-0 hd">RELATED PRODUCTS</h3>
+          <h3 className="mb-0 hd">{props.title}</h3>
         </div>
       </div>
 
       {/* PRODUCT SLIDER */}
       <div className="product_row w-100 mt-3">
         <Swiper
-          slidesPerView={5}
+          slidesPerView={6}
           spaceBetween={0}
           navigation={true}
           modules={[Navigation]}
