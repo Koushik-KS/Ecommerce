@@ -29,7 +29,7 @@ button{text-transform: capitalize !important;}
 .btn-sml{font-size: 12px !important;color: #000;text-transform: capitalize !important ;}
 .btn-sml svg {font-size: 20px;}
 
-
+.btn-circle{border-radius: 50% !important;min-width: auto !important;}
 
 
  .cursor{cursor: pointer;}
@@ -652,39 +652,48 @@ padding-left:  50px;}
 .productSize{
   width: 100%;
   height: auto;
-  padding: 25px 0px;
+  padding: 25px 0;
 }
 
 .productSize ul li{
-  margin-right: 10px !important;
+  margin-right: 10px;
 }
 
-.productSize ul li a{
+/* button style */
+.productSize ul li button{
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 5px 10px !important;
+  padding: 5px 12px;
   border: 1px solid rgba(0,0,0,0.1);
-  border-radius: 5px !important;
+  border-radius: 5px;
   cursor: pointer;
-  text-decoration: none !important;
+  background: #fff;
   color: #000;
-  font-size: 14px !important;
-  transition: all 0.1s ease-in-out;
+  font-size: 14px;
+  transition: all 0.2s ease-in-out;
 }
 
-.productSize ul li a:hover{
+/* hover */
+.productSize ul li button:hover{
+  background: #ececec;
+}
+
+/* active size */
+.productSize ul li button.active{
   background: #1565c0;
+  color: #fff;
+  border-color: #1565c0;
 }
 
-.productSize ul li a.active{
-  background: #1565c0 !important;
-  color: #fff !important;
+.productDetails .btn-circle{
+  min-width: 40px !important; width: 40px !important;height: 40px !important;
+  border-radius: 50% !important;background: #edeef5 !important;border: 1px solid rgba(0,0,0,0.1) !important;
+  color: #000;padding: 5px !important; 
 }
 
-
-
-
+.productDetails .btn-circle svg{color: #000 !important;opacity: 0.8;font-size: 18px;}
+.productDetails .btn-circle svg:hover{background: #ccc !important;}
 
 
 

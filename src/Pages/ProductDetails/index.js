@@ -4,6 +4,9 @@ import QuantityBox from "../../Components/QuantityBox";
 import Button from '@mui/material/Button';
 import { FaShoppingCart } from "react-icons/fa";
 import { useState } from "react";
+import { FaRegHeart } from "react-icons/fa";
+import { MdOutlineCompareArrows } from "react-icons/md";
+import Tooltip from '@mui/material/Tooltip';
 
 const ProductDetails =() =>{
     const [activeSize, setActiveSize]=useState(null);
@@ -52,28 +55,46 @@ return(
 
             <div className="productSize d-flex align-items-center">
                 <span>Sze/Weight: </span>
-                 <ul className="list list-inline mb-0 pl-4">
-    <li className="list-inline-item"><a className={`tag $
-    {activeSize === 0 ? 'active' : ''}`} onClick={() => isActive(0)}>50g</a></li>
+ <ul className="list list-inline mb-0 pl-4">
+  <li className="list-inline-item">
+    <button className={`tag ${activeSize === 0 ? 'active' : ''}`} onClick={() => isActive(0)}>50g</button>
+  </li>
 
-    <li className="list-inline-item"><a className={`tag $
-    {activeSize === 1? 'active' : ''}`}  onClick={() => isActive(1)}>100g</a></li>
+  <li className="list-inline-item">
+    <button className={`tag ${activeSize === 1 ? 'active' : ''}`} onClick={() => isActive(1)}>100g</button>
+  </li>
 
-    <li className="list-inline-item"><a className={`tag $
-    {activeSize === 2 ? 'active' : ''}`}  onClick={() => isActive(2)}>200g</a></li>
+  <li className="list-inline-item">
+    <button className={`tag ${activeSize === 2 ? 'active' : ''}`} onClick={() => isActive(2)}>200g</button>
+  </li>
 
-    <li className="list-inline-item"><a className={`tag $
-    {activeSize === 3 ? 'active' : ''}`}  onClick={() => isActive(3)}>300g</a></li>
+  <li className="list-inline-item">
+    <button className={`tag ${activeSize === 3 ? 'active' : ''}`} onClick={() => isActive(3)}>300g</button>
+  </li>
 
-    <li className="list-inline-item"><a className={`tag $
-    {activeSize === 4 ? 'active' : ''}`}  onClick={() => isActive(4)}>500g</a></li>
-  </ul>
+  <li className="list-inline-item">
+    <button className={`tag ${activeSize === 4 ? 'active' : ''}`} onClick={() => isActive(4)}>500g</button>
+  </li>
+</ul>
             </div>
 
 
-            <div className="d-flex align-items-center mt-4">
+            <div className="d-flex align-items-center mt-3">
                 <QuantityBox/>
-                <Button className="btn-blue btn-lg btn-big btn-round"><FaShoppingCart /> &nbsp; Add to Cart</Button>
+                <Button className="btn-blue btn-lg btn-big btn-round">
+                    <FaShoppingCart /> &nbsp; Add to Cart</Button>
+
+                     <Tooltip title="Add to WishList" placement="top">
+
+                 <Button className="btn-blue btn-lg btn-big btn-circle ml-4">
+                    <FaRegHeart /></Button>
+                    </Tooltip>
+
+                    <Tooltip title="Add to Compare" placement="top">
+
+                 <Button className="btn-blue btn-lg btn-big btn-circle ml-2">
+                    <MdOutlineCompareArrows /></Button>
+                    </Tooltip>
             </div>
 
 
