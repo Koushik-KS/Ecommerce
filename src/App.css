@@ -757,8 +757,10 @@ padding-left:  50px;}
 .cartPage .table thead th:last-child {border-top-right-radius: 10px !important;border-bottom-right-radius: 10px !important;}
 
 
-
-
+ a:hover{text-decoration: none;}
+ .cartItemimgWrapper .imgWrapper{width: 100px;overflow: hidden;}
+.cartItemimgWrapper .info a:hover{text-decoration: none;}
+ .cartItemimgWrapper .info h6{color:#000; font-weight: bold;}
 
 
 

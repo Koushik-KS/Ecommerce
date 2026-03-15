@@ -1,3 +1,5 @@
+import { Link } from "react-router-dom";
+import Rating from '@mui/material/Rating';
 
 const Cart =() =>{
 
@@ -25,11 +27,19 @@ const Cart =() =>{
                         <tbody>
                             <tr>
                                 <td>
-                                    <div className="d-flex align-items-center">
+                                    <Link to="/product/1">
+                                    <div className="d-flex align-items-center cartItemimgWrapper">
                                         <div className="imgWrapper">
-                                            <img src=""/>
-                                        </div>
+                                            <img src="https://i.pinimg.com/736x/ef/1a/fb/ef1afbc7cd59bf7918e1c3d600f53986.jpg" className="w-100"/>
+                                            
+                                       </div>
+
+                                       <div className="info px-3">
+                                        <h6> Icecream</h6> <Rating name="read-only" value={4.5} readOnly precision={0.5} size="small"/>
+
+                                       </div>
                                     </div>
+                                    </Link>
                                 </td>
                                 <td></td>
                                 <td></td>
