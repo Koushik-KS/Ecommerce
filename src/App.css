@@ -750,7 +750,11 @@ padding-left:  50px;}
   margin-top: 20px;   /* moves slightly down */
 }
 
+.cartPage .table thead{background: #ececec !important; overflow: hidden;}
+.cartPage .table thead th{border: 0px !important;}
+.cartPage .table thead th:first-child {border-top-left-radius: 10px !important;border-bottom-left-radius: 10px !important;}
 
+.cartPage .table thead th:last-child {border-top-right-radius: 10px !important;border-bottom-right-radius: 10px !important;}
 
 
 

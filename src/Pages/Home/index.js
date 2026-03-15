@@ -41,9 +41,9 @@ const Home = () => {
                 <img src={banner2} alt="banner" className="cursor w-100" />
               </div>
 
-              <div className="banner mt-4">
+              {/* <div className="banner mt-4">
                 <img src={banner5} alt="banner" className="cursor w-100" />
-              </div>
+              </div> */}
             </div>
 
             {/* PRODUCT SECTION */}

@@ -331,6 +331,8 @@ const ProductDetails = () => {
 
            <RelatedProducts title="RECENTLY VIEWED PRODUCTS"/>
 
+          
+
         </div>
       </section>
     </>

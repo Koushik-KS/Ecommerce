@@ -21,7 +21,7 @@ const RelatedProducts = (props) => {
       {/* PRODUCT SLIDER */}
       <div className="product_row w-100 mt-3">
         <Swiper
-          slidesPerView={6}
+          slidesPerView={5}
           spaceBetween={0}
           navigation={true}
           modules={[Navigation]}
@@ -53,6 +53,7 @@ const RelatedProducts = (props) => {
           </SwiperSlide>
         </Swiper>
       </div>
+      
     </>
   );
 };
