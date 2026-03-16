@@ -20,7 +20,11 @@ body{font-family: "Lato", sans-serif; font-size: 14px;
 .badge{display: inline-block;padding: 7px 10px;border-radius: 20px;}
 .badge.bg-success{background: #e5f8ed !important;color: #16b858 !important;}
 .badge-success{color: #00b853;background: #e5f8ed;}
-
+button{text-transform: capitalize !important;}
+.btn-blue{background: #1565c0 !important; color: #fff !important;text-transform: capitalize !important;}
+.bg-red{background: #ed174a !important;}
+.text-red{color: #ed174a !important;}
+.text-blue{color: #233a95 !important;}
 
 button{text-transform: capitalize !important;}
 .btn-blue{background: #233a95 !important;color: #fff !important;text-transform: capitalize !important;}
@@ -758,17 +762,24 @@ padding-left:  50px;}
 
 
  a:hover{text-decoration: none;}
+ .cartItemimgWrapper{width: 200px;}
  .cartItemimgWrapper .imgWrapper{width: 100px;overflow: hidden;}
 .cartItemimgWrapper .info a:hover{text-decoration: none;}
  .cartItemimgWrapper .info h6{color:#000; font-weight: bold;}
+ .cartItemimgWrapper .info h6:hover{color: #ed174a !important;}
+ .remove{cursor: pointer;}
+ .remove svg{font-size: 23px;}
+.remove:hover svg {color: #ed174a !important;}
 
+.cartPage .quantityDrop button{zoom:75%;}
 
+.cartPage table th, .cartPage table td{vertical-align: middle;}
+.cartPage table td,.cartPage table th{border-top: 0px !important; border-bottom: 1px solid
+  rgba(0,0,0,0.1) !important;}
 
-
-
-
-
-
+  .cartPage table tbody tr:hover{background: #fafafa;}
+  .cartDetails{border-radius: 7px !important;}
+.cartDetails h4{font-size: 16px ;padding-bottom: 15px; font-weight:800;border-bottom: 1px solid rgba(0,0,0,0.1);}
 
 
 
