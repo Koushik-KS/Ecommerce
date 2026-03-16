@@ -13,7 +13,7 @@ import { MyContext } from "../../App";
 
 
 import ProductZoom from "../ProductZoom";
-
+import { FaShoppingCart } from "react-icons/fa";
 const ProductModal = () => {
 
   const context = useContext(MyContext);
@@ -83,7 +83,7 @@ const ProductModal = () => {
 
             <QuantityBox />
 
-            <Button className="btn-blue btn-lg btn-big btn-round ml-3">
+            <Button className="btn-blue btn-lg btn-big btn-round ml-3"><FaShoppingCart />
               Add to Cart
             </Button>
 
