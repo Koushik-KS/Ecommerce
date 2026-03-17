@@ -782,12 +782,39 @@ padding-left:  50px;}
 
   .cartPage table tbody tr:hover{background: #fafafa;}
   .cartDetails{border-radius: 7px !important;position: sticky;top: 20px;}
-.cartDetails h4{font-size: 16px ;padding-bottom: 15px; font-weight:800;border-bottom: 1px solid rgba(0,0,0,0.1);}
+.cartDetails h4{font-size: 16px ;padding-bottom: 15px;
+   font-weight:800;border-bottom: 1px solid rgba(0,0,0,0.1);}
 
-.cartDetails span{}
+.signInPage{width: 100%; height: 100vh;position: relative;overflow: hidden;}
+.signInPage .shape-bottom{
+  position: absolute;
+  top:auto;
+  bottom: -6px;
+  left: 0;
+  right: 0;
+  z-index: 1;
+}
+ .signInPage::after {
+  position: absolute;
+  content: '';
+  height: 100%;
+  width: 100%;
+  top: 0;
+  left: 0;
+  background-image: linear-gradient(#1e3d81, #2334a3);
+  clip-path: polygon(0 0, 100% 0, 100% 65%, 0 90%);
+  opacity: 0.9;
+  z-index: -1;
+}
+
+.signInPage .box{width: 400px;height: 500px;background: #fff;margin: auto;}
 
 
 
+.signInPage .box img {
+  width: 120px;
+  height: 120px;
+}
 
 
 
