@@ -806,15 +806,17 @@ padding-left:  50px;}
   opacity: 0.9;
   z-index: -1;
 }
-
-.signInPage .box{width: 400px;height: 500px;background: #fff;margin: auto;}
-
-
-
 .signInPage .box img {
   width: 120px;
   height: 120px;
 }
+
+.signInPage .box{width: 400px;height: 500px;background: #fff;margin: auto;
+position: relative;z-index: 100;}
+.signInPage .box h2{font-size: 25px;font-weight: 600;}
+
+
+
 
 
 

@@ -33,6 +33,7 @@ const SignIn = () => {
                     <div className="text-center">
                         <img src={Logo}/>
                     </div>
+                    <h2>Sign In</h2>
                 </div>
             </div>
         </section>
