@@ -21,16 +21,19 @@ body{font-family: "Lato", sans-serif; font-size: 14px;
 .badge.bg-success{background: #e5f8ed !important;color: #16b858 !important;}
 .badge-success{color: #00b853;background: #e5f8ed;}
 button{text-transform: capitalize !important;}
-.btn-blue{background: #1565c0 !important; color: #fff !important;text-transform: capitalize !important;}
+.btn-blue{background: #1565c0 !important; 
+  color: #fff !important;text-transform: capitalize !important;font-weight: 600 !important;padding: 5px 20px !important;}
+
 .bg-red{background: #ed174a !important;}
 .text-red{color: #ed174a !important;}
 .text-blue{color: #233a95 !important;}
 
-button{text-transform: capitalize !important;}
-.btn-blue{background: #233a95 !important;color: #fff !important;text-transform: capitalize !important;}
+
+
 .btn-big {font-size: 15px !important;font-weight: bold !important;
   padding: 8px 30px !important;min-width: auto !important;}
 .btn-round{border-radius: 30px !important;}
+
 .btn-blue svg{font-size: 22px;}
 
 .btn-sml{font-size: 12px !important;color: #000;text-transform: capitalize !important ;}
@@ -72,7 +75,7 @@ button{text-transform: capitalize !important;}
 
 .headerWrapper .header .part2 .countryDrop span.m1-auto svg{opacity: 0.7;}
 
- .headerSearch{ width: 60%;height: 60px;background: #f3f4f7;padding: 5px ; position: relative !important;
+ .headerSearch{ width: 55%;height: 50px;background: #f3f4f7;padding: 5px ; position: relative !important;
    border-radius: 5px;border: 1px solid rgba(0,0,0,0.1);}
 
  .headerSearch input{ background-color: transparent !important;outline: none !important;font-size: 15px;

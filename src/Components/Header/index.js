@@ -37,10 +37,15 @@ const Header = () => {
               <SearchBox />
 
               <div className="part3 d-flex align-items-center ml-auto">
-                <Button className="circle mr-3">
+                {
+                  context.isLogin!==true ? <Link to="/signIn"><Button className="btn-blue  
+                   btn-round mr-3">Sign In</Button> </Link>:
+                  <Button className="circle mr-3">
                   <FaRegCircleUser />
-                </Button>
-
+                </Button> 
+                }
+               
+               
                 <div className="ml-auto cartTab d-flex align-items-center">
                   <span>RS 1000</span>
 

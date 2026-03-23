@@ -21,7 +21,7 @@ function App() {
   const [selectCountry, setSelectCountry] = useState("");
   const [isOpenProductModal, setisOpenProductModal] = useState(false);
   const [isHeaderFooterShow, setisHeaderFooterShow] = useState(true);
-
+  const [isLogin,setIsLogin]=useState(false);
   useEffect(() => {
     getCountry("https://countriesnow.space/api/v0.1/countries/");
   }, []);
@@ -42,6 +42,8 @@ function App() {
     setisOpenProductModal,
     isHeaderFooterShow,
     setisHeaderFooterShow,
+    isLogin,
+    setIsLogin
   };
 
   return (
