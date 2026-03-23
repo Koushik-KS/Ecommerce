@@ -4,9 +4,8 @@ import Logo from "../../assets/images/eshop.png";
 import TextField from "@mui/material/TextField";
 import Button from '@mui/material/Button';
 import { Link } from "react-router-dom";
-import { FaFacebookF } from "react-icons/fa";
-import { RiTwitterXFill } from "react-icons/ri";
-import { FaInstagram } from "react-icons/fa";
+
+import googleimg from "../../assets/images/google.png";
 const SignIn = () => {
 
     const context = useContext(MyContext);
@@ -59,21 +58,10 @@ const SignIn = () => {
                    
                         <h6 className="mt-3 text-center font-weight-bold">Or continue with social account</h6>
 
+                        <span className=""><img src={googleimg} className="w-100"/></span>
 
-                         <ul className="list list-inline mt-3  mb-1 socials text-center">
-                                                <li className="list-inline-item">
-                                                    <Link to="#"><FaFacebookF /></Link>
-                                                </li>
-                        
-                                                <li className="list-inline-item">
-                                                    <Link to="#"><RiTwitterXFill /></Link>
-                                                </li>
-                        
-                                                <li className="list-inline-item">
-                                                    <Link to="#"><FaInstagram /></Link>
-                                                </li>
-                        
-                                            </ul>
+
+                         
                                         
                         
                    
