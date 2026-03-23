@@ -12,6 +12,7 @@ import Listing from "./Pages/Home/Listing";
 import ProductDetails from "./Pages/ProductDetails";
 import Cart from "./Pages/Cart";
 import SignIn from "./Pages/SignIn";
+import SignUp from "./Pages/SignUp";
 
 const MyContext = createContext();
 
@@ -55,6 +56,7 @@ function App() {
           <Route path="/product/:id" element={<ProductDetails />} />
           <Route path="/cart" element={<Cart />} />
           <Route path="/signIn" element={<SignIn />} />
+           <Route path="/signUp" element={<SignUp />} />
         </Routes>
 
         {isHeaderFooterShow && <Footer />}
