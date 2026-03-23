@@ -809,7 +809,7 @@ padding-left:  50px;}
 
 
 .signInPage .box img {
-  width: 120px;
+ 
   height: 120px;
 }
 
@@ -820,7 +820,7 @@ padding-left:  50px;}
     color:#000}.border-effect:hover:after{width:100%}
 
 .signInPage .box{width: 400px;height: auto;background: #fff;margin: auto;
-position: relative;z-index: 100;}
+position: relative;z-index: 100;border-radius: 10px !important;}
 .signInPage .box h2{font-size: 25px;font-weight: 600;}
 
 .signInPage .box form{padding: 20px 30px;}
@@ -830,6 +830,22 @@ position: relative;z-index: 100;}
 
 
 
+.signInPage .box .txt{font-size: 18px;font-weight: bold;}
+
+.loginwithgoogle {
+    width: 100%;
+    height: 50px;
+    font-weight: bold !important;
+    color: rgba(0,0,0,0.8) !important;
+    gap: 10px;
+   
+}
+
+.loginwithgoogle img {
+    width: 30px !important;   
+    height: 20px;
+    object-fit: contain;
+}
 
 
 
