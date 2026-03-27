@@ -1,23 +1,22 @@
 const express = require('express');
 const app = express();
-const bodyParsel = require('body-parser');
+const bodyParser = require('body-parser'); // fix spelling
 const mongoose = require('mongoose');
 const cors = require('cors');
 require('dotenv/config');
 
 app.use(cors());
-//  app.options('*', cors());
+app.use(bodyParser.json());
 
-app.use(bodyParsel.json());
-
-// Import and use routes
-const categoryRoutes = require('./routes/category');
+// routes (ONLY ONCE)
+const categoryRoutes = require('./routes/categories');
 app.use('/api/categories', categoryRoutes);
 
 // Database
 mongoose.connect(process.env.CONNECTION_STRING)
     .then(() => {
         console.log('Database connection ready...');
+
         app.listen(process.env.PORT, () => {
             console.log(`server is running http://localhost:${process.env.PORT}`);
         });
