@@ -1,15 +1,14 @@
 const express = require('express');
 const app = express();
-const bodyParser = require('body-parser'); // fix spelling
+const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 const cors = require('cors');
-require('dotenv/config');
-const pLimit = require('p-limit');
+require('dotenv').config();
 
 app.use(cors());
 app.use(bodyParser.json());
 
-// routes (ONLY ONCE)
+// routes
 const categoryRoutes = require('./routes/categories');
 app.use('/api/categories', categoryRoutes);
 
