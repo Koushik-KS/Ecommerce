@@ -4,6 +4,7 @@ const bodyParser = require('body-parser'); // fix spelling
 const mongoose = require('mongoose');
 const cors = require('cors');
 require('dotenv/config');
+const pLimit = require('p-limit');
 
 app.use(cors());
 app.use(bodyParser.json());
