@@ -1,26 +1,27 @@
 const express = require('express');
 const app = express();
-const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 const cors = require('cors');
 require('dotenv').config();
 
 app.use(cors());
-app.use(bodyParser.json());
+app.options('*', cors());
+
+app.use(express.json());
 
 // routes
 const categoryRoutes = require('./routes/categories');
-app.use('/api/categories', categoryRoutes);
+app.use('/api/category', categoryRoutes);
 
-// Database
+// Database (FIXED)
 mongoose.connect(process.env.CONNECTION_STRING)
-    .then(() => {
-        console.log('Database connection ready...');
+  .then(() => {
+    console.log('Database connection ready...');
 
-        app.listen(process.env.PORT, () => {
-            console.log(`server is running http://localhost:${process.env.PORT}`);
-        });
-    })
-    .catch((err) => {
-        console.log(err);
+    app.listen(process.env.PORT || 4000, () => {
+      console.log(`server is running http://localhost:${process.env.PORT || 4000}`);
     });
+  })
+  .catch((err) => {
+    console.log(err);
+  });

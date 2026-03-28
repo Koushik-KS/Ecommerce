@@ -11,18 +11,22 @@ cloudinary.config({
   api_secret: process.env.cloudinary_Config_api_secret,
 });
 
-// GET
-router.get('/', async (req, res) => {
-  const categoryList = await Category.find();
+// ===================== GET =====================
+router.get(`/`, async (req, res) => {
+  try {
+    const categoryList = await Category.find();
 
-  if (!categoryList) {
-    return res.status(500).json({ success: false });
+    if (!categoryList) {
+      return res.status(500).json({ success: false });
+    }
+
+    res.send(categoryList);
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
   }
-
-  res.send(categoryList);
 });
 
-// POST
+// ===================== POST =====================
 router.post('/create', async (req, res) => {
   try {
     const limit = pLimit(2);
@@ -36,14 +40,14 @@ router.post('/create', async (req, res) => {
 
     const uploadStatus = await Promise.all(imagesToUpload);
 
-    if (!uploadStatus) {
+    const imgurl = uploadStatus.map((item) => item.secure_url);
+
+    if (!uploadStatus || uploadStatus.length === 0) {
       return res.status(500).json({
         error: "images cannot upload",
         success: false
       });
     }
-
-    const imgurl = uploadStatus.map((item) => item.secure_url);
 
     let category = new Category({
       name: req.body.name,
@@ -56,7 +60,7 @@ router.post('/create', async (req, res) => {
     res.status(201).json(category);
 
   } catch (err) {
-    return res.status(500).json({
+    res.status(500).json({
       error: err.message,
       success: false
     });
