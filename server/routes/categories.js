@@ -11,20 +11,45 @@ cloudinary.config({
   api_secret: process.env.cloudinary_Config_api_secret,
 });
 
-// ===================== GET =====================
+
+// GET
 router.get(`/`, async (req, res) => {
-  try {
-    const categoryList = await Category.find();
+  const categoryList = await Category.find();
 
-    if (!categoryList) {
-      return res.status(500).json({ success: false });
-    }
-
-    res.send(categoryList);
-  } catch (error) {
-    res.status(500).json({ success: false, error: error.message });
+  if (!categoryList) {
+    res.status(500).json({ success: false });
   }
+
+  res.send(categoryList);
 });
+// ===================== GET =====================
+router.get('/:id', async (req, res) => {
+  
+    const category = await Category.findById(req.params.id);
+
+    if (!category) {
+      res.status(500).json({ message: 'The category with the given ID was not found' })
+
+    }
+    return res.status(200).send(category);
+
+   })
+  
+
+   //delete
+   router.delete('/:id',async (req, res) => {
+    const deleteUser = await Category.findByIdAndDelete(req.params.id);
+
+    if (!deleteUser) {
+      res.status(404).json({ message: 'The category not found', success: false 
+
+      })
+    }
+      res.status(200).json({ message: 'The category is deleted', success: true 
+
+      })
+    });
+    
 
 // ===================== POST =====================
 router.post('/create', async (req, res) => {
