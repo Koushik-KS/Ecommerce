@@ -92,4 +92,43 @@ router.post('/create', async (req, res) => {
   }
 });
 
+// ===================== PUT =====================
+router.put('/:id', async (req, res) => {
+
+  const imagesToUpload = req.body.images.map(async (image) => {
+    const result = await cloudinary.uploader.upload(image);
+    return result;
+  });
+
+  const uploadStatus = await Promise.all(imagesToUpload);
+
+  const imgurl = uploadStatus.map((item) => item.secure_url);
+
+  if (!uploadStatus || uploadStatus.length === 0) {
+    return res.status(500).json({
+      message: "images cannot upload",
+      success: false
+    });
+  }
+
+  const category = await Category.findByIdAndUpdate(
+    req.params.id,
+    {
+      name: req.body.name,
+      images: imgurl, // ✅ use uploaded images
+      color: req.body.color
+    },
+    { new: true }
+  );
+
+  if (!category) {
+    return res.status(404).json({
+      message: 'The category cannot be updated',
+      success: false
+    });
+  }
+
+ res.send(category);
+});
+
 module.exports = router;
