@@ -3,6 +3,9 @@ const { Category } = require('../models/category');
 const { Product } = require('../models/products.js');
 const express = require('express');
 const router = express.Router();
+const pLimit = require('p-limit');
+const cloudinary = require('cloudinary').v2;
+
 
 
 // GET
@@ -16,7 +19,11 @@ router.get(`/`, async (req, res) => {
   res.send(productList);
 });
 
+
+//post
 router.post('/create', async (req, res) => {
+
+    
     const category = await Category.findById(req.body.category);
     if (!category){
 

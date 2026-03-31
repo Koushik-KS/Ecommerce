@@ -53,7 +53,7 @@ router.get('/:id', async (req, res) => {
 
 // ===================== POST =====================
 router.post('/create', async (req, res) => {
-  try {
+
     const limit = pLimit(2);
 
     const imagesToUpload = req.body.images.map((image) => {
@@ -65,9 +65,11 @@ router.post('/create', async (req, res) => {
 
     const uploadStatus = await Promise.all(imagesToUpload);
 
-    const imgurl = uploadStatus.map((item) => item.secure_url);
+    const imgurl = uploadStatus.map((item) => {
+      return item.secure_url
+    });
 
-    if (!uploadStatus || uploadStatus.length === 0) {
+    if (!uploadStatus) {
       return res.status(500).json({
         error: "images cannot upload",
         success: false
@@ -84,13 +86,7 @@ router.post('/create', async (req, res) => {
 
     res.status(201).json(category);
 
-  } catch (err) {
-    res.status(500).json({
-      error: err.message,
-      success: false
-    });
-  }
-});
+  });
 
 // ===================== PUT =====================
 router.put('/:id', async (req, res) => {
