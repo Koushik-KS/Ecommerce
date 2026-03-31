@@ -82,11 +82,21 @@ router.post('/create', async (req, res) => {
       color: req.body.color
     });
 
+    if (!category) {
+      res.status(500).json({
+        error:err,
+        success: false
+      })
+    }
+
     category = await category.save();
 
     res.status(201).json(category);
 
   });
+
+ 
+  
 
 // ===================== PUT =====================
 router.put('/:id', async (req, res) => {
