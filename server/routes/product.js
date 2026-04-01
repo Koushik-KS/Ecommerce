@@ -13,10 +13,10 @@ router.get(`/`, async (req, res) => {
   const productList = await Product.find().populate('category') ;
 
   if (!productList) {
-    res.status(500).json({ success: false });
+   return res.status(500).json({ success: false });
   }
 
-  res.send(productList);
+  return res.send(productList);
 });
 
 
@@ -62,7 +62,7 @@ router.post('/create', async (req, res) => {
         countInStock: req.body.countInStock,
         rating: req.body.rating,
         numReviews: req.body.numReviews,
-        isFinite: req.body.isFinite
+        isFeatured: req.body.isFeatured
 
 
 
@@ -77,6 +77,18 @@ router.post('/create', async (req, res) => {
     }
     res.status(201).json(product);
 });
+
+router.get('/:id', async (req, res) => {
+  
+    const product = await Product.findById(req.params.id);
+
+    if (!product) {
+    return res.status(500).json({ message: 'The product with the given ID was not found' })
+
+    }
+    return res.status(200).send(product);
+
+   });
 
 // ===================== DELETE =====================
 router.delete('/:id', async (req, res) => {
