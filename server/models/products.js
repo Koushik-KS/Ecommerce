@@ -1,4 +1,3 @@
-
 const mongoose = require('mongoose');
 
 const productSchema = mongoose.Schema({
@@ -6,44 +5,43 @@ const productSchema = mongoose.Schema({
     type: String,
     required: true,
   },
-    description: {
+  description: {
     type: String,
     required: true,
   },
-  images:[{
-    type: [String],
+  images: {
+    type: [String], // ✅ FIXED
     required: true,
-
-  }
-],
-    brand: {
+  },
+  brand: {
     type: String,
     default: ''
   },
-    price: {
+  price: {
     type: Number,
     default: 0
-    },
-    category: {
+  },
+  category: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Category',
     required: true
-    },
-    rating: {
+  },
+  rating: {
     type: Number,
     default: 0
-    },
-    numReviews: {
+  },
+  numReviews: {
     type: Number,
     default: 0
-    },
-    isFeatured: {
+  },
+  isFeatured: {
     type: Boolean,
     default: false,
-    },
-    dateCreated: {
+  },
+  dateCreated: {
     type: Date,
     default: Date.now,
-    },
-})
+  },
+});
+
 exports.Product = mongoose.model('Product', productSchema);

@@ -60,7 +60,7 @@ router.post('/create', async (req, res) => {
       return limit(async () => {
         const result = await cloudinary.uploader.upload(image);
         return result;
-      });
+      })
     });
 
     const uploadStatus = await Promise.all(imagesToUpload);
@@ -73,7 +73,7 @@ router.post('/create', async (req, res) => {
       return res.status(500).json({
         error: "images cannot upload",
         success: false
-      });
+      })
     }
 
     let category = new Category({
