@@ -19,8 +19,8 @@ const Header = () => {
                     </div>
 
                     {/* Menu Button Section */}
-                    <div className="col-sm-3 d-flex align-items-center part2 pl-4">
-                        <Button className="rounded-circle mr-3">
+                    <div className="col-sm-3 d-flex align-items-center part2 pl-3">
+                        <Button className="rounded-circle mr-2">
                             <MdMenuOpen />
                         </Button>
                         <SearchBox/>
