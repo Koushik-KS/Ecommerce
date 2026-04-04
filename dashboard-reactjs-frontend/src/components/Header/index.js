@@ -37,14 +37,16 @@ const Header = () => {
                             <Button className="rounded-circle"   > <FaRegBell /> </Button>
 
 
-                            <div className="myAcc d-flex align-items-center">
+                            <div className="myWrapper">
+                                <div className="myAcc d-flex align-items-center">
                                 <div className="userImg">
                                     <span className="rounded-circle">
-                                        <img src="https://cdn.prod.website-files.com/62d84e447b4f9e7263d31e94/6399a4d27711a5ad2c9bf5cd_ben-sweet-2LowviVHZ-E-unsplash-1.jpeg"/>
+                                        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSTx3SRpQ8G8mKf3SUHnnn5mzgz7jx2WnePnA&s"/>
 
                                     </span>
                                 </div>
 
+                            </div>
                             </div>
 
 
