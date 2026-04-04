@@ -46,6 +46,11 @@ const Header = () => {
                                     </span>
                                 </div>
 
+                                <div className="userInfo">
+                                    
+                                </div>
+
+
                             </div>
                             </div>
 
