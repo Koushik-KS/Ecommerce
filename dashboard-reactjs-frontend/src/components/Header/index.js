@@ -3,6 +3,11 @@ import logo from '../../assets/images/logo.jpg';
 import Button from '@mui/material/Button';
 import { MdMenuOpen } from "react-icons/md";
 import SearchBox from "../SearchBox";
+import { CiLight } from "react-icons/ci";
+import { MdDarkMode } from "react-icons/md";
+import { IoIosCart } from "react-icons/io";
+import { MdOutlineMailOutline } from "react-icons/md";
+import { FaRegBell } from "react-icons/fa";
 
 const Header = () => {
     return (
@@ -14,19 +19,37 @@ const Header = () => {
                     <div className="col-sm-2 part1">
                         <Link to="/" className="d-flex align-items-center logo">
                             <img src={logo} alt="Store Logo" />
-                            <span className="ml-2">STORE</span>
+                            <span style={{ marginLeft: "8px" }}>STORE</span>
                         </Link>
                     </div>
-                    
 
-                    {/* Menu Button Section */}
-                    <div className="col-sm-3 d-flex align-items-center part2 pl-2">
-                        <Button className="rounded-circle mr-2">
+                    {/* Menu + Search Section */}
+                    <div className="col-sm-4 d-flex align-items-center part2"style={{ gap: "8px" }} >
+                        <Button className="rounded-circle">
                             <MdMenuOpen />
                         </Button>
-                        
-                   
-                    <SearchBox/>
+                        <SearchBox />
+                    </div>
+                     <div className="col-sm-6 d-flex align-items-center justify-content-end part3" style={{ gap: "8px" }}>
+                         <Button className="rounded-circle "  > <CiLight /> </Button>
+                          <Button className="rounded-circle "  ><IoIosCart /> </Button>
+                           <Button className="rounded-circle"   ><MdOutlineMailOutline /> </Button>
+                            <Button className="rounded-circle"   > <FaRegBell /> </Button>
+
+
+                            <div className="myAcc d-flex align-items-center">
+                                <div className="userImg">
+                                    <span className="rounded-circle">
+                                        <img src="https://cdn.prod.website-files.com/62d84e447b4f9e7263d31e94/6399a4d27711a5ad2c9bf5cd_ben-sweet-2LowviVHZ-E-unsplash-1.jpeg"/>
+
+                                    </span>
+                                </div>
+
+                            </div>
+
+
+                            
+
                      </div>
 
                 </div>
