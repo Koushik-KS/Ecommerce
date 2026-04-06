@@ -47,6 +47,8 @@ const Header = () => {
                                 </div>
 
                                 <div className="userInfo">
+                                    <h4>Koushik shetty</h4>
+                                    <p className="mb-0">@koushikshetty</p>
                                     
                                 </div>
 

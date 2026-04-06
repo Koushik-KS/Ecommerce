@@ -28,8 +28,13 @@ header button.rounded-circle {
 
 header button.rounded-circle svg {
     color: #292929;
-    font-size: 22px !important;
+    font-size: 18px !important;
+    transition: all 0 2s ease-in-out;
 }
+
+
+header button.rounded-circle:hover svg {color: #0858f7 !important;}
+
 
 .searchBox {
     width: 400px;
@@ -53,7 +58,7 @@ header button.rounded-circle svg {
 
 .searchBox svg { font-size: 18px; color: #292929; flex-shrink: 0; }
 
-
+.myAcc{text-align: left !important;color: #000 !important;text-transform: capitalize !important;}
 .myAcc .userImg{display: flex;align-items: center;justify-content: center;overflow: hidden;
     width: 40px ;height: 40px;
 border: 1px solid #0858f7;padding: 3px;border-radius: 100%;}
@@ -62,3 +67,7 @@ width:100% ;height: 100%;cursor: pointer;position: relative;}
 
 .myAcc .userImg .rounded-circle img{object-fit: cover;width: 100%;height: 100%;}
    
+
+.myAcc .userInfo{padding-left: 10px;}
+.myAcc .userInfo h4{font-size: 15px;font-weight: 600;margin-bottom: 0px;}
+.myAcc .userInfo p{margin-top: 0px;font-size: 12px;color: #000;opacity: 0.7;}
