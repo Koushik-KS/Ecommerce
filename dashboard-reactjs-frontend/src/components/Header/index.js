@@ -13,24 +13,35 @@ import { FaRegBell } from "react-icons/fa";
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import ListItemIcon from '@mui/material/ListItemIcon';
-import Divider from '@mui/material/Divider';
-import Avatar from '@mui/material/Avatar';
 
 import PersonAdd from '@mui/icons-material/PersonAdd';
-import Settings from '@mui/icons-material/Settings';
+
 import Logout from '@mui/icons-material/Logout';
+import { BsShieldFillExclamation } from "react-icons/bs";
+import Divider from '@mui/material/Divider';
+
 
 const Header = () => {
 
   const [anchorEl, setAnchorEl] = useState(null);
-  const open = Boolean(anchorEl);
+  const [isOpenNotificationDrop, setIsOpenNotificationDrop] = useState(false);
+  const openMyAcc= Boolean(anchorEl);
+   const openNotifications= Boolean(isOpenNotificationDrop);
 
-  const handleClick = (event) => {
+  const handleOpenMyAccDrop = (event) => {
     setAnchorEl(event.currentTarget);
   };
 
-  const handleClose = () => {
+  const handleCloseMyAccDrop = () => {
     setAnchorEl(null);
+  };
+
+  const handleOpenNotificationsDrop = () => {
+    setIsOpenNotificationDrop(true)
+  };
+
+  const handleClosenotificationsDrop = () => {
+    setIsOpenNotificationDrop(false)
   };
 
   return (
@@ -71,52 +82,60 @@ const Header = () => {
               <MdOutlineMailOutline />
             </Button>
 
-            <Button className="rounded-circle">
+          
+
+         <div className='dropdownWrapper position-relative'>
+          <Button className="rounded-circle" onClick={handleOpenNotificationsDrop}>
               <FaRegBell />
             </Button>
+               <Menu
+        anchorEl={isOpenNotificationDrop}
+         className="notifications dropdown_list"
+        id="notifications"
+        open={ openNotifications}
+        onClose={handleClosenotificationsDrop}
+        onClick={handleClosenotificationsDrop}
+        
+        transformOrigin={{ horizontal: 'right', vertical: 'top' }}
+        anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}>
 
-            <Menu
-              anchorEl={anchorEl}
-              open={open}
-              onClose={handleClose}
-              onClick={handleClose}
-              transformOrigin={{ horizontal: 'right', vertical: 'top' }}
-              anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
-            >
-              <MenuItem onClick={handleClose}>
-                <Avatar /> Profile
-              </MenuItem>
-              <MenuItem onClick={handleClose}>
-                <Avatar /> My account
-              </MenuItem>
+          <div className='head pl-3 pb-0'>
+            <h4>Order(12)</h4>
+          </div>
+        <Divider className='mb-3'/>
+      
+        <MenuItem onClick={handleCloseMyAccDrop}>
+        <div className='d-flex '>
+     <div>
+           <div className="userImg">
+                  <span className="rounded-circle">
+                    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSTx3SRpQ8G8mKf3SUHnnn5mzgz7jx2WnePnA&s" alt="user" />
+                  </span>
+                </div>
+     </div>
 
-              <Divider />
+                <div className='dropdownInfo'>
+                  <h4>
+                    <span>
+                    
+                    <b>koushik shetty </b> added to this favorite list
+                    <b> leather belt steve madden</b></span></h4>
+                </div>
+          
+        </div>
+   
+        </MenuItem>
 
-              <MenuItem onClick={handleClose}>
-                <ListItemIcon>
-                  <PersonAdd fontSize="small" />
-                </ListItemIcon>
-                Add another account
-              </MenuItem>
+        
+      </Menu>
+         </div>
 
-              <MenuItem onClick={handleClose}>
-                <ListItemIcon>
-                  <Settings fontSize="small" />
-                </ListItemIcon>
-                Settings
-              </MenuItem>
-
-              <MenuItem onClick={handleClose}>
-                <ListItemIcon>
-                  <Logout fontSize="small" />
-                </ListItemIcon>
-                Logout
-              </MenuItem>
-            </Menu>
+            
 
             {/* User Info */}
             <div className="myWrapper">
-              <Button className="myAcc d-flex align-items-center">
+              <Button className="myAcc d-flex align-items-center" 
+               onClick={handleOpenMyAccDrop}>
                 <div className="userImg">
                   <span className="rounded-circle">
                     <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSTx3SRpQ8G8mKf3SUHnnn5mzgz7jx2WnePnA&s" alt="user" />
@@ -128,6 +147,42 @@ const Header = () => {
                   <p className="mb-0">@koushikshetty</p>
                 </div>
                 </Button>
+
+
+                <Menu
+        anchorEl={anchorEl}
+        id="account-menu"
+        open={openMyAcc}
+        onClose={handleCloseMyAccDrop}
+        onClick={handleCloseMyAccDrop}
+        
+        transformOrigin={{ horizontal: 'right', vertical: 'top' }}
+        anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
+      >
+        
+      
+        <MenuItem onClick={handleCloseMyAccDrop}>
+          <ListItemIcon>
+            <PersonAdd fontSize="small" />
+          </ListItemIcon>
+         My  Account
+        </MenuItem>
+
+        <MenuItem onClick={handleCloseMyAccDrop}>
+          <ListItemIcon>
+            <BsShieldFillExclamation  />
+          </ListItemIcon>
+         Reset Password
+        </MenuItem>
+       
+        <MenuItem onClick={handleCloseMyAccDrop }>
+          <ListItemIcon>
+            <Logout fontSize="small" />
+          </ListItemIcon>
+          Logout
+        </MenuItem>
+      </Menu>
+
             </div>
 
           </div>
