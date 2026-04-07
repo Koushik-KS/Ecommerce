@@ -8,8 +8,9 @@ body { font-family: "Open Sans", sans-serif; background: #ebe9e9; }
 ::-webkit-scrollbar-thumb{background:#0858f7 !important ;}
 ::-webkit-scrollbar-track{background: transparent !important;}
 
-.btn-blue{background: #0858f7 !important;font-size: 15px !important;
-font-weight: 500;color: #fff !important;}
+.btn-blue{background: #0858f7 !important;font-size: 14px !important;
+font-weight: 600;color: #fff !important;
+text-transform: capitalize !important;border-radius: 5px !important;}
 
 header {
     width: 100%;

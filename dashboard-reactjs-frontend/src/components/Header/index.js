@@ -287,7 +287,9 @@ const Header = () => {
 
       </div>
 
-      <Button className='btn-blue w-100'>View All Notifications</Button>
+   <div className='pl-3 pr-3 w-100 pt-2 pb-3'>
+       <Button className='btn-blue w-100'>View All Notifications</Button>
+   </div>
 
          
 
