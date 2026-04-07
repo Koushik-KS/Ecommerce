@@ -16,6 +16,7 @@ header {
     width: 100%;
     height: 70px;
     background: #fff;
+    position: fixed;top: 0px;left: 0px;z-index:1000 ;
     box-shadow: 0 2px 6px rgba(0,0,0,0.08);
 }
 
@@ -103,3 +104,6 @@ width:100% ;height: 100%;cursor: pointer;position: relative;}
 
 .dropdown_list .scroll{max-height: 300px;overflow-y: scroll;}
 
+.main .sidebarWrapper{width: 20%;flex: 0 0 20%;transition: all 0.3s ease-in-out;}
+.main .sidebarWrapper .sidebar{width: 20%;height: 100vh;position:fixed;top: 70px;left: 0px;
+background: #fff;}
