@@ -52,7 +52,7 @@ const Header = () => {
           {/* Logo */}
           <div className="col-sm-2 part1">
             <Link to="/" className="d-flex align-items-center logo">
-          <img src={logo} alt="Store Logo" style={{ width: "40px", height: "40px" }} />
+          <img src={logo} alt="Store Logo" style={{ width: "60px", height: "60px" }} />
               <span style={{ marginLeft: "4px" }}>STORE</span>
             </Link>
           </div>

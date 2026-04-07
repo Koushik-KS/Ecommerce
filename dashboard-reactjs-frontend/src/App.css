@@ -2,7 +2,7 @@
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
 
-body { font-family: "Open Sans", sans-serif; background: #ebe9e9; }
+body { font-family: "Open Sans", sans-serif !important; background: #ebe9e9; }
 
 ::-webkit-scrollbar{width: 5px !important;height: 5px !important;}
 ::-webkit-scrollbar-thumb{background:#0858f7 !important ;}
@@ -107,3 +107,19 @@ width:100% ;height: 100%;cursor: pointer;position: relative;}
 .main .sidebarWrapper{width: 20%;flex: 0 0 20%;transition: all 0.3s ease-in-out;}
 .main .sidebarWrapper .sidebar{width: 20%;height: 100vh;position:fixed;top: 70px;left: 0px;
 background: #fff;}
+
+.main .sidebarWrapper .sidebar ul{margin-bottom: 0px;}
+.main .sidebarWrapper .sidebar ul li{list-style: none;}
+.main .sidebarWrapper .sidebar ul li button{color: #000;text-align: left;
+justify-content: left;border-radius: 0px !important;padding: 12px 15px !important;
+align-items: center;text-transform: capitalize !important;
+font-weight: 500  !important;font-family: "Open Sans", sans-serif !important;}
+
+.main .sidebarWrapper .sidebar ul li button .icon{display: flex; align-items: center;justify-content: center;
+width: 25px;height: 25px;margin-right: 10px;}
+.main .sidebarWrapper .sidebar ul li button .icon svg{color: #000;opacity: 0.7;font-size: 22px;}
+
+.main .sidebarWrapper .sidebar ul li button .arrow{margin-left: auto;display: flex; align-items: center;justify-content: center;
+width: 25px;height: 25px;}
+
+.main .sidebarWrapper .sidebar ul li button:hover{background: #f1f1f1 !important;}
