@@ -102,7 +102,7 @@ const Header = () => {
           <div className='head pl-3 pb-0'>
             <h4>Order(12)</h4>
           </div>
-        <Divider className='mb-3'/>
+        <Divider className='mb-1'/>
       
         <MenuItem onClick={handleCloseMyAccDrop}>
         <div className='d-flex '>
@@ -119,15 +119,174 @@ const Header = () => {
                     <span>
                     
                     <b>koushik shetty </b> added to this favorite list
-                    <b> leather belt steve madden</b></span></h4>
+                    <b> leather belt steve madden</b>
+                    </span>
+                    </h4>
+                    <p className='text-sky'>few  seconds ago</p>
                 </div>
           
         </div>
    
         </MenuItem>
 
+         <MenuItem onClick={handleCloseMyAccDrop}>
+        <div className='d-flex '>
+     <div>
+           <div className="userImg">
+                  <span className="rounded-circle">
+                    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSTx3SRpQ8G8mKf3SUHnnn5mzgz7jx2WnePnA&s" alt="user" />
+                  </span>
+                </div>
+     </div>
+
+                <div className='dropdownInfo'>
+                  <h4>
+                    <span>
+                    
+                    <b>koushik shetty </b> added to this favorite list
+                    <b> leather belt steve madden</b>
+                    </span>
+                    </h4>
+                    <p className='text-sky'>few  seconds ago</p>
+                </div>
+          
+        </div>
+   
+        </MenuItem>
+
+         <MenuItem onClick={handleCloseMyAccDrop}>
+        <div className='d-flex '>
+     <div>
+           <div className="userImg">
+                  <span className="rounded-circle">
+                    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSTx3SRpQ8G8mKf3SUHnnn5mzgz7jx2WnePnA&s" alt="user" />
+                  </span>
+                </div>
+     </div>
+
+                <div className='dropdownInfo'>
+                  <h4>
+                    <span>
+                    
+                    <b>koushik shetty </b> added to this favorite list
+                    <b> leather belt steve madden</b>
+                    </span>
+                    </h4>
+                    <p className='text-sky'>few  seconds ago</p>
+                </div>
+          
+        </div>
+   
+        </MenuItem>
+
+           <MenuItem onClick={handleCloseMyAccDrop}>
+        <div className='d-flex '>
+     <div>
+           <div className="userImg">
+                  <span className="rounded-circle">
+                    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSTx3SRpQ8G8mKf3SUHnnn5mzgz7jx2WnePnA&s" alt="user" />
+                  </span>
+                </div>
+     </div>
+
+                <div className='dropdownInfo'>
+                  <h4>
+                    <span>
+                    
+                    <b>koushik shetty </b> added to this favorite list
+                    <b> leather belt steve madden</b>
+                    </span>
+                    </h4>
+                    <p className='text-sky'>few  seconds ago</p>
+                </div>
+          
+        </div>
+   
+        </MenuItem>
+
+           <MenuItem onClick={handleCloseMyAccDrop}>
+        <div className='d-flex '>
+     <div>
+           <div className="userImg">
+                  <span className="rounded-circle">
+                    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSTx3SRpQ8G8mKf3SUHnnn5mzgz7jx2WnePnA&s" alt="user" />
+                  </span>
+                </div>
+     </div>
+
+                <div className='dropdownInfo'>
+                  <h4>
+                    <span>
+                    
+                    <b>koushik shetty </b> added to this favorite list
+                    <b> leather belt steve madden</b>
+                    </span>
+                    </h4>
+                    <p className='text-sky'>few  seconds ago</p>
+                </div>
+          
+        </div>
+   
+        </MenuItem>
+
+          <MenuItem onClick={handleCloseMyAccDrop}>
+        <div className='d-flex '>
+     <div>
+           <div className="userImg">
+                  <span className="rounded-circle">
+                    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSTx3SRpQ8G8mKf3SUHnnn5mzgz7jx2WnePnA&s" alt="user" />
+                  </span>
+                </div>
+     </div>
+
+                <div className='dropdownInfo'>
+                  <h4>
+                    <span>
+                    
+                    <b>koushik shetty </b> added to this favorite list
+                    <b> leather belt steve madden</b>
+                    </span>
+                    </h4>
+                    <p className='text-sky'>few  seconds ago</p>
+                </div>
+          
+        </div>
+   
+        </MenuItem>
+
+          <MenuItem onClick={handleCloseMyAccDrop}>
+        <div className='d-flex '>
+     <div>
+           <div className="userImg">
+                  <span className="rounded-circle">
+                    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSTx3SRpQ8G8mKf3SUHnnn5mzgz7jx2WnePnA&s" alt="user" />
+                  </span>
+                </div>
+     </div>
+
+                <div className='dropdownInfo'>
+                  <h4>
+                    <span>
+                    
+                    <b>koushik shetty </b> added to this favorite list
+                    <b> leather belt steve madden</b>
+                    </span>
+                    </h4>
+                    <p className='text-sky'>few  seconds ago</p>
+                </div>
+          
+        </div>
+   
+        </MenuItem>
+
+         
+
         
       </Menu>
+
+        
+
+
          </div>
 
             
