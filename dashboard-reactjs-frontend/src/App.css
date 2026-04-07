@@ -4,6 +4,9 @@
 
 body { font-family: "Open Sans", sans-serif; background: #ebe9e9; }
 
+::-webkit-scrollbar{width: 5px !important;height: 5px !important;}
+::-webkit-scrollbar-thumb{background:#ccc !important ;}
+
 header {
     width: 100%;
     height: 70px;
@@ -77,13 +80,19 @@ width:100% ;height: 100%;cursor: pointer;position: relative;}
 
 #notifications .MuiPaper-elevation8{right: 240px !important;width: 300px !important;left: auto !important;}
 
-.dropdown_list h4{font-size: 17px;font-weight: 600;}
+
+.dropdown_list .head{padding: 10px 0px;}
+.dropdown_list .head h4{font-size: 17px;font-weight: 600;}
+.dropdown_list li.MuiButtonBase-root{background: #ebf6ff !important; 
+    color: #000 !important;}
 
 .dropdownInfo{padding-left: 15px;}
 .dropdownInfo h4{font-size: 13px;font-weight: 500;white-space: break-spaces;
-    line-height: 21px;}
+    line-height: 21px;margin-top: 0px;}
 .dropdownInfo h4 b{font-weight: 600;margin-right: 5px;}
+.dropdownInfo p{font-size: 12px;font-weight: 500;margin-top: 0px;}
 
+.text-sky{color:#0858f7 !important;}
 
 
 
