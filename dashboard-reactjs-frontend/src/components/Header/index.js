@@ -103,7 +103,9 @@ const Header = () => {
             <h4>Order(12)</h4>
           </div>
         <Divider className='mb-1'/>
-      
+        
+      <div className='scroll'>
+        
         <MenuItem onClick={handleCloseMyAccDrop}>
         <div className='d-flex '>
      <div>
@@ -230,6 +232,7 @@ const Header = () => {
         </MenuItem>
 
           <MenuItem onClick={handleCloseMyAccDrop}>
+          
         <div className='d-flex '>
      <div>
            <div className="userImg">
@@ -276,8 +279,15 @@ const Header = () => {
                 </div>
           
         </div>
+       
    
+       
+     
         </MenuItem>
+
+      </div>
+
+      <Button className='btn-blue w-100'>View All Notifications</Button>
 
          
 
