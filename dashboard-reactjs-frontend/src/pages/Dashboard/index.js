@@ -3,7 +3,16 @@
 const Dashboard = () => {
     return(
         <>
-        {/* <h1>Dashboard page</h1> */}
+        <div className="right-content">
+            <div className="dashboardBoxWrapper d-flex">
+                <div className="dashboardBox">
+                    
+                </div>
+
+            </div>
+        
+        </div>
+      
         </>
     )
 
