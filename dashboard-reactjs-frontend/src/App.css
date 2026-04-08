@@ -173,11 +173,14 @@ border-radius: 100%;position: absolute;top: 20px;left:10px;opacity:  0.5;}
 
 .logoutWrapper .logoutBox button svg{margin-right: 5px;font-size: 18px !important;}
 
+.main .content{width: 80%;flex: 0 0 80%;}
 
-.right-content{padding: 85px 30px;width: 100%;}
-.dashboardBoxWrapper{gap: 15px;}
-.dashboardBoxWrapper .dashboardBox{width: 45%;height: 250px;background: red;}
+.right-content{padding: 90px 30px;}
 
+.dashboardBoxWrapper{gap: 15px;width: 100%;;flex-wrap: wrap;}
+
+.dashboardBoxWrapper .dashboardBox{width: 45%;height: 200px;
+    background: #ccc;}
 
 
 
