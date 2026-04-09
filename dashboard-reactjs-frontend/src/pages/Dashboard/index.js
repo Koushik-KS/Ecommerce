@@ -12,7 +12,7 @@ const Dashboard = () => {
                 <div className="col-md-8">
                     <div className="dashboardBoxWrapper d-flex">
                 
-              <DashboardBox color={["#1da256","#48d483"]} icon={<FaRegUser />}/> 
+              <DashboardBox color={["#1da256","#48d483"]} icon={<FaRegUser />}  grow={true}/> 
                 <DashboardBox color={["#c012e2","#eb64fe"]}  icon={<FaShoppingCart />}/>
                 <DashboardBox color={["#2c78e5","#60aff5"]}  icon={<FaBagShopping />}/>
                 <DashboardBox color={["#e1950e","#f3cd29"]}  icon={<GiStarsStack />}/>

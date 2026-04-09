@@ -189,7 +189,8 @@ border-radius: 100%;position: absolute;top: 20px;left:10px;opacity:  0.5;}
 
 .dashboardBoxWrapper .dashboardBox{width: 48%;height: 170px;
  border-radius: 10px;overflow: hidden; padding: 20px;display: flex;
-flex-direction: column;justify-content: space-around; }
+flex-direction: column;justify-content: space-around;text-align: left !important;position: relative;
+columns: #fff; }
 
 .dashboardBoxWrapper .dashboardBox .col1 h4{font-size: 16px;font-weight: 500;}
 .dashboardBoxWrapper .dashboardBox .col1  span{font-size: 35px !important;
@@ -203,8 +204,13 @@ background-image: linear-gradient(to bottom right,rgba(0,0,0,0.2));}
 .dashboardBoxWrapper .dashboardBox .icon svg{  font-size: 36px;opacity: 0.4;color: #fff;}
 
 .dashboardBoxWrapper .dashboardBox .toggleIcon{ position: absolute;bottom: 15px;
-right: 15px;font-size: 22px;color: rgba(0,0,0,0.5);cursor: pointer;}
+right: 15px;font-size: 22px;color: rgba(0,0,0,0.5);cursor: pointer;min-width: 40px !important;
+width: 40px !important;height: 40px !important;border-radius: 50% !important;}
 
+.dashboardBoxWrapper .dashboardBox .chart{opacity: 0.1;position: absolute;bottom: 20px;left: 20px;}
+
+.dashboardBoxWrapper .dashboardBox .chart svg{font-size: 110px;color: #000;}
+.dashboardBoxWrapper .dashboardBox .bottomEle{position: relative;top: 25px;}
 .dashboardBoxWrapperRow .box{width: 100%;height: 100%;background: #ccc;}
 
 
