@@ -1,3 +1,4 @@
+import { FaRegUser } from "react-icons/fa";
 import { useEffect } from "react";
 
 const DashboardBox = (props) => {
@@ -13,11 +14,27 @@ const DashboardBox = (props) => {
 
     <div className="d-flex w-100">
         <div className="col1">
-        <h4 className="text-white">Total Users</h4>
+        <h4 className="text-white mb-0">Total Users</h4>
         <span className="text-white">277</span>
         </div>
         <div className="ml-auto">
-            <span className="icon"></span>
+            {
+                props.icon? props.icon 
+
+                     <span className="icon">
+                        {props.icon? props.icon :''}
+                         </span>
+
+
+
+                 }
+               
+               
+
+
+
+
+          
         </div>
     </div>
 
