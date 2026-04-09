@@ -1,5 +1,6 @@
 import { FaRegUser } from "react-icons/fa";
 import { useEffect } from "react";
+import { BsThreeDotsVertical } from "react-icons/bs";
 
 const DashboardBox = (props) => {
 
@@ -19,11 +20,13 @@ const DashboardBox = (props) => {
         </div>
         <div className="ml-auto">
             {
-                props.icon? props.icon 
-
-                     <span className="icon">
-                        {props.icon? props.icon :''}
+                props.icon ? 
+                  <span span className="icon">
+                        {props.icon ? props.icon : ''}
+                     
                          </span>
+                         :
+                         ''
 
 
 
@@ -36,6 +39,12 @@ const DashboardBox = (props) => {
 
           
         </div>
+    </div>
+
+    <div className="d-flex align-items-center">
+        <h6 className="text-white mb-0 mt-0">Last Month</h6>
+        <span className="toggleIcon ml-auto"><BsThreeDotsVertical />
+</span>
     </div>
 
                     
