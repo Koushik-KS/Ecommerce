@@ -9,8 +9,23 @@ import MenuItem from '@mui/material/MenuItem';
 import Button from '@mui/material/Button';
 import { FaRegClock } from "react-icons/fa6";
 import { BsThreeDotsVertical } from "react-icons/bs";
-const Dashboard = () => {
-     const [anchorEl, setAnchorEl] = useState(null);
+import { Chart } from "react-google-charts";
+
+export const data=[
+  ["Year","Sales","Expenses"],
+  ["2013",1000,400],
+  ["2014",1170,460],
+  ["2015",660,1120],
+  ["2016",1030,540]
+];
+
+export const options={
+  'backgroundColor':'transparent',
+};
+
+const Dashboard=()=>{
+  
+ const [anchorEl, setAnchorEl] = useState(null);
       const open = Boolean(anchorEl);
     
       const ITEM_HEIGHT = 48;
@@ -68,12 +83,36 @@ const Dashboard = () => {
           </Menu>
         </div>
       </div>
+
+                <h3 className="text-white font-weight-bold">Rs 3,787,681</h3>
+                <p >Rs 3,787,681 in last month</p>
+
+                 <Chart
+      chartType="PieChart"
+     
+      options={options}
+      data={data}
+      width={"100%"}
+      height={"170px"}
+    />
                     </div>
                 </div>
 
 
 
             </div>
+
+
+
+            <div className="card shadow border-0 p-3 mt-4">
+              <h3 className="hd">Best Selling Products</h3>
+              <div className="row">
+                <div className="col">
+                <h4>SHOW BY</h4>
+                </div>
+              </div>
+              </div> 
+             
         
         </div>
       
