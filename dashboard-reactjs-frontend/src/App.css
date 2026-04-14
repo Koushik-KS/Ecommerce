@@ -243,9 +243,12 @@ width: 40px !important;height: 40px !important;border-radius: 50% !important;}
 
  .cardFilters .col-md-3 h4{font-size: 14px;font-weight: 800;text-transform: capitalize;color: #403e57;}
 
+h1,h2,h3,h4,h5,h6 {color: #403e57;}
 
+ .table .thead-dark th{background-color: #1866ee !important;color: #fff;
+border-color: rgba(255,255,255,0.1) !important;font-size: 13px !important;}
 
-
+.table tbody td{font-size: 13px !important; color:#403e57 ;font-weight: 500;}
 
 
 

@@ -16,7 +16,9 @@ import InputLabel from '@mui/material/InputLabel';
 import FormHelperText from '@mui/material/FormHelperText';
 import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
-
+import { FaEye } from "react-icons/fa";
+import { FaPencilAlt } from "react-icons/fa";
+import { MdDelete } from "react-icons/md";
 
 export const data=[
   ["Year","Sales","Expenses"],
@@ -163,6 +165,51 @@ const Dashboard=()=>{
 
 
               </div>
+              
+              <div className="table-responsive mt-3">
+                <table className="table table-bordered">
+                  <thead className="thead-dark ">
+                    <tr>
+                    <th>UID </th>
+                   <th>PRODUCT</th>
+                    <th>CATEGORY</th>
+                      <th>BRAND</th>
+                      <th>PRICE</th>
+                   <th>STOCK</th>
+                    <th>RATING</th>
+                      <th>ORDER </th>
+                       <th>SALES</th>
+                      <th>ACTION</th>
+                      </tr>
+
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td>#1</td>
+                      <td>Tops and skirt set for Female</td>
+                      <td>Womans</td>
+                      <td>richman</td>
+                      <td>₹299</td>
+                      <td>30</td>
+                      <td>4.9(16)</td>
+                      <td>380</td>
+                      <td>₹38k</td>
+                      <td>
+                        <div className="actions d-flex align-items-center">
+                          <Button><FaEye /></Button>
+                            <Button><FaPencilAlt /></Button>
+                              <Button><MdDelete /></Button>
+                        </div>
+                      </td>
+
+
+
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+
+
               </div> 
              
         
