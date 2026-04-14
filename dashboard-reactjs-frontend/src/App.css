@@ -15,10 +15,12 @@ text-transform: capitalize !important;border-radius: 5px !important;}
 header {
     width: 100%;
     height: 70px;
-    background: #fff;
+    background: rgba(255,255,255,0.9);
+   position: fixed;
+   top: 0px;left: 0px;z-index: 1000; -webkit-backdrop-filter: blur(5px);
+   backdrop-filter: blur(5px);
+
    
-    top: 0px;left: 0px;z-index:1000 ;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.08);
 }
 
 header .logo { text-decoration: none; }
@@ -241,14 +243,105 @@ width: 40px !important;height: 40px !important;border-radius: 50% !important;}
 .card {margin:20px 0px;border-radius: 10px;}
 .card .hd{font-size: 18px;font-weight: bold;color: #403e57;}
 
- .cardFilters .col-md-3 h4{font-size: 14px;font-weight: 800;text-transform: capitalize;color: #403e57;}
+ .cardFilters .col-md-3 h4{font-size: 13px;font-weight: 800;text-transform: capitalize;color: #403e57;}
 
-h1,h2,h3,h4,h5,h6 {color: #403e57;}
+h1,h2,h3,h4,h5,h6,p{color: #403e57;}
 
  .table .thead-dark th{background-color: #1866ee !important;color: #fff;
 border-color: rgba(255,255,255,0.1) !important;font-size: 13px !important;}
 
-.table tbody td{font-size: 13px !important; color:#403e57 ;font-weight: 500;}
+.table tbody td{font-size: 14px !important; color:#403e57 ;font-weight: 500;}
+
+.table tbody .actions button{min-width: 32px !important;width: 32px !important;
+height: 32px !important;margin: 0px 3px !important;}
+
+.table tbody .actions button.secondary{background: rgba(203,60,231,0.2) !important;}
+.table tbody .actions button.success{background: rgba(26,159,83,0.2) !important;}
+.table tbody .actions button.error{background: rgba(241,17,51,0.2) !important;}
+
+.table tbody .actions button svg{font-size: 32px !important;}
+
+table.v-align td{vertical-align: middle !important;}
+
+.table td .old,.table td .new{display: block;width: 100%;}
+
+table td .imgWrapper{width: 20%;flex: 0 0 20%;}
+table td .info{width: 65%;flex: 0 0 65%;}
+
+table td .info h6{overflow: hidden;text-overflow: ellipsis;white-space:nowrap;
+font-size: 14px;font-weight: 600;margin-bottom: 0px;}
+
+table td .info p{font-size: 13px;line-height: 18px;overflow: hidden;
+text-overflow: ellipsis;white-space: nowrap;color: #5e5d72;margin-bottom: 0px;}
+
+table.v-align td .productBox{width: 270px;}
+
+.tableFooter{padding-bottom: 20px;}
+.tableFooter .pagination{margin-left: auto;}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
