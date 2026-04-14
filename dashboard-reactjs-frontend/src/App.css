@@ -246,6 +246,7 @@ width: 40px !important;height: 40px !important;border-radius: 50% !important;}
  .cardFilters .col-md-3 h4{font-size: 13px;font-weight: 800;text-transform: capitalize;color: #403e57;}
 
 h1,h2,h3,h4,h5,h6,p{color: #403e57;}
+.table .thead-dark::-webkit-scrollbar-thumb{background: #fff !important;}
 
  .table .thead-dark th{background-color: #1866ee !important;color: #fff;
 border-color: rgba(255,255,255,0.1) !important;font-size: 13px !important;}
@@ -277,7 +278,10 @@ text-overflow: ellipsis;white-space: nowrap;color: #5e5d72;margin-bottom: 0px;}
 table.v-align td .productBox{width: 270px;}
 
 .tableFooter{padding-bottom: 20px;}
+.tableFooter p{margin-bottom: 0px;font-size: 14px ;font-weight: 500;}
 .tableFooter .pagination{margin-left: auto;}
+
+.tableFooter p{font-size: 14px;font-weight: 500;margin-bottom: 0px;}
 
 
 
