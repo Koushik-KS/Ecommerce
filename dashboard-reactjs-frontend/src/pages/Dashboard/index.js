@@ -11,6 +11,13 @@ import { FaRegClock } from "react-icons/fa6";
 import { BsThreeDotsVertical } from "react-icons/bs";
 import { Chart } from "react-google-charts";
 
+import InputLabel from '@mui/material/InputLabel';
+
+import FormHelperText from '@mui/material/FormHelperText';
+import FormControl from '@mui/material/FormControl';
+import Select from '@mui/material/Select';
+
+
 export const data=[
   ["Year","Sales","Expenses"],
   ["2013",1000,400],
@@ -26,6 +33,8 @@ export const options={
 const Dashboard=()=>{
   
  const [anchorEl, setAnchorEl] = useState(null);
+ const [showBy, setshowBy] =useState('');
+ const [showBysetCat, setCatBy] =useState('');
       const open = Boolean(anchorEl);
     
       const ITEM_HEIGHT = 48;
@@ -106,10 +115,53 @@ const Dashboard=()=>{
 
             <div className="card shadow border-0 p-3 mt-4">
               <h3 className="hd">Best Selling Products</h3>
-              <div className="row">
-                <div className="col">
+              <div className="row cardFilters mt-3">
+                <div className="col-md-3">
                 <h4>SHOW BY</h4>
+                 <FormControl  size="small" className="w-100">
+                 <Select
+          value={showBy}
+          onChange={(e)=>setshowBy(e.target.value)}
+          displayEmpty
+          inputProps={{ 'aria-label': 'Without label' }} 
+          labelId="demo-select-small-label"
+          className="w-100"
+        
+          >
+          <MenuItem value="">
+            <em>None</em>
+          </MenuItem>
+          <MenuItem value={10}>Ten</MenuItem>
+          <MenuItem value={20}>Twenty</MenuItem>
+          <MenuItem value={30}>Thirty</MenuItem>
+        </Select>
+         </FormControl>
                 </div>
+
+                <div className="col-md-3">
+                <h4>CATEGORY BY</h4>
+                 <FormControl  size="small" className="w-100">
+                 <Select
+          value={showBysetCat}
+          onChange={(e)=>setCatBy(e.target.value)}
+          displayEmpty
+          inputProps={{ 'aria-label': 'Without label' }} 
+          labelId="demo-select-small-label"
+          className="w-100"
+        
+          >
+          <MenuItem value="">
+            <em>None</em>
+          </MenuItem>
+          <MenuItem value={10}>Ten</MenuItem>
+          <MenuItem value={20}>Twenty</MenuItem>
+          <MenuItem value={30}>Thirty</MenuItem>
+        </Select>
+          </FormControl>
+                </div>
+
+
+
               </div>
               </div> 
              
