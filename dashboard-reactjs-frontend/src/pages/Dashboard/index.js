@@ -19,6 +19,8 @@ import Select from '@mui/material/Select';
 import { FaEye } from "react-icons/fa";
 import { FaPencilAlt } from "react-icons/fa";
 import { MdDelete } from "react-icons/md";
+import Pagination from '@mui/material/Pagination';
+
 
 export const data=[
   ["Year","Sales","Expenses"],
@@ -167,11 +169,11 @@ const Dashboard=()=>{
               </div>
               
               <div className="table-responsive mt-3">
-                <table className="table table-bordered">
+                <table className="table table-bordered v-align">
                   <thead className="thead-dark ">
                     <tr>
                     <th>UID </th>
-                   <th>PRODUCT</th>
+                   <th style={{width:'300px'}}>PRODUCT</th>
                     <th>CATEGORY</th>
                       <th>BRAND</th>
                       <th>PRICE</th>
@@ -186,27 +188,421 @@ const Dashboard=()=>{
                   <tbody>
                     <tr>
                       <td>#1</td>
-                      <td>Tops and skirt set for Female</td>
+                      <td>
+                        <div className="d-flex align-items-center productBox">
+                          <div className="imgWrapper">
+                            <div className="img">
+                              <img src="https://i.pinimg.com/1200x/d5/f1/fc/d5f1fcea65a20b5b13960e080e70f7fa.jpg" className="w-100"/>
+                            </div>
+                          </div>
+                          <div className="info pl-0">
+                            <h6>Tops and skirt set for Female...</h6>
+                        <p>Women's exclusive summer Tops and skirt set for Female
+                          Tops and skirt set
+                        </p>
+                          </div>
+                        </div>
+                        </td>
                       <td>Womans</td>
                       <td>richman</td>
-                      <td>₹299</td>
+                      <td>
+                       <div style={{width:'70px'}}>
+                         <del className="old">₹299</del>
+                         <span className="new text-danger">₹299</span>
+                       </div>
+                        </td>
                       <td>30</td>
                       <td>4.9(16)</td>
                       <td>380</td>
                       <td>₹38k</td>
                       <td>
                         <div className="actions d-flex align-items-center">
-                          <Button><FaEye /></Button>
-                            <Button><FaPencilAlt /></Button>
-                              <Button><MdDelete /></Button>
+                          <Button className="secondary" color="secondary"><FaEye /></Button>
+                            <Button className="success" color="success"><FaPencilAlt /></Button>
+                              <Button className="error" color="error"><MdDelete /></Button>
                         </div>
                       </td>
 
 
 
                     </tr>
+
+                    <tr>
+                      <td>#1</td>
+                      <td>
+                        <div className="d-flex align-items-center productBox">
+                          <div className="imgWrapper">
+                            <div className="img">
+                              <img src="https://i.pinimg.com/1200x/d5/f1/fc/d5f1fcea65a20b5b13960e080e70f7fa.jpg" className="w-100"/>
+                            </div>
+                          </div>
+                          <div className="info pl-0">
+                            <h6>Tops and skirt set for Female...</h6>
+                        <p>Women's exclusive summer Tops and skirt set for Female
+                          Tops and skirt set
+                        </p>
+                          </div>
+                        </div>
+                        </td>
+                      <td>Womans</td>
+                      <td>richman</td>
+                      <td>
+                       <div style={{width:'70px'}}>
+                         <del className="old">₹299</del>
+                         <span className="new text-danger">₹299</span>
+                       </div>
+                        </td>
+                      <td>30</td>
+                      <td>4.9(16)</td>
+                      <td>380</td>
+                      <td>₹38k</td>
+                      <td>
+                        <div className="actions d-flex align-items-center">
+                          <Button className="secondary" color="secondary"><FaEye /></Button>
+                            <Button className="success" color="success"><FaPencilAlt /></Button>
+                              <Button className="error" color="error"><MdDelete /></Button>
+                        </div>
+                      </td>
+
+
+
+                    </tr>
+
+                    <tr>
+                      <td>#1</td>
+                      <td>
+                        <div className="d-flex align-items-center productBox">
+                          <div className="imgWrapper">
+                            <div className="img">
+                              <img src="https://i.pinimg.com/1200x/d5/f1/fc/d5f1fcea65a20b5b13960e080e70f7fa.jpg" className="w-100"/>
+                            </div>
+                          </div>
+                          <div className="info pl-0">
+                            <h6>Tops and skirt set for Female...</h6>
+                        <p>Women's exclusive summer Tops and skirt set for Female
+                          Tops and skirt set
+                        </p>
+                          </div>
+                        </div>
+                        </td>
+                      <td>Womans</td>
+                      <td>richman</td>
+                      <td>
+                       <div style={{width:'70px'}}>
+                         <del className="old">₹299</del>
+                         <span className="new text-danger">₹299</span>
+                       </div>
+                        </td>
+                      <td>30</td>
+                      <td>4.9(16)</td>
+                      <td>380</td>
+                      <td>₹38k</td>
+                      <td>
+                        <div className="actions d-flex align-items-center">
+                          <Button className="secondary" color="secondary"><FaEye /></Button>
+                            <Button className="success" color="success"><FaPencilAlt /></Button>
+                              <Button className="error" color="error"><MdDelete /></Button>
+                        </div>
+                      </td>
+
+
+
+                    </tr>
+
+                    <tr>
+                      <td>#1</td>
+                      <td>
+                        <div className="d-flex align-items-center productBox">
+                          <div className="imgWrapper">
+                            <div className="img">
+                              <img src="https://i.pinimg.com/1200x/d5/f1/fc/d5f1fcea65a20b5b13960e080e70f7fa.jpg" className="w-100"/>
+                            </div>
+                          </div>
+                          <div className="info pl-0">
+                            <h6>Tops and skirt set for Female...</h6>
+                        <p>Women's exclusive summer Tops and skirt set for Female
+                          Tops and skirt set
+                        </p>
+                          </div>
+                        </div>
+                        </td>
+                      <td>Womans</td>
+                      <td>richman</td>
+                      <td>
+                       <div style={{width:'70px'}}>
+                         <del className="old">₹299</del>
+                         <span className="new text-danger">₹299</span>
+                       </div>
+                        </td>
+                      <td>30</td>
+                      <td>4.9(16)</td>
+                      <td>380</td>
+                      <td>₹38k</td>
+                      <td>
+                        <div className="actions d-flex align-items-center">
+                          <Button className="secondary" color="secondary"><FaEye /></Button>
+                            <Button className="success" color="success"><FaPencilAlt /></Button>
+                              <Button className="error" color="error"><MdDelete /></Button>
+                        </div>
+                      </td>
+
+
+
+                    </tr>
+
+                    <tr>
+                      <td>#1</td>
+                      <td>
+                        <div className="d-flex align-items-center productBox">
+                          <div className="imgWrapper">
+                            <div className="img">
+                              <img src="https://i.pinimg.com/1200x/d5/f1/fc/d5f1fcea65a20b5b13960e080e70f7fa.jpg" className="w-100"/>
+                            </div>
+                          </div>
+                          <div className="info pl-0">
+                            <h6>Tops and skirt set for Female...</h6>
+                        <p>Women's exclusive summer Tops and skirt set for Female
+                          Tops and skirt set
+                        </p>
+                          </div>
+                        </div>
+                        </td>
+                      <td>Womans</td>
+                      <td>richman</td>
+                      <td>
+                       <div style={{width:'70px'}}>
+                         <del className="old">₹299</del>
+                         <span className="new text-danger">₹299</span>
+                       </div>
+                        </td>
+                      <td>30</td>
+                      <td>4.9(16)</td>
+                      <td>380</td>
+                      <td>₹38k</td>
+                      <td>
+                        <div className="actions d-flex align-items-center">
+                          <Button className="secondary" color="secondary"><FaEye /></Button>
+                            <Button className="success" color="success"><FaPencilAlt /></Button>
+                              <Button className="error" color="error"><MdDelete /></Button>
+                        </div>
+                      </td>
+
+
+
+                    </tr>
+
+                    <tr>
+                      <td>#1</td>
+                      <td>
+                        <div className="d-flex align-items-center productBox">
+                          <div className="imgWrapper">
+                            <div className="img">
+                              <img src="https://i.pinimg.com/1200x/d5/f1/fc/d5f1fcea65a20b5b13960e080e70f7fa.jpg" className="w-100"/>
+                            </div>
+                          </div>
+                          <div className="info pl-0">
+                            <h6>Tops and skirt set for Female...</h6>
+                        <p>Women's exclusive summer Tops and skirt set for Female
+                          Tops and skirt set
+                        </p>
+                          </div>
+                        </div>
+                        </td>
+                      <td>Womans</td>
+                      <td>richman</td>
+                      <td>
+                       <div style={{width:'70px'}}>
+                         <del className="old">₹299</del>
+                         <span className="new text-danger">₹299</span>
+                       </div>
+                        </td>
+                      <td>30</td>
+                      <td>4.9(16)</td>
+                      <td>380</td>
+                      <td>₹38k</td>
+                      <td>
+                        <div className="actions d-flex align-items-center">
+                          <Button className="secondary" color="secondary"><FaEye /></Button>
+                            <Button className="success" color="success"><FaPencilAlt /></Button>
+                              <Button className="error" color="error"><MdDelete /></Button>
+                        </div>
+                      </td>
+
+
+
+                    </tr>
+
+                    <tr>
+                      <td>#1</td>
+                      <td>
+                        <div className="d-flex align-items-center productBox">
+                          <div className="imgWrapper">
+                            <div className="img">
+                              <img src="https://i.pinimg.com/1200x/d5/f1/fc/d5f1fcea65a20b5b13960e080e70f7fa.jpg" className="w-100"/>
+                            </div>
+                          </div>
+                          <div className="info pl-0">
+                            <h6>Tops and skirt set for Female...</h6>
+                        <p>Women's exclusive summer Tops and skirt set for Female
+                          Tops and skirt set
+                        </p>
+                          </div>
+                        </div>
+                        </td>
+                      <td>Womans</td>
+                      <td>richman</td>
+                      <td>
+                       <div style={{width:'70px'}}>
+                         <del className="old">₹299</del>
+                         <span className="new text-danger">₹299</span>
+                       </div>
+                        </td>
+                      <td>30</td>
+                      <td>4.9(16)</td>
+                      <td>380</td>
+                      <td>₹38k</td>
+                      <td>
+                        <div className="actions d-flex align-items-center">
+                          <Button className="secondary" color="secondary"><FaEye /></Button>
+                            <Button className="success" color="success"><FaPencilAlt /></Button>
+                              <Button className="error" color="error"><MdDelete /></Button>
+                        </div>
+                      </td>
+
+
+
+                    </tr>
+
+                    <tr>
+                      <td>#1</td>
+                      <td>
+                        <div className="d-flex align-items-center productBox">
+                          <div className="imgWrapper">
+                            <div className="img">
+                              <img src="https://i.pinimg.com/1200x/d5/f1/fc/d5f1fcea65a20b5b13960e080e70f7fa.jpg" className="w-100"/>
+                            </div>
+                          </div>
+                          <div className="info pl-0">
+                            <h6>Tops and skirt set for Female...</h6>
+                        <p>Women's exclusive summer Tops and skirt set for Female
+                          Tops and skirt set
+                        </p>
+                          </div>
+                        </div>
+                        </td>
+                      <td>Womans</td>
+                      <td>richman</td>
+                      <td>
+                       <div style={{width:'70px'}}>
+                         <del className="old">₹299</del>
+                         <span className="new text-danger">₹299</span>
+                       </div>
+                        </td>
+                      <td>30</td>
+                      <td>4.9(16)</td>
+                      <td>380</td>
+                      <td>₹38k</td>
+                      <td>
+                        <div className="actions d-flex align-items-center">
+                          <Button className="secondary" color="secondary"><FaEye /></Button>
+                            <Button className="success" color="success"><FaPencilAlt /></Button>
+                              <Button className="error" color="error"><MdDelete /></Button>
+                        </div>
+                      </td>
+
+
+
+                    </tr>
+
+                    <tr>
+                      <td>#1</td>
+                      <td>
+                        <div className="d-flex align-items-center productBox">
+                          <div className="imgWrapper">
+                            <div className="img">
+                              <img src="https://i.pinimg.com/1200x/d5/f1/fc/d5f1fcea65a20b5b13960e080e70f7fa.jpg" className="w-100"/>
+                            </div>
+                          </div>
+                          <div className="info pl-0">
+                            <h6>Tops and skirt set for Female...</h6>
+                        <p>Women's exclusive summer Tops and skirt set for Female
+                          Tops and skirt set
+                        </p>
+                          </div>
+                        </div>
+                        </td>
+                      <td>Womans</td>
+                      <td>richman</td>
+                      <td>
+                       <div style={{width:'70px'}}>
+                         <del className="old">₹299</del>
+                         <span className="new text-danger">₹299</span>
+                       </div>
+                        </td>
+                      <td>30</td>
+                      <td>4.9(16)</td>
+                      <td>380</td>
+                      <td>₹38k</td>
+                      <td>
+                        <div className="actions d-flex align-items-center">
+                          <Button className="secondary" color="secondary"><FaEye /></Button>
+                            <Button className="success" color="success"><FaPencilAlt /></Button>
+                              <Button className="error" color="error"><MdDelete /></Button>
+                        </div>
+                      </td>
+
+
+
+                    </tr>
+
+                    <tr>
+                      <td>#1</td>
+                      <td>
+                        <div className="d-flex align-items-center productBox">
+                          <div className="imgWrapper">
+                            <div className="img">
+                              <img src="https://i.pinimg.com/1200x/d5/f1/fc/d5f1fcea65a20b5b13960e080e70f7fa.jpg" className="w-100"/>
+                            </div>
+                          </div>
+                          <div className="info pl-0">
+                            <h6>Tops and skirt set for Female...</h6>
+                        <p>Women's exclusive summer Tops and skirt set for Female
+                          Tops and skirt set
+                        </p>
+                          </div>
+                        </div>
+                        </td>
+                      <td>Womans</td>
+                      <td>richman</td>
+                      <td>
+                       <div style={{width:'70px'}}>
+                         <del className="old">₹299</del>
+                         <span className="new text-danger">₹299</span>
+                       </div>
+                        </td>
+                      <td>30</td>
+                      <td>4.9(16)</td>
+                      <td>380</td>
+                      <td>₹38k</td>
+                      <td>
+                        <div className="actions d-flex align-items-center">
+                          <Button className="secondary" color="secondary"><FaEye /></Button>
+                            <Button className="success" color="success"><FaPencilAlt /></Button>
+                              <Button className="error" color="error"><MdDelete /></Button>
+                        </div>
+                      </td>
+
+
+
+                    </tr>
+
                   </tbody>
                 </table>
+   <div className="d-flex tableFooter">
+    <Pagination count={10} color="primary" className="pagination" 
+     showFirstButton showLastButton/>
+   </div>
+
               </div>
 
 
