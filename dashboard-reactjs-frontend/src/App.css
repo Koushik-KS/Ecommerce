@@ -2,7 +2,7 @@
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
 
-body { font-family: "Open Sans", sans-serif !important; background: #ebe9e9; }
+body { font-family: "Open Sans", sans-serif !important; background: #ebe9e9;overflow-x: hidden; }
 
 ::-webkit-scrollbar{width: 5px !important;height: 5px !important;}
 ::-webkit-scrollbar-thumb{background:#0858f7 !important ;}
@@ -108,9 +108,14 @@ left: auto !important;top: 70px !important;}
 
 .dropdown_list .scroll{max-height: 300px;overflow-y: scroll;}
 
-.main .sidebarWrapper{width: 20%;flex: 0 0 20%;transition: all 0.3s ease-in-out;}
+.main .sidebarWrapper{width: 20%;flex: 0 0 20%;transition: all 0.3s ;}
+.main .sidebarWrapper.toggle{width: 0%;flex: 0 0 0%;}
+
 .main .sidebarWrapper .sidebar{width: 20%;height: 100vh;max-height:calc(100% - 70px);position: fixed;top: 70px;left: 0px;
-background: #fff;overflow-y:scroll;overflow-x:hidden; padding-bottom: 40px;}
+background: #fff;overflow-y:scroll;overflow-x:hidden; padding-bottom: 40px;
+transition: all 0.3s ;}
+
+.main .sidebarWrapper.toggle .sidebar{left: -100%;}
 
 .main .sidebarWrapper .sidebar::-webkit-scrollbar{width: 3px !important;}
 .main .sidebarWrapper .sidebar::-webkit-scrollbar-thumb{background: transparent !important;}
@@ -175,9 +180,10 @@ border-radius: 100%;position: absolute;top: 20px;left:10px;opacity:  0.5;}
 
 .logoutWrapper .logoutBox button svg{margin-right: 5px;font-size: 18px !important;}
 
-.main .content{width: 80%;flex: 0 0 80%;}
+.main .content{width: 80%;flex: 0 0 80%;transition: all 0.3s ;}
+.main .content.toggle{width: 100%;flex: 0 0 100%;}
 
-.right-content{padding: 90px 30px;}
+.right-content{padding: 90px 30px;padding-bottom: 10px;}
 
 
 

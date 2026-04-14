@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import { Link } from "react-router-dom";
 
 import logo from '../../assets/images/logo.jpg';
@@ -8,6 +8,7 @@ import SearchBox from "../SearchBox";
 import { CiLight } from "react-icons/ci";
 import { IoIosCart } from "react-icons/io";
 import { MdOutlineMailOutline } from "react-icons/md";
+import { IoMenu } from "react-icons/io5";
 import { FaRegBell } from "react-icons/fa";
 
 import Menu from '@mui/material/Menu';
@@ -19,6 +20,7 @@ import PersonAdd from '@mui/icons-material/PersonAdd';
 import Logout from '@mui/icons-material/Logout';
 import { BsShieldFillExclamation } from "react-icons/bs";
 import Divider from '@mui/material/Divider';
+import { MyContext } from '../../App';
 
 
 const Header = () => {
@@ -27,6 +29,8 @@ const Header = () => {
   const [isOpenNotificationDrop, setIsOpenNotificationDrop] = useState(false);
   const openMyAcc= Boolean(anchorEl);
    const openNotifications= Boolean(isOpenNotificationDrop);
+
+   const context=useContext(MyContext)
 
   const handleOpenMyAccDrop = (event) => {
     setAnchorEl(event.currentTarget);
@@ -59,9 +63,15 @@ const Header = () => {
 
           {/* Menu + Search */}
           <div className="col-sm-4 d-flex align-items-center part2" style={{ gap: "8px" }}>
-            <Button className="rounded-circle">
-              <MdMenuOpen />
-            </Button>
+            <Button className="rounded-circle" onClick={()=>context.
+              setIsToggleSidebar(!context.isToggleSidebar)}>
+              {
+                context.isToggleSidebar===false ? <MdMenuOpen /> :
+                <IoMenu />
+
+              }
+              
+               </Button>
             <SearchBox />
           </div>
 
