@@ -241,6 +241,8 @@ width: 40px !important;height: 40px !important;border-radius: 50% !important;}
 .card {margin:20px 0px;border-radius: 10px;}
 .card .hd{font-size: 18px;font-weight: bold;color: #403e57;}
 
+ .cardFilters .col-md-3 h4{font-size: 14px;font-weight: 800;text-transform: capitalize;color: #403e57;}
+
 
 
 
