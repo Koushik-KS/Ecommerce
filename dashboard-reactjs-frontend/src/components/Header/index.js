@@ -62,7 +62,7 @@ const Header = () => {
           </div>
 
           {/* Menu + Search */}
-          <div className="col-sm-4 d-flex align-items-center part2" style={{ gap: "8px" }}>
+          <div className="col-sm-4 d-flex align-items-center part2" >
             <Button className="rounded-circle" onClick={()=>context.
               setIsToggleSidebar(!context.isToggleSidebar)}>
               {
