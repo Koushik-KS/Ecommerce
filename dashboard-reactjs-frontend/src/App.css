@@ -47,6 +47,7 @@ header button.rounded-circle svg {
 
 header button.rounded-circle:hover svg {color: #0858f7 !important;}
 
+header .part2{padding-left: 50px;}
 
 .searchBox {
     width: 400px;
