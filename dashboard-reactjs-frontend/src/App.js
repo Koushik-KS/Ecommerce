@@ -33,6 +33,7 @@ const values={
       <Routes>
     <Route path="/" exact={true} element={<Dashboard/>} />
     <Route path="/dashboard" exact={true} element={<Dashboard/>} />
+     <Route path="/login" exact={true} element={<Dashboard/>} />
 
    </Routes>
 
