@@ -16,6 +16,8 @@ text-transform: capitalize !important;border-radius: 5px !important;}
 
 .btn-round{border-radius: 30px !important;}
 
+.full{max-width: 100% !important;flex: 0 0 100% !important;width: 100% !important;}
+
 header {
     width: 100%;
     height: 70px;
