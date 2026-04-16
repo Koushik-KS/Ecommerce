@@ -308,9 +308,11 @@ top: 0px;left: 0px;z-index: 100;pointer-events: none;}
 .loginSection .loginBox .wrapper{width: 100%;height: 300px;background: #f0f0f0;
 position: relative;z-index: 100;}
 
+.loginSection .loginBox .wrapper .form-control{background: #fff !important;
+box-shadow: none !important;outline: none !important;border-radius: 5px !important;
+font-weight: 600;font-size: 14px;height: 45px ;padding-left:40px ;}
 
-
-
+.loginSection .loginBox .wrapper .form-control:focus{border: 1px solid #0858f7 !important;}
 
 
 
