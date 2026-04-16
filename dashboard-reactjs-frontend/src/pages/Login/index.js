@@ -5,10 +5,15 @@ import pattern from '../../assets/images/pattern.jpg'
 import { MyContext } from '../../App';
 import { MdOutlineMail } from "react-icons/md";
 import { RiLockPasswordFill } from "react-icons/ri";
+import { TiEye } from "react-icons/ti";
+import { IoEyeOffSharp } from "react-icons/io5";
 
+import Button from '@mui/material/Button';
+import { Link } from 'react-router-dom';
 const Login=()=>{
 
   const [inputIndex, setInputIndex]=useState(null);
+  const [isShowPassword, setisShowPassword]=useState(false);
 
     const context =useContext(MyContext)
 
@@ -40,12 +45,30 @@ const Login=()=>{
        
       </div>
 
-       <div className={`form-group mb-3 position-relative ${inputIndex===0 && 'focus'}`}>
+       <div className={`form-group mb-3 position-relative ${inputIndex===1 && 'focus'}`}>
         <span className='icon'><RiLockPasswordFill /> </span>
-        <input type='password' className='form-control' 
-        placeholder= 'Enter your password' onFocus={()=>focusInput(1)} onBlur={()=>setInputIndex(null)}/>
+        <input type={`${ isShowPassword===true ? 'text' : 'password'}`} 
+        className='form-control' 
+        placeholder= 'Enter your password' onFocus={()=>focusInput(1)} onBlur={() =>setInputIndex(null)}/>
        
+       <span className='toggleShowPassword' onClick={()=>setisShowPassword(!isShowPassword)}>
+        {
+          isShowPassword===true ? <IoEyeOffSharp /> :  <TiEye />
+        }
+       
+
+       </span>
       </div>
+
+      <div className='form-group'>
+        <Button className="btn-blue btn-lg w-100 btn-big">Sign In</Button>
+      </div>
+
+      <div className='form-group'>
+        <Link to={'/forget-password'} className='link'>FORGET PASSWORD</Link>
+      </div>
+
+
       </form>
 
     </div>
