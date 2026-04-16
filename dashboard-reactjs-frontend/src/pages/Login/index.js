@@ -22,6 +22,13 @@ const Login=()=>{
       <img src={logo} width="90" alt="Logo" />
       <h5 className="fw-bold">Login to Admin</h5>
     </div>
+
+    <div className='wrapper'>
+      
+    </div>
+
+
+
   </div>
 </section>
        </>
