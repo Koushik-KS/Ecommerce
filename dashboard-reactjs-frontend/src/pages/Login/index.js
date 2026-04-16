@@ -23,8 +23,11 @@ const Login=()=>{
       <h5 className="fw-bold">Login to Admin</h5>
     </div>
 
-    <div className='wrapper'>
-      
+    <div className='wrapper mt-3 card border p-4'>
+      <div className='form-group mb-3'>
+        <input type='text' className='form-control' placeholder='Enter your Email'/>
+      </div>
+
     </div>
 
 
