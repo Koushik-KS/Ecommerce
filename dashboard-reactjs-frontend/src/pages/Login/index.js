@@ -64,7 +64,7 @@ const Login=()=>{
         <Button className="btn-blue btn-lg w-100 btn-big">Sign In</Button>
       </div>
 
-      <div className='form-group'>
+      <div className='form-group text-center mt-2'>
         <Link to={'/forget-password'} className='link'>FORGET PASSWORD</Link>
       </div>
 
