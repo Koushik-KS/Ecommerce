@@ -309,7 +309,7 @@ table.v-align td .productBox{width: 270px;}
 .loginSection{width: 100%;height: 100vh;padding: 35px 25px;background:#fff;
 position: relative;}
 
-.loginPattern{width: 100%;height: 100%;opacity: 0.4;position:fixed;
+.loginPattern{width: 100%;height: 100%;opacity: 0.2;position:fixed;
 top: 0px;left: 0px;z-index: 100;pointer-events: none;}
 
 
