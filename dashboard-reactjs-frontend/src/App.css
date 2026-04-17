@@ -26,6 +26,7 @@ text-transform: capitalize !important;border-radius: 8px !important;}
 
 .link{color: #5e5d72;font-weight: 600;}
 .link:hover{color: #0858f7 !important;text-decoration: none;}
+.link.color{color: #0858f7 !important; text-decoration: none;}
 
 header {
     width: 100%;
@@ -312,10 +313,12 @@ position: relative;}
 top: 0px;left: 0px;z-index: 100;pointer-events: none;}
 
 
-.loginSection .loginBox{width: 400px;height: auto;;margin: auto;}
+.loginSection .loginBox{width: 350px;height: auto;;margin: auto;}
 
-.loginSection .loginBox .wrapper{width: 100%;height: 300px;background: #f0f0f0;
+.loginSection .loginBox .wrapper{width: 100%;height: auto;background: #f0f0f0;
 position: relative;z-index: 100;padding: 35px;}
+
+.loginSection .loginBox .wrapper .form-group{margin-bottom: 18px;}
 
 .loginSection .loginBox .wrapper .form-control{background: #fff !important;
 box-shadow: none !important;outline: none !important;border-radius: 8px !important;
@@ -331,15 +334,18 @@ left: 10px;z-index: 100;font-size: 23px;}
 .loginSection .loginBox .wrapper .form-group .icon svg{color: #5e5d72;}
 
 .toggleShowPassword{position: absolute;top: 10px;right: 8px;cursor: pointer;}
-.toggleShowPassword svg{font-size: 22px;}
+.toggleShowPassword svg{font-size: 22px;color: #5e5d72;}
 
 .loginSection .loginBox .wrapper .link{font-size: 14px; }
 
+.loginSection .loginBox .wrapper .or span.line{display: block;width: 35%;height: 1px;
+background: rgba(0,0,0,0.2);}
 
+.loginSection .loginBox .wrapper .or span.txt{display: flex;align-items: center;justify-content: center;
+font-size: 16px;font-weight: 600;width: 40px;height: 40px;border:1px solid rgba(0,0,0,0.2);
+border-radius: 50%;}
 
-
-
-
+.loginWithGoogle{text-transform: capitalize !important;font-weight: bold !important;}
 
 
 

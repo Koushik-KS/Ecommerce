@@ -10,6 +10,7 @@ import { IoEyeOffSharp } from "react-icons/io5";
 
 import Button from '@mui/material/Button';
 import { Link } from 'react-router-dom';
+import gooleIcon from '../../assets/images/googleIcon.png'
 const Login=()=>{
 
   const [inputIndex, setInputIndex]=useState(null);
@@ -38,14 +39,14 @@ const Login=()=>{
 
     <div className='wrapper mt-3 card border '>
       <form>
-      <div className={`form-group mb-3 position-relative ${inputIndex===0 && 'focus'}`}>
+      <div className={`form-group  position-relative ${inputIndex===0 && 'focus'}`}>
         <span className='icon'><MdOutlineMail /> </span>
         <input type='text' className='form-control' 
         placeholder= 'Enter your Email' onFocus={()=>focusInput(0)} onBlur={()=>setInputIndex(null)}/>
        
       </div>
 
-       <div className={`form-group mb-3 position-relative ${inputIndex===1 && 'focus'}`}>
+       <div className={`form-group  position-relative ${inputIndex===1 && 'focus'}`}>
         <span className='icon'><RiLockPasswordFill /> </span>
         <input type={`${ isShowPassword===true ? 'text' : 'password'}`} 
         className='form-control' 
@@ -64,14 +65,33 @@ const Login=()=>{
         <Button className="btn-blue btn-lg w-100 btn-big">Sign In</Button>
       </div>
 
-      <div className='form-group text-center mt-2'>
+      <div className='form-group text-center mb-0'>
         <Link to={'/forget-password'} className='link'>FORGET PASSWORD</Link>
       </div>
+      <div className='d-flex align-items-center justify-content-center or mt-3 mb-3'>
+        <span className='line'></span>
+         <span className='txt'>or</span>
+          <span className='line'></span>
+      </div>
+
+      <Button variant="outlined"  className='w-100
+      btn-lg btn-big loginWithGoogle' >
+        <img src={gooleIcon} width="25px"/> &nbsp;
+  Sign In with Google
+</Button>
 
 
-      </form>
+      </form> 
 
     </div>
+
+    <div  className='wrapper mt-3 card border footer p-3'>
+      <span className='text-center'>
+        Don't have an account?
+        <Link to={'/signUp'} className='link color ml-2'> Register</Link>
+      </span>
+      </div>
+    
 
 
 
