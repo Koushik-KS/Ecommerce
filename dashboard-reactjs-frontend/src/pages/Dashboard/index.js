@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import DashboardBox from "./components/dashboardBox";
 import { FaRegUser } from "react-icons/fa";
 import { FaShoppingCart } from "react-icons/fa";
@@ -20,6 +20,7 @@ import { FaEye } from "react-icons/fa";
 import { FaPencilAlt } from "react-icons/fa";
 import { MdDelete } from "react-icons/md";
 import Pagination from '@mui/material/Pagination';
+import { MyContext } from "../../App";
 
 
 export const data=[
@@ -42,6 +43,13 @@ const Dashboard=()=>{
       const open = Boolean(anchorEl);
     
       const ITEM_HEIGHT = 48;
+
+      const context =useContext(MyContext);
+
+      useEffect(()=>{
+        context.setisHideSidebarAndHeader(false);
+
+      },[]);
     
       const handleClick = (event) => {
         setAnchorEl(event.currentTarget);

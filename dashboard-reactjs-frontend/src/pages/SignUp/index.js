@@ -8,7 +8,7 @@ import { TiEye } from "react-icons/ti";
 import { IoEyeOffSharp } from "react-icons/io5";
 import { FaUserCircle } from "react-icons/fa";
 import { IoShieldCheckmark } from "react-icons/io5";
-
+import { AiFillHome } from "react-icons/ai";
 
 
 import Button from '@mui/material/Button';
@@ -43,12 +43,17 @@ const SignUp=()=>{
         <section className="loginSection signUpSection">
 
             <div className='row'>
-            <div className='col-md-8 d-flex align-items-center flex-column part1'>
-                <h1>Welcome! Let’s Get You Started</h1>
+            <div className='col-md-8 d-flex align-items-center flex-column part1
+            justify-content-center'>
+                <h1> Welcome! Let’s Get You Started</h1>
                 <p>Create your account to start managing your online store, products, and customer orders in one place. 
                     Build your store, manage your products, and track your sales effortlessly with our platform. 
                     Everything you need to run your online store is just one account away.</p>
-
+                    
+                   <div className='w-100 mt-4'>
+                  <Link to={'/'}>   <Button className='btn-blue btn-lg btn-big'><AiFillHome />
+                     Go To Home</Button></Link>
+                   </div>
             </div>
            
 
