@@ -19,7 +19,14 @@ function App() {
   const [isToggleSidebar, setIsToggleSidebar]=useState(false);
   const [isLogin, setIsLogin]= useState(false);
   const [isHideSidebarAndHeader, setisHideSidebarAndHeader]= useState(false);
+  const [themeMode, setThememode]= useState('light');
 
+useEffect(()=>{
+    document.body.classList.remove('light');
+    document.body.classList.remove('dark');
+  document.body.classList.add(themeMode);
+  localStorage.setItem('themeMode',themeMode);
+},[themeMode]);
 
   
 
@@ -29,7 +36,9 @@ const values={
   isLogin,
    setIsLogin,
    isHideSidebarAndHeader, 
-   setisHideSidebarAndHeader
+   setisHideSidebarAndHeader,
+   themeMode,
+   setThememode
 }
 
   return (
