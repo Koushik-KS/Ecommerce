@@ -36,10 +36,11 @@ header {
     background: rgba(255,255,255,0.9);
    position: fixed;
    top: 0px;left: 0px;z-index: 1000; -webkit-backdrop-filter: blur(5px);
-   backdrop-filter: blur(5px);
+   backdrop-filter: blur(5px);}
 
-   
-}
+ body.dark header{background: #112143 !important;}  
+
+
 
 header .logo { text-decoration: none; }
 header .logo img { width: 95px; }
@@ -65,6 +66,9 @@ header button.rounded-circle svg {
 
 header button.rounded-circle:hover svg {color: #0858f7 !important;}
 
+body.dark  header button.rounded-circle{background: #122755 !important;}
+body.dark  header button.rounded-circle svg{color: #fff !important;}
+
 header .part2{padding-left: 50px;}
 
 .searchBox {
@@ -75,6 +79,7 @@ header .part2{padding-left: 50px;}
     padding: 3px 15px;
     gap: 8px;
 }
+body.dark .searchBox{background: #12254e !important;}
 
 .searchBox input {
     background: transparent;
@@ -85,7 +90,12 @@ header .part2{padding-left: 50px;}
     width: 100%;
 }
 
+
 .searchBox input::-webkit-input-placeholder { color: rgba(0,0,0,0.6); }
+
+body.dark .searchBox input,body.dark .searchBox input::-webkit-input-placeholder{color: #fff;}
+
+.searchBox svg{color:rgba(255,255,255,0.7);}
 
 .searchBox svg { font-size: 18px; color: #292929; flex-shrink: 0; }
 

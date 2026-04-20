@@ -19,13 +19,20 @@ function App() {
   const [isToggleSidebar, setIsToggleSidebar]=useState(false);
   const [isLogin, setIsLogin]= useState(false);
   const [isHideSidebarAndHeader, setisHideSidebarAndHeader]= useState(false);
-  const [themeMode, setThemeMode]= useState('light');
+  const [themeMode, setThemeMode]= useState(true);
 
 useEffect(()=>{
-    document.body.classList.remove('light');
-    document.body.classList.remove('dark');
-  document.body.classList.add(themeMode);
-  localStorage.setItem('themeMode',themeMode);
+   if(themeMode===true){
+     document.body.classList.remove('dark');
+  document.body.classList.add('light');
+  localStorage.setItem('themeMode',"light");
+}
+else{
+   document.body.classList.remove('light');
+  document.body.classList.add('dark');
+  localStorage.setItem('themeMode','dark');
+}
+   
 },[themeMode]);
 
   
