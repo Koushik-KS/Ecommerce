@@ -19,7 +19,7 @@ function App() {
   const [isToggleSidebar, setIsToggleSidebar]=useState(false);
   const [isLogin, setIsLogin]= useState(false);
   const [isHideSidebarAndHeader, setisHideSidebarAndHeader]= useState(false);
-  const [themeMode, setThememode]= useState('light');
+  const [themeMode, setThemeMode]= useState('light');
 
 useEffect(()=>{
     document.body.classList.remove('light');
@@ -38,7 +38,7 @@ const values={
    isHideSidebarAndHeader, 
    setisHideSidebarAndHeader,
    themeMode,
-   setThememode
+   setThemeMode
 }
 
   return (

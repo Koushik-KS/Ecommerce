@@ -79,7 +79,7 @@ const Header = () => {
           {/* Right Section */}
           <div className="col-sm-6 d-flex align-items-center justify-content-end part3" style={{ gap: "8px" }}>
             
-            <Button className="rounded-circle">
+            <Button className="rounded-circle"onClick={()=>context.setThemeMode(!context.themeMode)}>
               <CiLight />
             </Button>
 
