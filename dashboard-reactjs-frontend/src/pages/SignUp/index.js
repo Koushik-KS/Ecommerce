@@ -45,7 +45,7 @@ const SignUp=()=>{
             <div className='row'>
             <div className='col-md-8 d-flex align-items-center flex-column part1
             justify-content-center'>
-                <h1> Welcome! Let’s Get You Started</h1>
+                <h1>  Welcome! Let’s Get You Started <span className='text-sky'>Ecommerce Dashboard</span></h1>
                 <p>Create your account to start managing your online store, products, and customer orders in one place. 
                     Build your store, manage your products, and track your sales effortlessly with our platform. 
                     Everything you need to run your online store is just one account away.</p>
@@ -70,7 +70,7 @@ const SignUp=()=>{
          <div className={`form-group  position-relative ${inputIndex===0 && 'focus'}`}>
         <span className='icon'><FaUserCircle /> </span>
         <input type='text' className='form-control' 
-        placeholder= 'Enter your name' onFocus={()=>focusInput(0)} onBlur={()=>setInputIndex(null)}/>
+        placeholder= 'Enter your name' onFocus={()=>focusInput(0)} onBlur={()=>setInputIndex(null)} autoFocus/>
        
       </div>
 
