@@ -31,6 +31,8 @@ const SignUp=()=>{
     useEffect(()=>{
         context.setisHideSidebarAndHeader(true);
 
+         window.scrollTo(0,0);
+
     },[]);
 
     const focusInput=(index)=>{
