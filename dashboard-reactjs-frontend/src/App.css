@@ -3,6 +3,7 @@
 * { margin: 0; padding: 0; box-sizing: border-box; }
 
 body { font-family: "Open Sans", sans-serif !important; background: #ebe9e9;overflow-x: hidden; }
+body.dark {background: #071739 !important;}
 
 ::-webkit-scrollbar{width: 5px !important;height: 5px !important;}
 ::-webkit-scrollbar-thumb{background:#0858f7 !important ;}
@@ -169,24 +170,27 @@ body.dark .main .sidebarWrapper .sidebar{background: #112143 !important;}
 .main .sidebarWrapper .sidebar ul li button{color:#5e5d72;text-align: left;   
 justify-content: left;border-radius: 10px !important;padding: 12px 10px !important;
 align-items: center;text-transform: capitalize !important;
-
-body.dark .main .sidebarWrapper .sidebar ul li button{color:rgba(255,255,255,0.8) !important;}
 font-weight: 600  !important;font-family: "Open Sans", sans-serif !important; font-size: 15px !important;}
 
+body.dark .main .sidebarWrapper .sidebar ul li button {color:rgba(255,255,255,0.8) !important;}
 .main .sidebarWrapper .sidebar ul li button .icon{display: flex; align-items: center;justify-content: center;
 width: 25px;height: 25px;margin-right: 10px;}
 .main .sidebarWrapper .sidebar ul li button .icon svg{font-size: 22px;}
 
 .main .sidebarWrapper .sidebar ul li button *{color: #5e5d72 !important;}
 
+body.dark .main .sidebarWrapper .sidebar ul li button *{color:rgba(255,255,255,0.8) !important}
+
+
 .main .sidebarWrapper .sidebar ul li button .arrow{margin-left: auto;display: flex; align-items: center;justify-content: center;
 width: 25px;height: 25px;transition: all 0.3s ease-in-out;}
 
 .main .sidebarWrapper .sidebar ul li button:hover{background: #f1f1f1 !important;}
-body.dark .main .sidebarWrapper .sidebar ul li button:hover{background:rgba(255,255,255,0.1) !important; ;}
+body.dark .main .sidebarWrapper .sidebar ul li button:hover{background:rgba(255,255,255,0.1) !important ;}
 
 .main .sidebarWrapper .sidebar ul li button.active{background: #f1f1f1 !important;color: #0858f7;}
-body.dark .main .sidebarWrapper .sidebar ul li button.active{background:rgba(255,255,255,0.1) !important; ;}
+body.dark .main .sidebarWrapper .sidebar ul li button.active{background:rgba(255,255,255,0.1) !important ;}
+
 
 
 .main .sidebarWrapper .sidebar ul li button.active .icon svg{color: #081e49 !important;}
@@ -208,6 +212,7 @@ display: block;padding: 6px 0px;font-size: 14px;font-weight: 500;transition: all
 
 body.dark .main .sidebarWrapper .sidebar ul .submenu li a {color:rgba(255,255,255,0.7) !important;}
 .main .sidebarWrapper .sidebar ul .submenu li a:hover{color: #0858f7 !important;}
+body.dark .main .sidebarWrapper .sidebar ul .submenu li a:hover{color: #0858f7 !important;}
 
 .main .sidebarWrapper .sidebar ul .submenuWrapper{transition: all 0.4s;height: 0px;overflow: hidden;}
 
@@ -221,6 +226,9 @@ body.dark .main .sidebarWrapper .sidebar ul .submenu li a {color:rgba(255,255,25
 .logoutWrapper{padding:0px 25px;}
 .logoutWrapper .logoutBox{width: 100%;height: 130px;padding: 25px;background: #bcd2fd;border-radius: 10px;
 display: flex;align-items: center;justify-content: center;position: relative;overflow: hidden;}
+
+body.dark .logoutWrapper .logoutBox{background: transparent;background-image: linear-gradient(#183e8c,#163474);}
+
 
 .logoutWrapper .logoutBox::before{content: '';width: 70px;height: 70px;background: #0858f7;
 border-radius: 100%;position: absolute;top: -20px;right: -20px;opacity: 0.5;}
@@ -301,9 +309,15 @@ width: 40px !important;height: 40px !important;border-radius: 50% !important;}
 .card {margin:20px 0px;border-radius: 10px;}
 .card .hd{font-size: 18px;font-weight: bold;color: #403e57;}
 
+body.dark .card {background: #112143 !important;}
+body.dark  .card .hd {font-size: 18px;font-weight: bold;color: rgba(255,255,255,0.8);}
+body.dark  .cardFilters .col-md-3 h4{color:rgba(255,255,255,0.8) ;}
+
  .cardFilters .col-md-3 h4{font-size: 13px;font-weight: 800;text-transform: capitalize;color: #403e57;}
 
 h1,h2,h3,h4,h5,h6,p{color: #403e57;}
+
+
 .table .thead-dark::-webkit-scrollbar-thumb{background: #fff !important;}
 
  .table .thead-dark th{background-color: #1866ee !important;color: #fff;
