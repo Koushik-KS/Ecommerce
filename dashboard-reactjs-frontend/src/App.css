@@ -309,15 +309,32 @@ width: 40px !important;height: 40px !important;border-radius: 50% !important;}
 .card {margin:20px 0px;border-radius: 10px;}
 .card .hd{font-size: 18px;font-weight: bold;color: #403e57;}
 
-body.dark .card {background: #112143 !important;}
+
+
+body.dark .card  {background: #112143 !important;}
+
 body.dark  .card .hd {font-size: 18px;font-weight: bold;color: rgba(255,255,255,0.8);}
 body.dark  .cardFilters .col-md-3 h4{color:rgba(255,255,255,0.8) ;}
 
  .cardFilters .col-md-3 h4{font-size: 13px;font-weight: 800;text-transform: capitalize;color: #403e57;}
 
 h1,h2,h3,h4,h5,h6,p{color: #403e57;}
+body.dark .css-sc8y68-MuiInputBase-root-MuiOutlinedInput-root-MuiSelect-root,
+body.dark h1,
+body.dark h2,
+body.dark h3,
+body.dark h4,
+body.dark h5,
+body.dark h6,
+body.dark p,
+body.dark .css-1rfqz7c-MuiSvgIcon-root-MuiNativeSelect-root-MuiSelect-icon
+{color: rgba(255,255,255,0.8) !important;}
+
+body.dark body.dark .css-18p5xg2-MuiNotchedOutlined-root-MuiOutlinedInput-notchedOutline{border-color: rgba(255,255,255,0.3) !important;}
 
 
+
+body.dark .table {--bs-table-bg: #112143 !important;}
 .table .thead-dark::-webkit-scrollbar-thumb{background: #fff !important;}
 
  .table .thead-dark th{background-color: #1866ee !important;color: #fff;
@@ -354,6 +371,14 @@ table.v-align td .productBox{width: 270px;}
 .tableFooter .pagination{margin-left: auto;}
 
 .tableFooter p{font-size: 14px;font-weight: 500;margin-bottom: 0px;}
+
+body.dark table td{color: rgba(255,255,255,0.5) !important;}
+body.dark .table-bordered td, .table-bordered th {border: 1px solid rgba(255,255,255,0.1) !important;}
+
+.css-1bug3cd-MuiButtonBase-root-MuiPaginationItem-root:hover{background: #0858f7 !important;color: #fff !important;}
+body.dark .css-1bug3cd-MuiButtonBase-root-MuiPaginationItem-root {color:rgba(255,255,255,0.8) !important;}
+
+
 
 .loginSection{width: 100%;height: 100vh;padding: 35px 25px;background:#fff;
 position: relative;}
