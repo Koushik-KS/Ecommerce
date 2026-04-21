@@ -45,6 +45,7 @@ header {
 header .logo { text-decoration: none; }
 header .logo img { width: 95px; }
 header .logo span { color: #1a1a1a; font-weight: 800; font-size: 24px; }
+body.dark header .logo span{color: #fff !important;opacity: 0.9;}
 
 header button.rounded-circle {
     min-width: 40px !important;
@@ -95,9 +96,9 @@ body.dark .searchBox{background: #12254e !important;}
 
 body.dark .searchBox input,body.dark .searchBox input::-webkit-input-placeholder{color: #fff;}
 
-.searchBox svg{color:rgba(255,255,255,0.7);}
+body.dark .searchBox svg{color:rgba(255,255,255,0.7);}
 
-.searchBox svg { font-size: 18px; color: #292929; flex-shrink: 0; }
+.searchBox svg { font-size: 18px; color: #1c1b1b; flex-shrink: 0; }
 
 .myAcc{text-align: left !important;color: #000 !important;text-transform: capitalize !important;}
  .userImg{display: flex;align-items: center;justify-content: center;overflow: hidden;
@@ -113,6 +114,11 @@ width:100% ;height: 100%;cursor: pointer;position: relative;}
 .myAcc .userInfo h4{font-size: 15px;font-weight: 600;margin-bottom: 0px;}
 .myAcc .userInfo p{margin-top: 0px;font-size: 12px;color: #000;opacity: 0.7;}
 
+body.dark .myAcc .userInfo *{color:rgba(255,255,255,0.8) !important;}
+body.dark .MuiPaper-elevation{background-color:#12254e !important ;}
+body.dark .MuiPaper-elevation *,body.dark .MuiPaper-elevation li *{color:rgba(255,255,255,0.8) !important;}
+
+
 #account-menu li{font-size: 14px !important;padding: 12px 15px !important;}
 #account-menu li svg{font-size: 20px !important;}
 
@@ -122,8 +128,14 @@ left: auto !important;top: 70px !important;}
 
 .dropdown_list .head{padding: 10px 0px;}
 .dropdown_list .head h4{font-size: 17px;font-weight: 600;}
+body.dark .dropdown_list .head h4{color:rgba(255,255,255,0.9) !important;}
 .dropdown_list li.MuiButtonBase-root{background: #ebf6ff !important; 
     color: #000 !important;}
+
+   body.dark .dropdown_list li.MuiButtonBase-root {background-color:#12254e !important ;
+background: #12254e !important;}
+
+
 .dropdown_list li.MuiButtonBase-root:hover{background: #d4e2ed !important; }
 
 
@@ -144,6 +156,8 @@ left: auto !important;top: 70px !important;}
 background: #fff;overflow-y:scroll;overflow-x:hidden; padding-bottom: 40px;
 transition: all 0.3s ;}
 
+body.dark .main .sidebarWrapper .sidebar{background: #112143 !important;}
+
 .main .sidebarWrapper.toggle .sidebar{left: -100%;}
 
 .main .sidebarWrapper .sidebar::-webkit-scrollbar{width: 3px !important;}
@@ -152,9 +166,11 @@ transition: all 0.3s ;}
 
 .main .sidebarWrapper .sidebar ul{margin-bottom: 0px;padding: 10px 15px;}
 .main .sidebarWrapper .sidebar ul li{list-style: none;}
-.main .sidebarWrapper .sidebar ul li button{color:#5e5d72;text-align: left;
+.main .sidebarWrapper .sidebar ul li button{color:#5e5d72;text-align: left;   
 justify-content: left;border-radius: 10px !important;padding: 12px 10px !important;
 align-items: center;text-transform: capitalize !important;
+
+body.dark .main .sidebarWrapper .sidebar ul li button{color:rgba(255,255,255,0.8) !important;}
 font-weight: 600  !important;font-family: "Open Sans", sans-serif !important; font-size: 15px !important;}
 
 .main .sidebarWrapper .sidebar ul li button .icon{display: flex; align-items: center;justify-content: center;
@@ -167,8 +183,12 @@ width: 25px;height: 25px;margin-right: 10px;}
 width: 25px;height: 25px;transition: all 0.3s ease-in-out;}
 
 .main .sidebarWrapper .sidebar ul li button:hover{background: #f1f1f1 !important;}
+body.dark .main .sidebarWrapper .sidebar ul li button:hover{background:rgba(255,255,255,0.1) !important; ;}
 
 .main .sidebarWrapper .sidebar ul li button.active{background: #f1f1f1 !important;color: #0858f7;}
+body.dark .main .sidebarWrapper .sidebar ul li button.active{background:rgba(255,255,255,0.1) !important; ;}
+
+
 .main .sidebarWrapper .sidebar ul li button.active .icon svg{color: #081e49 !important;}
 .main .sidebarWrapper .sidebar ul li button.active .arrow{transform: rotate(90deg);}
 
@@ -178,12 +198,15 @@ height: 0px;}
 .main .sidebarWrapper .sidebar ul .submenu::before{content: '';width: 1px;height: 95%;
 position: absolute;top: 0px; left: 25px;background: rgba(0,0,0.2);}
 
+body.dark .main .sidebarWrapper .sidebar ul .submenu::before{background:rgba(255,255,255,0.2) ;}
+
 .main .sidebarWrapper .sidebar ul .submenu li{width: 100%;list-style: none;
 }
-
+ 
 .main .sidebarWrapper .sidebar ul .submenu li a{color: #5e5d72 !important;text-decoration: none;
 display: block;padding: 6px 0px;font-size: 14px;font-weight: 500;transition: all 0.3s;}
 
+body.dark .main .sidebarWrapper .sidebar ul .submenu li a {color:rgba(255,255,255,0.7) !important;}
 .main .sidebarWrapper .sidebar ul .submenu li a:hover{color: #0858f7 !important;}
 
 .main .sidebarWrapper .sidebar ul .submenuWrapper{transition: all 0.4s;height: 0px;overflow: hidden;}
