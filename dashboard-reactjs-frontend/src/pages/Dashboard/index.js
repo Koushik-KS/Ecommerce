@@ -21,6 +21,7 @@ import { FaPencilAlt } from "react-icons/fa";
 import { MdDelete } from "react-icons/md";
 import Pagination from '@mui/material/Pagination';
 import { MyContext } from "../../App";
+import { Link } from "react-router-dom";
 
 
 export const data=[
@@ -227,7 +228,8 @@ const Dashboard=()=>{
                       <td>₹38k</td>
                       <td>
                         <div className="actions d-flex align-items-center">
-                          <Button className="secondary" color="secondary"><FaEye /></Button>
+                            <Link to="/product/details">
+                          <Button className="secondary" color="secondary"><FaEye /></Button></Link>
                             <Button className="success" color="success"><FaPencilAlt /></Button>
                               <Button className="error" color="error"><MdDelete /></Button>
                         </div>
@@ -267,8 +269,8 @@ const Dashboard=()=>{
                       <td>380</td>
                       <td>₹38k</td>
                       <td>
-                        <div className="actions d-flex align-items-center">
-                          <Button className="secondary" color="secondary"><FaEye /></Button>
+                        <div className="actions d-flex align-items-center"><Link to="/product/details">
+                          <Button className="secondary" color="secondary"><FaEye /></Button></Link>
                             <Button className="success" color="success"><FaPencilAlt /></Button>
                               <Button className="error" color="error"><MdDelete /></Button>
                         </div>
@@ -308,8 +310,8 @@ const Dashboard=()=>{
                       <td>380</td>
                       <td>₹38k</td>
                       <td>
-                        <div className="actions d-flex align-items-center">
-                          <Button className="secondary" color="secondary"><FaEye /></Button>
+                        <div className="actions d-flex align-items-center"><Link to="/product/details">
+                          <Button className="secondary" color="secondary"><FaEye /></Button></Link>
                             <Button className="success" color="success"><FaPencilAlt /></Button>
                               <Button className="error" color="error"><MdDelete /></Button>
                         </div>
@@ -349,8 +351,8 @@ const Dashboard=()=>{
                       <td>380</td>
                       <td>₹38k</td>
                       <td>
-                        <div className="actions d-flex align-items-center">
-                          <Button className="secondary" color="secondary"><FaEye /></Button>
+                        <div className="actions d-flex align-items-center"><Link to="/product/details">
+                          <Button className="secondary" color="secondary"><FaEye /></Button></Link>
                             <Button className="success" color="success"><FaPencilAlt /></Button>
                               <Button className="error" color="error"><MdDelete /></Button>
                         </div>
@@ -390,8 +392,8 @@ const Dashboard=()=>{
                       <td>380</td>
                       <td>₹38k</td>
                       <td>
-                        <div className="actions d-flex align-items-center">
-                          <Button className="secondary" color="secondary"><FaEye /></Button>
+                        <div className="actions d-flex align-items-center"><Link to="/product/details">
+                          <Button className="secondary" color="secondary"><FaEye /></Button></Link>
                             <Button className="success" color="success"><FaPencilAlt /></Button>
                               <Button className="error" color="error"><MdDelete /></Button>
                         </div>
@@ -431,8 +433,8 @@ const Dashboard=()=>{
                       <td>380</td>
                       <td>₹38k</td>
                       <td>
-                        <div className="actions d-flex align-items-center">
-                          <Button className="secondary" color="secondary"><FaEye /></Button>
+                        <div className="actions d-flex align-items-center"><Link to="/product/details">
+                          <Button className="secondary" color="secondary"><FaEye /></Button></Link>
                             <Button className="success" color="success"><FaPencilAlt /></Button>
                               <Button className="error" color="error"><MdDelete /></Button>
                         </div>
@@ -472,8 +474,8 @@ const Dashboard=()=>{
                       <td>380</td>
                       <td>₹38k</td>
                       <td>
-                        <div className="actions d-flex align-items-center">
-                          <Button className="secondary" color="secondary"><FaEye /></Button>
+                        <div className="actions d-flex align-items-center"><Link to="/product/details">
+                          <Button className="secondary" color="secondary"><FaEye /></Button></Link>
                             <Button className="success" color="success"><FaPencilAlt /></Button>
                               <Button className="error" color="error"><MdDelete /></Button>
                         </div>
@@ -513,8 +515,8 @@ const Dashboard=()=>{
                       <td>380</td>
                       <td>₹38k</td>
                       <td>
-                        <div className="actions d-flex align-items-center">
-                          <Button className="secondary" color="secondary"><FaEye /></Button>
+                        <div className="actions d-flex align-items-center"><Link to="/product/details">
+                          <Button className="secondary" color="secondary"><FaEye /></Button></Link>
                             <Button className="success" color="success"><FaPencilAlt /></Button>
                               <Button className="error" color="error"><MdDelete /></Button>
                         </div>
@@ -554,8 +556,8 @@ const Dashboard=()=>{
                       <td>380</td>
                       <td>₹38k</td>
                       <td>
-                        <div className="actions d-flex align-items-center">
-                          <Button className="secondary" color="secondary"><FaEye /></Button>
+                        <div className="actions d-flex align-items-center"><Link to="/product/details">
+                          <Button className="secondary" color="secondary"><FaEye /></Button></Link>
                             <Button className="success" color="success"><FaPencilAlt /></Button>
                               <Button className="error" color="error"><MdDelete /></Button>
                         </div>
@@ -595,8 +597,8 @@ const Dashboard=()=>{
                       <td>380</td>
                       <td>₹38k</td>
                       <td>
-                        <div className="actions d-flex align-items-center">
-                          <Button className="secondary" color="secondary"><FaEye /></Button>
+                        <div className="actions d-flex align-items-center"><Link to="/product/details">
+                          <Button className="secondary" color="secondary"><FaEye /></Button></Link>
                             <Button className="success" color="success"><FaPencilAlt /></Button>
                               <Button className="error" color="error"><MdDelete /></Button>
                         </div>
