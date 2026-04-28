@@ -9,6 +9,8 @@ import Sidebar from './components/Sidebar';
 import { createContext, useEffect, useState } from 'react';
 import Login from './pages/Login';
 import SignUp from './pages/SignUp';
+import ProductDetails from './pages/ProductDetails';
+
 
 
 
@@ -73,6 +75,11 @@ const values={
    
      <Route path="/login" exact={true} element={<Login/>} />
       <Route path="/signUp" exact={true} element={<SignUp/>} />
+      
+      <Route path="/product/details" exact={true} element={<ProductDetails/>} />
+      
+
+
 
 
 
