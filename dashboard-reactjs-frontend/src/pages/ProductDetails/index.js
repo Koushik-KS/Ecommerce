@@ -2,9 +2,8 @@ import { emphasize, styled } from '@mui/material/styles';
 import Breadcrumbs from '@mui/material/Breadcrumbs';
 import Chip from '@mui/material/Chip';
 import HomeIcon from '@mui/icons-material/Home';
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 
-// breadcrumb code
+// breadcrumb style
 const StyledBreadcrumb = styled(Chip)(({ theme }) => {
   const backgroundColor =
     theme.palette.mode === 'light'
@@ -30,12 +29,16 @@ const StyledBreadcrumb = styled(Chip)(({ theme }) => {
 
 const ProductDetails = () => {
   return (
-    <>
-      <div className="right-content w-100">
-        <div className="card shadow border-0 w-100 flex-row ">
-          <h5 className="mb-0">Product View</h5>
+    <div className="right-content">
 
-          <Breadcrumbs aria-label="breadcrumb" className="ml-auto breadcrumbs_">
+      <div className="card header-row">
+        
+        {/* LEFT SIDE */}
+        <h5 className="title">Product View</h5>
+
+        {/* RIGHT SIDE */}
+        <div className="breadcrumb-wrapper">
+          <Breadcrumbs aria-label="breadcrumb">
             <StyledBreadcrumb
               component="a"
               href="#"
@@ -52,8 +55,10 @@ const ProductDetails = () => {
             <StyledBreadcrumb label="Product View" />
           </Breadcrumbs>
         </div>
+
       </div>
-    </>
+
+    </div>
   );
 };
 
