@@ -435,7 +435,72 @@ padding-top:10px !important ;}
 
 .signUpSection .part1 p{font-size: 18px;font-weight: 500;}
 
+/* container */
+.right-content {
+  width: 100%;
+}
 
+/* card layout */
+.card {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 16px;
+  background: #fff;
+  border-radius: 8px;
+}
+
+/* ensure row layout */
+.flex-row {
+  display: flex;
+  flex-direction: row;
+}
+
+/* heading */
+.card h5 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+  color: #333;
+}
+
+/* breadcrumbs to right */
+.breadcrumbs_ {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+}
+
+/* spacing between chips */
+.breadcrumbs_ .MuiChip-root {
+  margin-left: 8px;
+}
+
+/* chip styling smooth */
+.MuiChip-root {
+  transition: all 0.2s ease-in-out;
+  cursor: pointer;
+}
+
+/* optional hover effect */
+.MuiChip-root:hover {
+  transform: translateY(-1px);
+}
+
+/* optional: shadow (if not using bootstrap) */
+.shadow {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+/* optional: border reset */
+.border-0 {
+  border: none;
+}
+
+/* full width */
+.w-100 {
+  width: 100%;
+}
 
 
 
