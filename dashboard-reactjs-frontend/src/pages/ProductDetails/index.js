@@ -1,4 +1,3 @@
-
 import { emphasize, styled } from '@mui/material/styles';
 import Breadcrumbs from '@mui/material/Breadcrumbs';
 import Chip from '@mui/material/Chip';
@@ -28,31 +27,34 @@ const StyledBreadcrumb = styled(Chip)(({ theme }) => {
     },
   };
 });
-const ProductDetails=()=>{
-    return(
-        <>
-        <div className="right-content w-100">
-  <div className="card shadow border-0 w-100 flex-row p-4">
-    <h5 className="mb-0">Product List</h5>
 
-    <Breadcrumbs aria-label="breadcrumb" className="ml-auto breadcrumbs_">
-      <StyledBreadcrumb
-        component="a"
-        href="#"
-        label="Dashboard"
-        icon={<HomeIcon fontSize="small" />}
-      />
+const ProductDetails = () => {
+  return (
+    <>
+      <div className="right-content w-100">
+        <div className="card shadow border-0 w-100 flex-row ">
+          <h5 className="mb-0">Product View</h5>
 
-      <StyledBreadcrumb
-        label="Products"
-        deleteIcon={<ExpandMoreIcon />}
-      />
-    </Breadcrumbs>
-  </div>
-</div>
-        </>
-    )
+          <Breadcrumbs aria-label="breadcrumb" className="ml-auto breadcrumbs_">
+            <StyledBreadcrumb
+              component="a"
+              href="#"
+              label="Dashboard"
+              icon={<HomeIcon fontSize="small" />}
+            />
 
+            <StyledBreadcrumb
+              label="Products"
+              component="a"
+              href="#"
+            />
 
-}
+            <StyledBreadcrumb label="Product View" />
+          </Breadcrumbs>
+        </div>
+      </div>
+    </>
+  );
+};
+
 export default ProductDetails;
