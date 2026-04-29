@@ -29,7 +29,9 @@ const StyledBreadcrumb = styled(Chip)(({ theme }) => {
 
 const ProductDetails = () => {
   return (
+    <>
     <div className="right-content">
+      
 
       <div className="card header-row">
         
@@ -57,8 +59,30 @@ const ProductDetails = () => {
         </div>
 
       </div>
+       <div className='card'>
+    <br/><br/> 
+       <div className='row'>
+        <div className='col-md-4'>
+
+        </div>
+
+        <div className='col-md-8'>
+          
+        </div>
+      </div>
+     
+    </div>
+
+
 
     </div>
+
+   
+
+    
+    </>
+
+    
   );
 };
 
