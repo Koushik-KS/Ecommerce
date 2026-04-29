@@ -435,12 +435,12 @@ padding-top:10px !important ;}
 
 .signUpSection .part1 p{font-size: 18px;font-weight: 500;}
 
-/* container */
+
 .right-content {
   width: 100%;
 }
 
-/* MAIN ROW (force horizontal layout) */
+
 .header-row {
   display: flex !important;
   flex-direction: row !important;
@@ -452,7 +452,7 @@ padding-top:10px !important ;}
   border-radius: 10px;
 }
 
-/* LEFT TITLE */
+
 .title {
   margin: 0;
   font-size: 18px;
@@ -460,24 +460,22 @@ padding-top:10px !important ;}
   color: #333;
 }
 
-/* RIGHT SIDE (force push to end) */
+
 .breadcrumb-wrapper {
   margin-left: auto !important;
   display: flex;
   align-items: center;
 }
 
-/* spacing between breadcrumb chips */
 .breadcrumb-wrapper .MuiChip-root {
   margin-left: 8px;
 }
 
-/* smooth UI */
+
 .MuiChip-root {
   transition: all 0.2s ease-in-out;
 }
 
-/* optional hover */
 .MuiChip-root:hover {
   transform: translateY(-1px);
 }
