@@ -3,6 +3,8 @@ import Breadcrumbs from '@mui/material/Breadcrumbs';
 import Chip from '@mui/material/Chip';
 import HomeIcon from '@mui/icons-material/Home';
 
+import React from "react";
+import Slider from "react-slick";
 // breadcrumb style
 const StyledBreadcrumb = styled(Chip)(({ theme }) => {
   const backgroundColor =
@@ -28,6 +30,14 @@ const StyledBreadcrumb = styled(Chip)(({ theme }) => {
 });
 
 const ProductDetails = () => {
+
+  var productSliderOptions = {
+    dots: true,
+    infinite: true,
+    speed: 500,
+    slidesToShow: 1,
+    slidesToScroll: 1
+  };
   return (
     <>
     <div className="right-content">
@@ -60,9 +70,12 @@ const ProductDetails = () => {
 
       </div>
        <div className='card'>
-    <br/><br/> 
+    
        <div className='row'>
         <div className='col-md-4'>
+          <Slider {...productSliderOptions}>
+
+          </Slider>
 
         </div>
 
