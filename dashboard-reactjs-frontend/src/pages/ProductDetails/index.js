@@ -5,6 +5,9 @@ import HomeIcon from '@mui/icons-material/Home';
 
 import React from "react";
 import Slider from "react-slick";
+
+import "slick-carousel/slick/slick.css";
+import "slick-carousel/slick/slick-theme.css";
 // breadcrumb style
 const StyledBreadcrumb = styled(Chip)(({ theme }) => {
   const backgroundColor =
@@ -32,8 +35,8 @@ const StyledBreadcrumb = styled(Chip)(({ theme }) => {
 const ProductDetails = () => {
 
   var productSliderOptions = {
-    dots: true,
-    infinite: true,
+    dots: false,
+    infinite: false,
     speed: 500,
     slidesToShow: 1,
     slidesToScroll: 1
@@ -79,13 +82,14 @@ const ProductDetails = () => {
               className='w-100'/>
               
             </div>
+            
 
           </Slider>
 
         </div>
 
         <div className='col-md-8'>
-          
+   
         </div>
       </div>
      
