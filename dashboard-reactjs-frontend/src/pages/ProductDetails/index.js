@@ -85,10 +85,10 @@ const ProductDetails = () => {
        <div className='card'>
     
        <div className='row'>
-        <div className='col-md-4 '>
-          <div className='SliderWrapper p-3'>
-            <h5>Product Gallery</h5>
-            <Slider {...productSliderOptions}>
+        <div className='col-md-5 '>
+          <div className='SliderWrapper pt-3 pb-3 pl-4 pr-4'>
+            <h6 className='mb-3'>Product Gallery</h6>
+            <Slider {...productSliderOptions} className='sliderBig mb-2'>
             <div className="item">
               <img src='https://www.zapdress.com/cdn/shop/files/O1CN01u1Rsh41psa8mdZ8Lq__2928235416-0-cib.jpg?v=1774589444&width=900'
               className='w-100'/>
@@ -99,7 +99,7 @@ const ProductDetails = () => {
           </Slider>
           </div>
 
-          <Slider {...productSliderSmlOptions}>
+          <Slider {...productSliderSmlOptions} className='sliderSml'>
             <div className="item">
               <img src='https://www.zapdress.com/cdn/shop/files/O1CN01u1Rsh41psa8mdZ8Lq__2928235416-0-cib.jpg?v=1774589444&width=900'
               className='w-100'/>
@@ -139,7 +139,7 @@ const ProductDetails = () => {
 
         </div>
 
-        <div className='col-md-8'>
+        <div className='col-md-7'>
    
         </div>
       </div>

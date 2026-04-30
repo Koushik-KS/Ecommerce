@@ -472,7 +472,9 @@ padding-top:10px !important ;}
 }
 
 
+.sliderSml .slick-slide{padding-right: 10px;}
 
+.sliderSml .slick-slide .item{border-radius: 7px !important;overflow: hidden;}
 
 
 
