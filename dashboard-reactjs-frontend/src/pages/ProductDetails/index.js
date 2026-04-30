@@ -39,7 +39,17 @@ const ProductDetails = () => {
     infinite: false,
     speed: 500,
     slidesToShow: 1,
-    slidesToScroll: 1
+    slidesToScroll: 1,
+    arrows:false
+  };
+
+    var productSliderSmlOptions = {
+    dots: false,
+    infinite: false,
+    speed: 500,
+    slidesToShow: 4,
+    slidesToScroll: 1,
+      arrows:false
   };
   return (
     <>
@@ -75,8 +85,10 @@ const ProductDetails = () => {
        <div className='card'>
     
        <div className='row'>
-        <div className='col-md-4'>
-          <Slider {...productSliderOptions}>
+        <div className='col-md-4 '>
+          <div className='SliderWrapper p-3'>
+            <h5>Product Gallery</h5>
+            <Slider {...productSliderOptions}>
             <div className="item">
               <img src='https://www.zapdress.com/cdn/shop/files/O1CN01u1Rsh41psa8mdZ8Lq__2928235416-0-cib.jpg?v=1774589444&width=900'
               className='w-100'/>
@@ -85,6 +97,45 @@ const ProductDetails = () => {
             
 
           </Slider>
+          </div>
+
+          <Slider {...productSliderSmlOptions}>
+            <div className="item">
+              <img src='https://www.zapdress.com/cdn/shop/files/O1CN01u1Rsh41psa8mdZ8Lq__2928235416-0-cib.jpg?v=1774589444&width=900'
+              className='w-100'/>
+          </div>
+
+            <div className="item">
+              <img src='https://www.zapdress.com/cdn/shop/files/960e37a66491045f142b56a32263a8a9.jpg?v=1774589444&width=900'
+              className='w-100'/>
+          </div>
+
+            <div className="item">
+              <img src='https://www.zapdress.com/cdn/shop/files/4dfae8ea5ff51f2c084baaea287505e6.jpg?v=1774589444&width=900'
+              className='w-100'/>
+          </div>
+
+            <div className="item">
+              <img src='https://www.zapdress.com/cdn/shop/files/960e37a66491045f142b56a32263a8a9.jpg?v=1774589444&width=900'
+              className='w-100'/>
+          </div>
+
+            <div className="item">
+              <img src='https://www.zapdress.com/cdn/shop/files/12803434665_843810280.jpg?v=1774589445&width=900'
+              className='w-100'/>
+          </div>
+
+            <div className="item">
+              <img src='https://www.zapdress.com/cdn/shop/files/O1CN01u1Rsh41psa8mdZ8Lq__2928235416-0-cib.jpg?v=1774589444&width=900'
+              className='w-100'/>
+          </div>
+
+           
+            
+            
+
+          </Slider>
+          
 
         </div>
 
