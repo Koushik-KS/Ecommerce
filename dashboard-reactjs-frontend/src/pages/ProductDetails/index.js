@@ -74,6 +74,11 @@ const ProductDetails = () => {
        <div className='row'>
         <div className='col-md-4'>
           <Slider {...productSliderOptions}>
+            <div className="item">
+              <img src='https://www.zapdress.com/cdn/shop/files/O1CN01u1Rsh41psa8mdZ8Lq__2928235416-0-cib.jpg?v=1774589444&width=900'
+              className='w-100'/>
+              
+            </div>
 
           </Slider>
 
