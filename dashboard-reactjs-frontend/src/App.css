@@ -331,8 +331,8 @@ body.dark h6,
 body.dark p,
 body.dark .row,
 body.dark .css-1rfqz7c-MuiSvgIcon-root-MuiNativeSelect-root-MuiSelect-icon
-{color: rgba(255,255,255,0.9) !important;}
-
+{color: rgba(255,255,255,0.8) !important;}
+p{font-weight: 300;}
 body.dark body.dark .css-18p5xg2-MuiNotchedOutlined-root-MuiOutlinedInput-notchedOutline{border-color: rgba(255,255,255,0.3) !important;}
 
 
@@ -502,7 +502,7 @@ padding-left: 20px;}
 background: #1b2b4d !important;border-radius: 5px !important;font-size: 13px !important;
 padding: 5px 10px !important;}
 
-
+.tags li span:first-child{padding-left: 0px !important;}
 
 
 

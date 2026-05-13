@@ -219,7 +219,23 @@ const ProductDetails = () => {
       </div>
 
       <div className='col-sm-9'>
-       : <span>Men's</span>
+       : <span>
+         <ul className='list list-inline tags sml'>
+          <li className='list-inline-item'>
+            <span>RED</span>
+          </li>
+
+           <li className='list-inline-item'>
+            <span>BLUE</span>
+          </li>
+
+           <li className='list-inline-item'>
+            <span>WHITE</span>
+          </li>
+
+          
+        </ul>
+       </span>
       </div>
       </div>
 
@@ -243,7 +259,7 @@ const ProductDetails = () => {
       </div>
 
       <div className='col-sm-9'>
-       : <span>Men's</span>
+       : <span>(68) Piece</span>
       </div>
       </div>
 
@@ -307,6 +323,24 @@ const ProductDetails = () => {
   </div>
 </div>
       </div>
+
+    <div className='p-4'>
+        <h6 className='mt-4 mb-3'>Product Description</h6>
+      <p>Upgrade your style with this premium formal suit designed for a modern and classy look. 
+Made with high-quality fabric, this suit offers excellent comfort, durability, and a perfect fit 
+for weddings, parties, office meetings, and special occasions. 
+The stylish design, smooth texture, and elegant finish make it an ideal choice for men who want 
+confidence and sophistication in every step.
+
+This suit is carefully tailored to provide a sharp and attractive appearance while ensuring maximum comfort throughout the day. 
+Its breathable material helps you stay relaxed even during long hours of wear. 
+The modern fit enhances your personality and gives a professional as well as fashionable touch. 
+Perfectly matching with formal shoes, watches, and accessories, this suit adds elegance to your complete outfit. 
+The premium stitching and detailed finishing increase durability and maintain the rich look for a long time. 
+Whether you are attending a business event, engagement, reception, or festive celebration, this suit helps you stand out with confidence and style. 
+Easy to maintain and suitable for all seasons, it is a must-have addition to every gentleman’s wardrobe.
+</p>
+    </div>
      
     </div>
 
