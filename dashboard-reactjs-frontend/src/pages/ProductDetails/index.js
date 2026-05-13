@@ -8,6 +8,8 @@ import Slider from "react-slick";
 
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
+
+import 'bootstrap/dist/css/bootstrap.min.css';
 // breadcrumb style
 const StyledBreadcrumb = styled(Chip)(({ theme }) => {
   const backgroundColor =
@@ -86,7 +88,7 @@ const ProductDetails = () => {
     
        <div className='row'>
         <div className='col-md-5 '>
-          <div className='SliderWrapper pt-3 pb-3 pl-4 pr-4'>
+          <div className='SliderWrapper pt-3 pb-3 ps-4 pe-4'>
             <h6 className='mb-3'>Product Gallery</h6>
             <Slider {...productSliderOptions} className='sliderBig mb-2'>
             <div className="item">
@@ -97,7 +99,7 @@ const ProductDetails = () => {
             
 
           </Slider>
-          </div>
+         
 
           <Slider {...productSliderSmlOptions} className='sliderSml'>
             <div className="item">
@@ -131,17 +133,19 @@ const ProductDetails = () => {
           </div>
 
            
-            
+             
             
 
           </Slider>
           
-
+ </div>
         </div>
 
         <div className='col-md-7'>
-   
-        </div>
+  <div className="pt-3 pb-3 ps-4 pe-4">
+    <h6 className='mb-3'>Product Details</h6>
+  </div>
+</div>
       </div>
      
     </div>
