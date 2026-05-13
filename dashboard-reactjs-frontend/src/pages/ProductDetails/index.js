@@ -84,7 +84,7 @@ const ProductDetails = () => {
         </div>
 
       </div>
-       <div className='card'>
+       <div className='card productDetailsSEction'>
     
        <div className='row'>
         <div className='col-md-5 '>
@@ -148,7 +148,13 @@ const ProductDetails = () => {
     
     <div className='productInfo'>
       <div className='row'>
-        <div className='col-sm-5'></div>
+        <div className='col-sm-5 d-flex align-items-center'>
+          <span className='icon'></span>
+          <span className='name'>Brand</span>
+        
+      </div>
+
+      <div className='col-sm-7'></div>
       </div>
     </div>
   
