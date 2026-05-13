@@ -9,6 +9,8 @@ body.dark {background: #071739 !important;}
 ::-webkit-scrollbar-thumb{background:#0858f7 !important ;}
 ::-webkit-scrollbar-track{background: transparent !important;}
 h1,h2,h3,h4,h5,h6,p{color: #403e57;}
+
+h4{line-height: 32px;}
 input[type="password"]::-ms-reveal,
 input[type="password"]::-ms-clear {
   display: none;
@@ -328,7 +330,7 @@ body.dark h5,
 body.dark h6,
 body.dark p,
 body.dark .css-1rfqz7c-MuiSvgIcon-root-MuiNativeSelect-root-MuiSelect-icon
-{color: rgba(255,255,255,0.8) !important;}
+{color: rgba(255,255,255,0.9) !important;}
 
 body.dark body.dark .css-18p5xg2-MuiNotchedOutlined-root-MuiOutlinedInput-notchedOutline{border-color: rgba(255,255,255,0.3) !important;}
 
@@ -476,8 +478,8 @@ padding-top:10px !important ;}
 
 .sliderSml .slick-slide .item{border-radius: 7px !important;overflow: hidden;}
 
-
-
+.sliderSml *,.sliderBig *{transition:all 0.2s !important;}
+.sliderBig .item{overflow: hidden;border-radius: 7px;}
 
 
 
