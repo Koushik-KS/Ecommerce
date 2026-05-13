@@ -89,7 +89,7 @@ const ProductDetails = () => {
        <div className='row'>
         <div className='col-md-5 '>
           <div className='SliderWrapper pt-3 pb-3 ps-4 pe-4'>
-            <h6 className='mb-3'>Product Gallery</h6>
+            <h6 className='mb-4'>Product Gallery</h6>
             <Slider {...productSliderOptions} className='sliderBig mb-2'>
             <div className="item">
               <img src='https://www.zapdress.com/cdn/shop/files/O1CN01u1Rsh41psa8mdZ8Lq__2928235416-0-cib.jpg?v=1774589444&width=900'
@@ -143,7 +143,16 @@ const ProductDetails = () => {
 
         <div className='col-md-7'>
   <div className="pt-3 pb-3 ps-4 pe-4">
-    <h6 className='mb-3'>Product Details</h6>
+    <h6 className='mb-4'>Product Details</h6>
+    <h4> Formal suits for men wedding slim fit 3 piece dress business party jacket</h4>
+    
+    <div className='productInfo'>
+      <div className='row'>
+        <div className='col-sm-5'></div>
+      </div>
+    </div>
+  
+  
   </div>
 </div>
       </div>
