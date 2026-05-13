@@ -329,7 +329,7 @@ body.dark h4,
 body.dark h5,
 body.dark h6,
 body.dark p,
-
+body.dark .row,
 body.dark .css-1rfqz7c-MuiSvgIcon-root-MuiNativeSelect-root-MuiSelect-icon
 {color: rgba(255,255,255,0.9) !important;}
 
@@ -482,14 +482,25 @@ padding-top:10px !important ;}
 .sliderSml *,.sliderBig *{transition:all 0.2s !important;}
 .sliderBig .item{overflow: hidden;border-radius: 7px;}
 
-.productDetailsSEction .productInfo{}
+.productDetailsSEction .productInfo .icon{width: 28%;flex: 0 0 28%;}
+.productDetailsSEction .productInfo .icon svg{font-size: 22px;}
 
+.productDetailsSEction .productInfo .name{width: 72%;flex: 0 0 72%;font-weight: 600;
+font-size: 15px;}
 
+body.dark .productDetailsSEction .productInfo .name{width: 76%;flex: 0 0 76%;font-weight: 600;
+font-size: 15px;color: rgba(255,255,255,0.8) !important;}
 
+.productDetailsSEction .productInfo .row{margin-bottom: 10px !important;}
+.productDetailsSEction .productInfo .row .col-sm-9{display: flex;align-items: center;}
 
+.productDetailsSEction .productInfo .row .col-sm-9 span{opacity: 0.8;font-size: 15px;
+padding-left: 20px;}
 
-
-
+.tags{margin-bottom: 0px !important;}
+.tags li span{display: flex;align-items: center;justify-content: center;
+background: #1b2b4d !important;border-radius: 5px !important;font-size: 13px !important;
+padding: 5px 10px !important;}
 
 
 

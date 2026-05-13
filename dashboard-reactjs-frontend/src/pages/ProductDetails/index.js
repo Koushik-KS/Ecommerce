@@ -10,6 +10,8 @@ import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 
 import 'bootstrap/dist/css/bootstrap.min.css';
+import { MdBrandingWatermark } from "react-icons/md";
+import { BiSolidCategory } from "react-icons/bi";
 // breadcrumb style
 const StyledBreadcrumb = styled(Chip)(({ theme }) => {
   const backgroundColor =
@@ -146,16 +148,159 @@ const ProductDetails = () => {
     <h6 className='mb-4'>Product Details</h6>
     <h4> Formal suits for men wedding slim fit 3 piece dress business party jacket</h4>
     
-    <div className='productInfo'>
-      <div className='row'>
-        <div className='col-sm-5 d-flex align-items-center'>
-          <span className='icon'></span>
+    <div className='productInfo mt-3'>
+      <div className='row mb-2'>
+        <div className='col-sm-3 d-flex align-items-center'>
+          <span className='icon'><MdBrandingWatermark /></span>
           <span className='name'>Brand</span>
         
       </div>
 
-      <div className='col-sm-7'></div>
+      <div className='col-sm-9'>
+     :  <span>Zara</span>
       </div>
+      </div>
+
+      <div className='row mb-2'>
+        <div className='col-sm-3 d-flex align-items-center'>
+          <span className='icon'><MdBrandingWatermark /></span>
+          <span className='name'>Category</span>
+        
+      </div>
+
+      <div className='col-sm-9'>
+     :  <span>Men's</span>
+      </div>
+      </div>
+
+       <div className='row mb-2'>
+        <div className='col-sm-3 d-flex align-items-center'>
+          <span className='icon'><BiSolidCategory /></span>
+          <span className='name'>Category</span>
+        
+      </div>
+
+      <div className='col-sm-9'>
+       : <span>
+        <ul className='list list-inline tags sml'>
+          <li className='list-inline-item'>
+            <span>SUIT</span>
+          </li>
+
+           <li className='list-inline-item'>
+            <span>PARTY</span>
+          </li>
+
+           <li className='list-inline-item'>
+            <span>PARTY</span>
+          </li>
+
+           <li className='list-inline-item'>
+            <span>DRESS</span>
+          </li>
+
+           <li className='list-inline-item'>
+            <span>SMARTT</span>
+          </li>
+
+           <li className='list-inline-item'>
+            <span>MAN</span>
+          </li>
+        </ul>
+       </span>
+      </div>
+      </div>
+
+      <div className='row mb-2'>
+        <div className='col-sm-3 d-flex align-items-center'>
+          <span className='icon'><BiSolidCategory /></span>
+          <span className='name'>Tags</span>
+        
+      </div>
+
+      <div className='col-sm-9'>
+       : <span>Men's</span>
+      </div>
+      </div>
+
+      <div className='row mb-2'>
+        <div className='col-sm-3 d-flex align-items-center'>
+          <span className='icon'><BiSolidCategory /></span>
+          <span className='name'>Color</span>
+        
+      </div>
+
+      <div className='col-sm-9'>
+       : <span>Men's</span>
+      </div>
+      </div>
+
+      <div className='row mb-2'>
+        <div className='col-sm-3 d-flex align-items-center'>
+          <span className='icon'><BiSolidCategory /></span>
+          <span className='name'>Size</span>
+        
+      </div>
+
+      <div className='col-sm-9'>
+       : <span>Men's</span>
+      </div>
+      </div>
+
+      <div className='row mb-2'>
+        <div className='col-sm-3 d-flex align-items-center'>
+          <span className='icon'><BiSolidCategory /></span>
+          <span className='name'>Price</span>
+        
+      </div>
+
+      <div className='col-sm-9'>
+       : <span>Men's</span>
+      </div>
+      </div>
+
+      <div className='row mb-2'>
+        <div className='col-sm-3 d-flex align-items-center'>
+          <span className='icon'><BiSolidCategory /></span>
+          <span className='name'>Stock</span>
+        
+      </div>
+
+      <div className='col-sm-9'>
+       : <span>Men's</span>
+      </div>
+      </div>
+
+      <div className='row mb-2'>
+        <div className='col-sm-3 d-flex align-items-center'>
+          <span className='icon'><BiSolidCategory /></span>
+          <span className='name'>Review</span>
+        
+      </div>
+
+      <div className='col-sm-9'>
+       : <span>Men's</span>
+      </div>
+      </div>
+
+        <div className='row mb-2'>
+        <div className='col-sm-3 d-flex align-items-center'>
+          <span className='icon'><BiSolidCategory /></span>
+          <span className='name'>Published</span>
+        
+      </div>
+
+      <div className='col-sm-9'>
+       : <span>Men's</span>
+      </div>
+      </div>
+
+      
+
+      
+
+   
+
     </div>
   
   
