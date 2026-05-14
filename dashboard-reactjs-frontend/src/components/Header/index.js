@@ -21,6 +21,7 @@ import Logout from '@mui/icons-material/Logout';
 import { BsShieldFillExclamation } from "react-icons/bs";
 import Divider from '@mui/material/Divider';
 import { MyContext } from '../../App';
+import UserAvatarImgComponent from '../userAvatarImg';
 
 
 const Header = () => {
@@ -322,11 +323,9 @@ const Header = () => {
            <div className="myAccWrapper">
               <Button className="myAcc d-flex align-items-center" 
                onClick={handleOpenMyAccDrop}>
-                <div className="userImg">
-                  <span className="rounded-circle">
-                    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSTx3SRpQ8G8mKf3SUHnnn5mzgz7jx2WnePnA&s" alt="user" />
-                  </span>
-                </div>
+                <div>
+               <UserAvatarImgComponent img={'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSTx3SRpQ8G8mKf3SUHnnn5mzgz7jx2WnePnA&s'}/>
+               </div>
 
                 <div className="userInfo">
                   <h4>Koushik Shetty</h4>
