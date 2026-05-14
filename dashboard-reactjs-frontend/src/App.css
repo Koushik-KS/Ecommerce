@@ -4,7 +4,7 @@
 
 body { font-family: "Open Sans", sans-serif !important; background: #ebe9e9;overflow-x: hidden; }
 body.dark {background: #071739 !important;}
-body.dark *{ color: #fff !important;}
+body.dark *{ color:  rgba(255,255,255,0.8) !important;}
  
 body.dark .css-187f9kc-MuiChip-root {background-color: transparent !important};
 
@@ -508,8 +508,11 @@ padding: 5px 10px !important;}
 
 .tags li span:first-child{padding-left: 0px !important;}
 
-
-
+.ratingSection{width: 500px;}
+.ratingSection .ratingrow{width: 100%;}
+.ratingSection .ratingrow .col1{width: 25%;flex: 0 0 25%;display: flex;}
+.ratingSection .ratingrow .col2{width: 50%;flex: 0 0 50%;}
+.ratingSection .ratingrow .col3{width: 25%;flex: 0 0 25%;display: flex;}
 
 
 

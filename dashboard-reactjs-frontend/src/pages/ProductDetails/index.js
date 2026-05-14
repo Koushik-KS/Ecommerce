@@ -12,6 +12,8 @@ import "slick-carousel/slick/slick-theme.css";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { MdBrandingWatermark } from "react-icons/md";
 import { BiSolidCategory } from "react-icons/bi";
+
+import LinearProgress from '@mui/material/LinearProgress';
 // breadcrumb style
 const StyledBreadcrumb = styled(Chip)(({ theme }) => {
   const backgroundColor =
@@ -343,10 +345,14 @@ Easy to maintain and suitable for all seasons, it is a must-have addition to eve
 
 <h6 className='mt-4 mb-3'>Rating Analytics</h6>
 <div className='ratingSection'>
-  <div className='ratinggrow'>
+  <div className='ratingrow d-flex align-items-center '>
     <span className='col1'>5 star</span>
 
-    <div className='col2'></div>
+    <div className='col2'>
+        <LinearProgress
+        variant="determinate"
+        value={80} />
+    </div>
 
      <span className='col3'>(22)</span>
   </div>
