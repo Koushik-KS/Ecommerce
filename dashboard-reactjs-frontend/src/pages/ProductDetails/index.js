@@ -340,6 +340,17 @@ The premium stitching and detailed finishing increase durability and maintain th
 Whether you are attending a business event, engagement, reception, or festive celebration, this suit helps you stand out with confidence and style. 
 Easy to maintain and suitable for all seasons, it is a must-have addition to every gentleman’s wardrobe.
 </p>
+
+<h6 className='mt-4 mb-3'>Rating Analytics</h6>
+<div className='ratingSection'>
+  <div className='ratinggrow'>
+    <span className='col1'>5 star</span>
+
+    <div className='col2'></div>
+
+     <span className='col3'>(22)</span>
+  </div>
+</div>
     </div>
      
     </div>
