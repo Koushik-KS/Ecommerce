@@ -4,6 +4,10 @@
 
 body { font-family: "Open Sans", sans-serif !important; background: #ebe9e9;overflow-x: hidden; }
 body.dark {background: #071739 !important;}
+body.dark *{ color: #fff !important;}
+ 
+body.dark .css-187f9kc-MuiChip-root {background-color: transparent !important};
+
 
 ::-webkit-scrollbar{width: 5px !important;height: 5px !important;}
 ::-webkit-scrollbar-thumb{background:#0858f7 !important ;}
@@ -332,7 +336,7 @@ body.dark p,
 body.dark .row,
 body.dark .css-1rfqz7c-MuiSvgIcon-root-MuiNativeSelect-root-MuiSelect-icon
 {color: rgba(255,255,255,0.8) !important;}
-p{font-weight: 300;}
+p{font-weight: 300;font-size: 15px;line-height: 25px;}
 body.dark body.dark .css-18p5xg2-MuiNotchedOutlined-root-MuiOutlinedInput-notchedOutline{border-color: rgba(255,255,255,0.3) !important;}
 
 
