@@ -4,11 +4,11 @@
 
 body { font-family: "Open Sans", sans-serif !important; background: #ebe9e9;overflow-x: hidden; }
 body.dark {background: #071739 !important;}
-body.dark *{ color:  rgba(255,255,255,0.8) !important;}
+/* body.dark *{ color:  rgba(255,255,255,0.8) !important;} */
  
-body.dark .css-187f9kc-MuiChip-root {background-color: transparent !important};
-
-
+body.dark .css-187f9kc-MuiChip-root {background-color: transparent !important;color: rgba(255,255,255,0.9);}
+body.dark .css-187f9kc-MuiChip-root .MuiChip-icon {color: #fff !important;}
+body.dark .css-jhr02i-MuiBreadcrumbs-separator {color: rgba(255,255,255,0.8);}
 ::-webkit-scrollbar{width: 5px !important;height: 5px !important;}
 ::-webkit-scrollbar-thumb{background:#0858f7 !important ;}
 ::-webkit-scrollbar-track{background: transparent !important;}
@@ -519,10 +519,10 @@ padding: 5px 10px !important;}
 .ratingSection .ratingrow .col3{width: 25%;flex: 0 0 25%;display: flex;padding-left: 20px;}
 
 .reviewSecrion{width: 100%;display: flex;flex-direction: column;}
-.reviewSecrion .reviewsRow{width: 100%;height: 100px;background: #071739;padding: 35px;
+.reviewSecrion .reviewsRow{width: 100%;height: auto;background: #071739;padding: 35px;
 border-radius: 10px;}
 
-
+.userInfo h6{margin-bottom: 0px;}
 
 
 
