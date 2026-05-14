@@ -509,13 +509,16 @@ padding: 5px 10px !important;}
 .tags li span:first-child{padding-left: 0px !important;}
 
 .ratingSection{width: 500px;}
-.ratingSection .ratingrow{width: 100%;}
-.ratingSection .ratingrow .col1{width: 25%;flex: 0 0 25%;display: flex;}
+.ratingSection .ratingrow{width: 100%;margin-bottom: 15px !important;}
+.ratingSection .ratingrow .progress{height: 5px !important;background-color: #000 !important;}
+.ratingSection .ratingrow .progress .progress-bar{background: #edb213 !important;}
+.ratingSection .ratingrow .col1{width: 15%;flex: 0 0 15%;display: flex;}
 .ratingSection .ratingrow .col2{width: 50%;flex: 0 0 50%;}
-.ratingSection .ratingrow .col3{width: 25%;flex: 0 0 25%;display: flex;}
+.ratingSection .ratingrow .col3{width: 25%;flex: 0 0 25%;display: flex;padding-left: 20px;}
 
-
-
+.reviewSecrion{width: 100%;display: flex;flex-direction: column;}
+.reviewSecrion .reviewsRow{width: 100%;height: 100px;background: #071739;padding: 35px;
+border-radius: 10px;}
 
 
 
