@@ -13,7 +13,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import { MdBrandingWatermark } from "react-icons/md";
 import { BiSolidCategory } from "react-icons/bi";
 
-import LinearProgress from '@mui/material/LinearProgress';
+
 // breadcrumb style
 const StyledBreadcrumb = styled(Chip)(({ theme }) => {
   const backgroundColor =
@@ -342,6 +342,7 @@ The premium stitching and detailed finishing increase durability and maintain th
 Whether you are attending a business event, engagement, reception, or festive celebration, this suit helps you stand out with confidence and style. 
 Easy to maintain and suitable for all seasons, it is a must-have addition to every gentleman’s wardrobe.
 </p>
+<br/>
 
 <h6 className='mt-4 mb-3'>Rating Analytics</h6>
 <div className='ratingSection'>
@@ -349,12 +350,80 @@ Easy to maintain and suitable for all seasons, it is a must-have addition to eve
     <span className='col1'>5 star</span>
 
     <div className='col2'>
-        <LinearProgress
-        variant="determinate"
-        value={80} />
+       <div className="progress">
+  <div className="progress-bar" style={{ width: '70%' }}></div>
+</div>
     </div>
 
      <span className='col3'>(22)</span>
+  </div>
+
+    <div className='ratingrow d-flex align-items-center '>
+    <span className='col1'>4 star</span>
+
+    <div className='col2'>
+       <div className="progress">
+  <div className="progress-bar" style={{ width: '50%' }}></div>
+</div>
+    </div>
+
+     <span className='col3'>(22)</span>
+  </div>
+
+  <div className='ratingrow d-flex align-items-center '>
+    <span className='col1'>3 star</span>
+
+    <div className='col2'>
+       <div className="progress">
+  <div className="progress-bar" style={{ width: '50%' }}></div>
+</div>
+    </div>
+
+     <span className='col3'>(2)</span>
+  </div>
+
+    <div className='ratingrow d-flex align-items-center '>
+    <span className='col1'>2 star</span>
+
+    <div className='col2'>
+       <div className="progress">
+  <div className="progress-bar" style={{ width: '20%' }}></div>
+</div>
+    </div>
+
+     <span className='col3'>(2)</span>
+  </div>
+
+
+    <div className='ratingrow d-flex align-items-center '>
+    <span className='col1'>1 star</span>
+
+    <div className='col2'>
+       <div className="progress">
+  <div className="progress-bar" style={{ width: '50%' }}></div>
+</div>
+    </div>
+
+     <span className='col3'>(2)</span>
+  </div>
+
+
+
+
+
+
+
+</div>
+
+<br/>
+
+<h6 className='mt-4 mb-4'>Customer Reviews</h6>
+<div className='reviewSecrion'>
+  <div className='reviewsRow'>
+    <div className='row'>
+      <div className='col-sm-7'></div>
+    </div>
+
   </div>
 </div>
     </div>
