@@ -1,7 +1,7 @@
 
 const UserAvatarImgComponent = (props)=>{
     return(
-      <div className="userImg">
+      <div className={`userImg ${props.lg==true && 'lg'}`}>
                   <span className="rounded-circle">
                     <img src={props.img} alt="user" />
                   </span>

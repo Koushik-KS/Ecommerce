@@ -12,6 +12,7 @@ import "slick-carousel/slick/slick-theme.css";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { MdBrandingWatermark } from "react-icons/md";
 import { BiSolidCategory } from "react-icons/bi";
+import UserAvatarImgComponent from '../../components/userAvatarImg';
 
 
 // breadcrumb style
@@ -421,7 +422,17 @@ Easy to maintain and suitable for all seasons, it is a must-have addition to eve
 <div className='reviewSecrion'>
   <div className='reviewsRow'>
     <div className='row'>
-      <div className='col-sm-7'></div>
+      <div className='col-sm-7'>
+        <div className='userInfo d-flex'>
+          <UserAvatarImgComponent img="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSTx3SRpQ8G8mKf3SUHnnn5mzgz7jx2WnePnA&s"
+          lg={true}/>
+ <div className='info'>
+          <h6>Koushik Shetty</h6>
+          <span>25 minutes ago!</span>
+        </div>
+        </div>
+       
+      </div>
     </div>
 
   </div>
