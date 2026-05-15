@@ -576,7 +576,9 @@ Easy to maintain and suitable for all seasons, it is a must-have addition to eve
  <h6 className='mt-4 mb-4'>Review Reply Form</h6>
 
  <form className='reviewForm'>
-  <textarea placeholder='write here....'></textarea>
+  <textarea placeholder='write here.... '></textarea>
+
+  <Button className='btn-blue btn-big btn-lg w-100 mt-4'>Drop your replies</Button>
  </form>
     </div>
      
