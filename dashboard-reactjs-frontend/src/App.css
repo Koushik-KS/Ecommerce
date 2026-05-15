@@ -23,7 +23,8 @@ input[type="password"]::-ms-clear {
 .btn-blue{background: #0858f7 !important;font-size: 14px !important;
 font-weight: 600;color: #fff !important; display: inline-block;
   width: auto;
-text-transform: capitalize !important;border-radius: 8px !important;}
+text-transform: capitalize !important;border-radius: 8px !important;
+}
 
 .btn-lg{padding: 5px 25px !important;}
 .btn-big{padding: 10px 25px !important;font-size: 16px !important;}
@@ -521,7 +522,7 @@ body.dark  .ratingSection .ratingrow{width: 100%;margin-bottom: 15px !important;
 
 .reviewSecrion{width: 100%;display: flex;flex-direction: column;}
 .reviewSecrion .reviewsrow{width: 100%;height: auto;background: #071739;padding: 35px;
-border-radius: 10px;}
+border-radius: 10px;margin: 15px 0px;}
 
 .userInfo h6{margin-bottom: 3px;}
 
@@ -529,12 +530,11 @@ border-radius: 10px;}
     padding-left: 10px;
 }
 
+.reviewSecrion .reviewsrow p{padding-left: 20px;}
 
+.reviewSecrion .reviewsrow.reply{width: 90%;margin-left: auto;}
 
+.reviewSecrion .reviewsrow .btn-big{font-size: 15px !important;}
 
-
-
-
-
-
+.reviewSecrion .reviewsrow .btn-big svg{font-size: 18px !important;}
 
