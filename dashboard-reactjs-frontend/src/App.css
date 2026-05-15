@@ -511,6 +511,8 @@ padding-top:10px !important ;}
     cursor: pointer;
 }
 
+.sliderSml .slick-current .item{border: 1px dashed rgba(128,128,128) !important;}
+
 .productDetailsSEction .productInfo .icon{width: 28%;flex: 0 0 28%;}
 
 body.light .productDetailsSEction .productInfo .icon svg{color: #5e5d72 !important;}
