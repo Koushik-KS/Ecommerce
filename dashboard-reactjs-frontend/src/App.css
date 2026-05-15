@@ -116,7 +116,7 @@ width:100% ;height: 100%;cursor: pointer;position: relative;}
 
 .userImg .rounded-circle img{object-fit: cover;width: 100%;height: 100%;}
    
-.userImg.lg{width: 60px !important;height: 60px !important;}
+.userImg.lg{width: 50px !important;height: 50px !important;}
 
 
 .myAcc .userInfo{padding-left: 10px;}
@@ -511,7 +511,8 @@ padding: 5px 10px !important;}
 .tags li span:first-child{padding-left: 0px !important;}
 
 .ratingSection{width: 500px;}
-.ratingSection .ratingrow{width: 100%;margin-bottom: 15px !important;}
+ .ratingSection .ratingrow{width: 100%;margin-bottom: 15px !important;}
+body.dark  .ratingSection .ratingrow{width: 100%;margin-bottom: 15px !important;color: rgba(255,255,255,0.8);}
 .ratingSection .ratingrow .progress{height: 5px !important;background-color: #000 !important;}
 .ratingSection .ratingrow .progress .progress-bar{background: #edb213 !important;}
 .ratingSection .ratingrow .col1{width: 15%;flex: 0 0 15%;display: flex;}
@@ -519,10 +520,14 @@ padding: 5px 10px !important;}
 .ratingSection .ratingrow .col3{width: 25%;flex: 0 0 25%;display: flex;padding-left: 20px;}
 
 .reviewSecrion{width: 100%;display: flex;flex-direction: column;}
-.reviewSecrion .reviewsRow{width: 100%;height: auto;background: #071739;padding: 35px;
+.reviewSecrion .reviewsrow{width: 100%;height: auto;background: #071739;padding: 35px;
 border-radius: 10px;}
 
-.userInfo h6{margin-bottom: 0px;}
+.userInfo h6{margin-bottom: 3px;}
+
+.info{
+    padding-left: 10px;
+}
 
 
 
