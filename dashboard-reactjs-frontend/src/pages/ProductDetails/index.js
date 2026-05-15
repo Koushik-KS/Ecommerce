@@ -14,7 +14,7 @@ import { MdBrandingWatermark } from "react-icons/md";
 import { BiSolidCategory } from "react-icons/bi";
 import UserAvatarImgComponent from '../../components/userAvatarImg';
 import Rating from '@mui/material/Rating';
-
+import Button from '@mui/material/Button';
 // breadcrumb style
 const StyledBreadcrumb = styled(Chip)(({ theme }) => {
   const backgroundColor =
@@ -420,22 +420,41 @@ Easy to maintain and suitable for all seasons, it is a must-have addition to eve
 
 <h6 className='mt-4 mb-4'>Customer Reviews</h6>
 <div className='reviewSecrion'>
-  <div className='reviewsRow'>
+  <div className='reviewsrow mb-4'>
     <div className='row'>
-      <div className='col-sm-7'>
-        <div className='userInfo d-flex align-items-center mb-3'>
-          <UserAvatarImgComponent img="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSTx3SRpQ8G8mKf3SUHnnn5mzgz7jx2WnePnA&s" lg={true}/>
- <div className='info pl-3'>
-          <h6>Koushik Shetty</h6>
-          <span>25 minutes ago!</span>
+      <div className='col-sm-7 d-flex'>
+        <div className='d-flex align-items-center flex-column'>
+          <div className='userInfo d-flex align-items-center mb-3'>
+    <UserAvatarImgComponent
+      img="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSTx3SRpQ8G8mKf3SUHnnn5mzgz7jx2WnePnA&s"
+      lg={true}
+    />
+
+    <div className='info'>
+        <h6>Koushik Shetty</h6>
+        <span>25 minutes ago!</span>
+    </div>
+</div>
+ <Rating name="read-only" value={4.5}  precision={0.5}  readOnly />
         </div>
-        </div>
-        <Rating name="read-only" value={4.5}  precision={0.5}  readOnly />
       </div>
+      <div className='col-md-5 d-flex align-items-center'>
+         <div className='ml-auto'>
+               <Button className='btn-blue btn-big btn-lg ml-auto'>Reply</Button>
+       </div>
+      </div>
+
+
+
+       <p className='mt-3'>Excellent quality and stylish design. 
+          The product arrived on time, looks exactly as shown, and 
+          feels premium. Totally worth the price and highly recommended!</p>
 
     </div>
 
   </div>
+
+
 </div>
     </div>
      
