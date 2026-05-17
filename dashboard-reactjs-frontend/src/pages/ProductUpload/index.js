@@ -1,7 +1,10 @@
 
 const ProductUpload = () => {
     return(
-        <h2>Product Upload</h2>
+        <div>
+            <h2>Product Upload</h2>
+            <span>Product Upload Page</span>
+        </div>
     )
     
 }
