@@ -32,17 +32,17 @@ const StyledBreadcrumb = styled(Chip)(({ theme }) => {
 
 const ProductUpload = () => {
   return (
-    <div className="right-content">
+    <div className="right-content w-100">
 
-      <div className="card header-row">
+      <div className="card shadow border-0 w-100 flex-row p-4">
 
         {/* LEFT SIDE */}
         <h5 className="title">Product Upload</h5>
 
-        {/* RIGHT SIDE */}
-        <div className="breadcrumb-wrapper">
+       
 
-          <Breadcrumbs aria-label="breadcrumb">
+
+          <Breadcrumbs aria-label="breadcrumb" className="ml-auto breadcrumbs_">
 
             <StyledBreadcrumb
               component="a"
@@ -52,6 +52,7 @@ const ProductUpload = () => {
             />
 
             <StyledBreadcrumb
+            component="a"
               label="Products"
               href="#"
               deleteIcon={<ExpandMoreIcon />}
@@ -69,9 +70,23 @@ const ProductUpload = () => {
 
         </div>
 
+        <div className="row">
+          <div className="col-sm-7">
+            <div className="card">
+              <h5 className="text-white">Basic Information</h5>
+            </div>
+          </div>
+
+          <div className="col-sm-5"></div>
+
+
+          
+
+        </div>
+
       </div>
 
-    </div>
+
   );
 };
 
