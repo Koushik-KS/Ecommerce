@@ -597,7 +597,7 @@ border-radius: 5px;font-size: 14px;}
 .form .form-group textarea{height: 120px;padding-top:15px ;}
 
 body.dark .form .form-group input ,body.dark .form .form-group textarea{background: #2b3c5f  !important;
-border:1px solid #233557 !important;color: #fff !important;}
+border:1px solid #233557 !important;color: rgba(255,255,255,0.8) !important;}
 
 
 

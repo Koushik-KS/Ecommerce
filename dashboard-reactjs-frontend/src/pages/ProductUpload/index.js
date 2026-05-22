@@ -7,11 +7,13 @@ import Chip from '@mui/material/Chip';
 
 import { styled, emphasize } from '@mui/material/styles';
 
-import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
-import FormHelperText from '@mui/material/FormHelperText';
-import FormControl from '@mui/material/FormControl';
+
 import Select from '@mui/material/Select';
+
+import Rating from '@mui/material/Rating';
+import Button from '@mui/material/Button';
+import { FaCloudUploadAlt } from "react-icons/fa";
 const StyledBreadcrumb = styled(Chip)(({ theme }) => {
   const backgroundColor =
     theme.palette.mode === 'light'
@@ -38,6 +40,7 @@ const StyledBreadcrumb = styled(Chip)(({ theme }) => {
 const ProductUpload = () => {
 
 const [categoryVal, setCategoryVal] =useState('');
+const [ratingsValue, setRatingsValue] = useState(1);
 
   const handleChangeCategory = (event) => {
     setCategoryVal(event.target.value);
@@ -84,7 +87,7 @@ const [categoryVal, setCategoryVal] =useState('');
         <form className="form">
 
         <div className="row">
-          <div className="col-sm-7">
+          <div className="col-sm-9">
             <div className="card p-4">
               <h5 className="mb-4" >Basic Information</h5>
               <div className="form-group">
@@ -160,18 +163,38 @@ const [categoryVal, setCategoryVal] =useState('');
 
                 </div>
 
+                  <div className="row">
+                <div className="col">
+                  <div className="form-group">
+                   <h6>RATTINGS</h6>
+           <Rating
+        name="simple-controlled"
+        value={ratingsValue}
+        onChange={(event, newValue) => {
+          setRatingsValue(newValue);
+        }}
+      />
+                   </div>
+                </div>
 
+                 <div className="col">
+                  <div className="form-group">
+                   <h6>PRODUCT STOCK</h6>
+                    <input type="text"/>
+                   </div>
+                </div>
 
+                </div>
 
-
-
+                <Button className="btn-blue btn-lg btn-big"><FaCloudUploadAlt />
+                &nbsp; PUBLISH AND VIEW</Button>
 
 
 
             </div>
           </div>
  
-          <div className="col-sm-5"></div>
+          
 
 
           
