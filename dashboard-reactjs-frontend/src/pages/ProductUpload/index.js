@@ -69,20 +69,31 @@ const ProductUpload = () => {
           </Breadcrumbs>
 
         </div>
+        <form className="form">
 
         <div className="row">
           <div className="col-sm-7">
-            <div className="card">
-              <h5 className="text-white">Basic Information</h5>
+            <div className="card p-4">
+              <h5 className="mb-4" >Basic Information</h5>
+              <div className="form-group">
+                <h6>TITLE</h6>
+                <input type="text"/>
+              </div>
+
+              <div className="form-group">
+                <h6>DESCRIPTION</h6>
+               <textarea rows={5} cols={10}/>
+              </div>
             </div>
           </div>
-
+ 
           <div className="col-sm-5"></div>
 
 
           
 
         </div>
+        </form>
 
       </div>
 
