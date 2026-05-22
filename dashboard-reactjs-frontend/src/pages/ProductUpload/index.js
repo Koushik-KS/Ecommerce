@@ -36,13 +36,13 @@ const ProductUpload = () => {
 
       <div className="card shadow border-0 w-100 flex-row p-4">
 
-        {/* LEFT SIDE */}
+        
         <h5 className="title">Product Upload</h5>
 
        
 
 
-          <Breadcrumbs aria-label="breadcrumb" className="ml-auto breadcrumbs_">
+          <Breadcrumbs aria-label="breadcrumb" className="ml-auto  breadcrumb-wrapper">
 
             <StyledBreadcrumb
               component="a"
