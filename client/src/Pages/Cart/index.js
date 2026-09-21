@@ -1,209 +1,299 @@
-import { Link } from "react-router-dom";
-import Rating from '@mui/material/Rating';
-import QuantityBox from "../../Components/QuantityBox";
 
-import { IoClose } from "react-icons/io5";
+import React, { useContext } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { MyContext } from "../../App";
 import Button from "@mui/material/Button";
-import { FaShoppingCart } from "react-icons/fa";
-const Cart =() =>{
+import { FaTrash, FaMinus, FaPlus } from "react-icons/fa";
 
-    return(
-        <>
-        <section className="section cartPage">
-            <div className="container">
-                 <h2 className="hd mb-1">Your Cart</h2>
-                        <p>There are <b className="text-red">3</b> products in your cart</p>
+const Cart = () => {
+  const context = useContext(MyContext);
+  const navigate = useNavigate();
 
+  const cartItems = context.cartItems || [];
 
-                <div className="row">
-                    <div className="col-md-9 pr-5">
-                       
-                        <div className="table-responsive">
-                    <table className="table  ">
-                        <thead>
-                            <tr>
-                            <th width="35%" >Product</th>
-                            <th width="15%">Unit Price</th>
-                            <th width="25%">Quantity</th>
-                            <th width="15%">Subtotal</th>
-                             <th width="10%">Remove</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td width="35%">
-                                    <Link to="/product/1">
-                                    <div className="d-flex align-items-center cartItemimgWrapper">
-                                        <div className="imgWrapper">
-                                            <img src="https://i.pinimg.com/736x/ef/1a/fb/ef1afbc7cd59bf7918e1c3d600f53986.jpg" className="w-100"/>
-                                            
-                                       </div>
+  // Increase product quantity
+  const increaseQuantity = (id) => {
+    const updatedCart = cartItems.map((item) =>
+      item.id === id
+        ? { ...item, quantity: item.quantity + 1 }
+        : item
+    );
 
-                                       <div className="info px-3">
-                                        <h6> Icecream</h6> <Rating name="read-only" value={4.5} readOnly precision={0.5} size="small"/>
+    context.setCartItems(updatedCart);
+  };
 
-                                       </div>
-                                    </div>
-                                    </Link>
-                                </td>
-                                <td width="15%">₹150</td>
-                                <td width="25%"><QuantityBox/></td>
-                                <td width="15%">₹150</td>
-                                <td width="10%"><span className="remove"><IoClose /></span></td>
-                            </tr>
+  // Decrease product quantity
+  const decreaseQuantity = (id) => {
+    const updatedCart = cartItems.map((item) =>
+      item.id === id
+        ? { ...item, quantity: Math.max(1, item.quantity - 1) }
+        : item
+    );
 
-                             <tr>
-                                <td width="35%">
-                                    <Link to="/product/1">
-                                    <div className="d-flex align-items-center cartItemimgWrapper">
-                                        <div className="imgWrapper">
-                                            <img src="https://i.pinimg.com/736x/ef/1a/fb/ef1afbc7cd59bf7918e1c3d600f53986.jpg" className="w-100"/>
-                                            
-                                       </div>
+    context.setCartItems(updatedCart);
+  };
 
-                                       <div className="info px-3">
-                                        <h6> Icecream</h6> <Rating name="read-only" value={4.5} readOnly precision={0.5} size="small"/>
+  // Remove product from cart
+  const removeItem = (id) => {
+    const updatedCart = cartItems.filter(
+      (item) => item.id !== id
+    );
 
-                                       </div>
-                                    </div>
-                                    </Link>
-                                </td>
-                                <td width="15%">₹150</td>
-                                <td width="25%"><QuantityBox/></td>
-                                <td width="15%">₹150</td>
-                                <td width="10%"><span className="remove"><IoClose /></span></td>
-                            </tr>
+    context.setCartItems(updatedCart);
+  };
 
-                             <tr>
-                                <td width="35%">
-                                    <Link to="/product/1">
-                                    <div className="d-flex align-items-center cartItemimgWrapper">
-                                        <div className="imgWrapper">
-                                            <img src="https://i.pinimg.com/736x/ef/1a/fb/ef1afbc7cd59bf7918e1c3d600f53986.jpg" className="w-100"/>
-                                            
-                                       </div>
+  // Calculate subtotal
+  const subtotal = cartItems.reduce(
+    (total, item) => total + item.price * item.quantity,
+    0
+  );
 
-                                       <div className="info px-3">
-                                        <h6> Icecream</h6> <Rating name="read-only" value={4.5} readOnly precision={0.5} size="small"/>
+  // Delivery charge
+  const deliveryCharge = subtotal > 0 ? 0 : 0;
 
-                                       </div>
-                                    </div>
-                                    </Link>
-                                </td>
-                                <td width="15%">₹150</td>
-                                <td width="25%"><QuantityBox/></td>
-                                <td width="15%">₹150</td>
-                                <td width="10%"><span className="remove"><IoClose /></span></td>
-                            </tr>
+  // Total amount
+  const total = subtotal + deliveryCharge;
 
-                             <tr>
-                                <td width="35%">
-                                    <Link to="/product/1">
-                                    <div className="d-flex align-items-center cartItemimgWrapper">
-                                        <div className="imgWrapper">
-                                            <img src="https://i.pinimg.com/736x/ef/1a/fb/ef1afbc7cd59bf7918e1c3d600f53986.jpg" className="w-100"/>
-                                            
-                                       </div>
+  return (
+    <div className="container py-4">
 
-                                       <div className="info px-3">
-                                        <h6> Icecream</h6> <Rating name="read-only" value={4.5} readOnly precision={0.5} size="small"/>
+      {/* Page Header */}
+      <div className="d-flex justify-content-between align-items-center mb-4">
 
-                                       </div>
-                                    </div>
-                                    </Link>
-                                </td>
-                                <td width="15%">₹150</td>
-                                <td width="25%"><QuantityBox/></td>
-                                <td width="15%">₹150</td>
-                                <td width="10%"><span className="remove"><IoClose /></span></td>
-                            </tr>
+        <h2 className="font-weight-bold">
+          Shopping Cart
+        </h2>
 
-                             <tr>
-                                <td width="35%">
-                                    <Link to="/product/1">
-                                    <div className="d-flex align-items-center cartItemimgWrapper">
-                                        <div className="imgWrapper">
-                                            <img src="https://i.pinimg.com/736x/ef/1a/fb/ef1afbc7cd59bf7918e1c3d600f53986.jpg" className="w-100"/>
-                                            
-                                       </div>
+        <Link to="/" className="text-decoration-none">
+          Continue Shopping
+        </Link>
 
-                                       <div className="info px-3">
-                                        <h6> Icecream</h6> <Rating name="read-only" value={4.5} readOnly precision={0.5} size="small"/>
+      </div>
 
-                                       </div>
-                                    </div>
-                                    </Link>
-                                </td>
-                                <td width="15%">₹150</td>
-                                <td width="25%"><QuantityBox/></td>
-                                <td width="15%">₹150</td>
-                                <td width="10%"><span className="remove"><IoClose /></span></td>
-                            </tr>
+      {/* Empty Cart */}
+      {cartItems.length === 0 ? (
 
-                             <tr>
-                                <td width="35%">
-                                    <Link to="/product/1">
-                                    <div className="d-flex align-items-center cartItemimgWrapper">
-                                        <div className="imgWrapper">
-                                            <img src="https://i.pinimg.com/736x/ef/1a/fb/ef1afbc7cd59bf7918e1c3d600f53986.jpg" className="w-100"/>
-                                            
-                                       </div>
+        <div className="text-center py-5">
 
-                                       <div className="info px-3">
-                                        <h6> Icecream</h6> <Rating name="read-only" value={4.5} readOnly precision={0.5} size="small"/>
+          <h3>
+            Your Cart is Empty 🛒
+          </h3>
 
-                                       </div>
-                                    </div>
-                                    </Link>
-                                </td>
-                                <td width="15%">₹150</td>
-                                <td width="25%"><QuantityBox/></td>
-                                <td width="15%">₹150</td>
-                                <td width="10%"><span className="remove"><IoClose /></span></td>
-                            </tr>
-                        </tbody>
+          <p className="text-muted mt-3">
+            You have not added any products to your cart yet.
+          </p>
 
-                    </table>
+          <Link to="/">
+            <Button
+              variant="contained"
+              className="btn-blue mt-3"
+            >
+              Start Shopping
+            </Button>
+          </Link>
+
+        </div>
+
+      ) : (
+
+        <div className="row">
+
+          {/* Cart Products */}
+          <div className="col-md-8">
+
+            {cartItems.map((item) => (
+
+              <div
+                className="card mb-3 p-3"
+                key={item.id}
+              >
+
+                <div className="row align-items-center">
+
+                  {/* Product Image */}
+                  <div className="col-md-3 text-center">
+
+                    {item.image ? (
+
+                      <img
+                        src={item.image}
+                        alt={item.name}
+                        style={{
+                          width: "120px",
+                          height: "120px",
+                          objectFit: "contain"
+                        }}
+                      />
+
+                    ) : (
+
+                      <div
+                        className="d-flex align-items-center justify-content-center"
+                        style={{
+                          width: "120px",
+                          height: "120px",
+                          backgroundColor: "#f5f5f5",
+                          margin: "auto"
+                        }}
+                      >
+                        <span>
+                          No Image
+                        </span>
+                      </div>
+
+                    )}
+
+                  </div>
+
+                  {/* Product Details */}
+                  <div className="col-md-5">
+
+                    <h5 className="font-weight-bold">
+                      {item.name}
+                    </h5>
+
+                    <p className="text-muted mb-1">
+                      Brand: {item.brand}
+                    </p>
+
+                    <h5 className="text-danger">
+                      ₹{item.price}
+                    </h5>
+
+                  </div>
+
+                  {/* Quantity Controls */}
+                  <div className="col-md-3">
+
+                    <div className="d-flex align-items-center justify-content-center">
+
+                      <Button
+                        variant="outlined"
+                        size="small"
+                        onClick={() =>
+                          decreaseQuantity(item.id)
+                        }
+                      >
+                        <FaMinus />
+                      </Button>
+
+                      <span
+                        className="mx-3 font-weight-bold"
+                        style={{
+                          fontSize: "18px"
+                        }}
+                      >
+                        {item.quantity}
+                      </span>
+
+                      <Button
+                        variant="outlined"
+                        size="small"
+                        onClick={() =>
+                          increaseQuantity(item.id)
+                        }
+                      >
+                        <FaPlus />
+                      </Button>
+
+                    </div>
+
+                    {/* Product Subtotal */}
+                    <p className="text-center mt-2 font-weight-bold">
+                      ₹{item.price * item.quantity}
+                    </p>
+
+                  </div>
+
+                  {/* Remove Button */}
+                  <div className="col-md-1 text-center">
+
+                    <Button
+                      color="error"
+                      onClick={() =>
+                        removeItem(item.id)
+                      }
+                    >
+                      <FaTrash />
+                    </Button>
+
+                  </div>
+
                 </div>
 
+              </div>
 
-                        </div>
-                        <div className="col-md-3">
-                            <div className="card border p-3 cartDetails">
-                                <h4>CART TOTALS</h4>
+            ))}
 
-                                <div className="d-flex align-items-center mb-3">
-                                    <span>Subtotal</span>
-                                    <span className="ml-auto text-red font-weight-bold">₹1200</span>
-                                </div>
+          </div>
 
-                                 <div className="d-flex align-items-center mb-3">
-                                    <span>Shipping</span>
-                                    <span className="ml-auto "><b>Free</b></span>
-                                </div>
+          {/* Cart Summary */}
+          <div className="col-md-4">
 
-                                 <div className="d-flex align-items-center mb-3">
-                                    <span>Estimate For</span>
-                                    <span className="ml-auto "><b>India</b></span>
-                                </div>
+            <div className="card p-4">
 
-                                 <div className="d-flex align-items-center mb-3">
-                                    <span>Total</span>
-                                    <span className="ml-auto text-red font-weight-bold">₹1200</span>
-                                </div>
-                                <br/>
-                                 <Button className="btn-blue btn-lg btn-big bg-red"><FaShoppingCart />Add to Cart</Button>
+              <h4 className="font-weight-bold mb-4">
+                Cart Summary
+              </h4>
 
-                            </div>
+              <div className="d-flex justify-content-between mb-3">
 
-                        </div>
-                        </div>                
+                <span>
+                  Subtotal
+                </span>
+
+                <strong>
+                  ₹{subtotal}
+                </strong>
+
+              </div>
+
+              <div className="d-flex justify-content-between mb-3">
+
+                <span>
+                  Delivery Charge
+                </span>
+
+                <strong className="text-success">
+                  Free
+                </strong>
+
+              </div>
+
+              <hr />
+
+              <div className="d-flex justify-content-between mb-4">
+
+                <h5>
+                  Total
+                </h5>
+
+                <h5 className="text-danger">
+                  ₹{total}
+                </h5>
+
+              </div>
+
+              {/* Checkout Button */}
+              <Button
+                variant="contained"
+                fullWidth
+                className="btn-blue"
+                onClick={() => navigate("/checkout")}
+              >
+                Proceed to Checkout
+              </Button>
 
             </div>
-        </section>
-        </>
-    )
 
+          </div>
 
-}
+        </div>
+
+      )}
+
+    </div>
+  );
+};
+
 export default Cart;

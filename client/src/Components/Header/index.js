@@ -1,3 +1,4 @@
+
 import { Link } from "react-router-dom";
 import Logo from "../../assets/images/eshop.png";
 import Button from "@mui/material/Button";
@@ -12,8 +13,22 @@ import { MyContext } from "../../App";
 const Header = () => {
   const context = useContext(MyContext);
 
+  // Calculate total quantity of all cart items
+  const totalQuantity = context.cartItems.reduce(
+    (total, item) => total + item.quantity,
+    0
+  );
+
+  // Calculate total cart price
+  const totalPrice = context.cartItems.reduce(
+    (total, item) => total + item.price * item.quantity,
+    0
+  );
+
   return (
     <div className="headerWrapper">
+
+      {/* Top Strip */}
       <div className="top-strip bg-blue">
         <div className="container">
           <p className="mb-0 mt-0">
@@ -22,49 +37,84 @@ const Header = () => {
         </div>
       </div>
 
+      {/* Header */}
       <header className="header">
         <div className="container">
+
           <div className="row">
+
+            {/* Logo */}
             <div className="logoWrapper d-flex align-items-center col-sm-2">
               <Link to="/">
                 <img src={Logo} alt="Logo" />
               </Link>
             </div>
 
+            {/* Header Right Section */}
             <div className="col-sm-10 d-flex align-items-center part2">
-              {context.countryList.length !== 0 && <CountryDropdown />}
 
+              {/* Country Dropdown */}
+              {context.countryList.length !== 0 && (
+                <CountryDropdown />
+              )}
+
+              {/* Search Box */}
               <SearchBox />
 
+              {/* Sign In and Cart */}
               <div className="part3 d-flex align-items-center ml-auto">
-                {
-                  context.isLogin!==true ? <Link to="/signIn"><Button className="btn-blue  
-                   btn-round mr-3">Sign In</Button> </Link>:
-                  <Button className="circle mr-3">
-                  <FaRegCircleUser />
-                </Button> 
-                }
-               
-               
-                <div className="ml-auto cartTab d-flex align-items-center">
-                  <span>RS 1000</span>
 
-                  <div className="position-relative ml-2">
-                    <Button className="circle">
-                      <IoBagOutline />
+                {/* Sign In */}
+                {context.isLogin !== true ? (
+                  <Link to="/signIn">
+                    <Button className="btn-blue btn-round mr-3">
+                      Sign In
                     </Button>
+                  </Link>
+                ) : (
+                  <Button className="circle mr-3">
+                    <FaRegCircleUser />
+                  </Button>
+                )}
+
+                {/* Cart */}
+                <div className="ml-auto cartTab d-flex align-items-center">
+
+                  {/* Dynamic Total Price */}
+                  <span>
+                    ₹{totalPrice}
+                  </span>
+
+                  {/* Cart Icon */}
+                  <div className="position-relative ml-2">
+
+                    <Link to="/cart">
+                      <Button className="circle">
+                        <IoBagOutline />
+                      </Button>
+                    </Link>
+
+                    {/* Dynamic Cart Count */}
                     <span className="count d-flex align-items-center justify-content-center">
-                      1
+                      {totalQuantity}
                     </span>
+
                   </div>
+
                 </div>
+
               </div>
+
             </div>
+
           </div>
+
         </div>
       </header>
 
+      {/* Navigation */}
       <Navigation />
+
     </div>
   );
 };

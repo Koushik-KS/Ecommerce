@@ -1,21 +1,32 @@
+
 import { TiMinus } from "react-icons/ti";
 import { FaPlus } from "react-icons/fa";
 import Button from "@mui/material/Button";
 import { useState } from "react";
 
-const QuantityBox = () => {
-
+const QuantityBox = ({ onChange }) => {
   const [inputVal, setInputVal] = useState(1);
 
   const minus = () => {
-    if(inputVal>1){
-    setInputVal(inputVal - 1);
+    if (inputVal > 1) {
+      const newValue = inputVal - 1;
+
+      setInputVal(newValue);
+
+      if (onChange) {
+        onChange(newValue);
+      }
     }
-   
   };
 
   const plus = () => {
-    setInputVal(inputVal + 1);
+    const newValue = inputVal + 1;
+
+    setInputVal(newValue);
+
+    if (onChange) {
+      onChange(newValue);
+    }
   };
 
   return (
@@ -24,7 +35,11 @@ const QuantityBox = () => {
         <TiMinus />
       </Button>
 
-      <input type="text" value={inputVal} readOnly />
+      <input
+        type="text"
+        value={inputVal}
+        readOnly
+      />
 
       <Button onClick={plus}>
         <FaPlus />
