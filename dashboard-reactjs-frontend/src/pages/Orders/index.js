@@ -1,5 +1,5 @@
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 const Orders = () => {
@@ -9,6 +9,10 @@ const Orders = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState("");
   const [updatingOrderId, setUpdatingOrderId] = useState("");
+
+  // Search and filter states
+  const [searchTerm, setSearchTerm] = useState("");
+  const [statusFilter, setStatusFilter] = useState("ALL");
 
   const API_URL = "http://localhost:4000/api/orders";
 
@@ -37,6 +41,7 @@ const Orders = () => {
     fetchOrders();
   }, []);
 
+  // Update order status
   const updateOrderStatus = async (orderId, status) => {
     try {
       setUpdatingOrderId(orderId);
@@ -90,20 +95,56 @@ const Orders = () => {
     switch (status) {
       case "PENDING":
         return "bg-warning text-dark";
+
       case "CONFIRMED":
         return "bg-primary";
+
       case "PROCESSING":
         return "bg-info text-dark";
+
       case "SHIPPED":
         return "bg-secondary";
+
       case "DELIVERED":
         return "bg-success";
+
       case "CANCELLED":
         return "bg-danger";
+
       default:
         return "bg-dark";
     }
   };
+
+  // Search and filter orders
+  const filteredOrders = useMemo(() => {
+    const search = searchTerm.trim().toLowerCase();
+
+    return orders.filter((order) => {
+      const customerName =
+        order.customer?.fullName ||
+        order.customer?.name ||
+        "";
+
+      const customerMobile =
+        order.customer?.mobile ||
+        order.customer?.phone ||
+        "";
+
+      const orderId = order.orderId || "";
+
+      const matchesSearch =
+        orderId.toLowerCase().includes(search) ||
+        customerName.toLowerCase().includes(search) ||
+        customerMobile.toString().includes(search);
+
+      const matchesStatus =
+        statusFilter === "ALL" ||
+        order.status === statusFilter;
+
+      return matchesSearch && matchesStatus;
+    });
+  }, [orders, searchTerm, statusFilter]);
 
   return (
     <div className="right-content w-100">
@@ -113,6 +154,7 @@ const Orders = () => {
         <div className="d-flex justify-content-between align-items-center mb-4">
           <div>
             <h2 className="font-weight-bold">Orders</h2>
+
             <p className="text-muted mb-0">
               Manage customer orders and update order status.
             </p>
@@ -146,20 +188,106 @@ const Orders = () => {
           <div className="card shadow-sm border-0">
             <div className="card-body">
 
+              {/* Table Header */}
               <div className="d-flex justify-content-between align-items-center mb-3">
                 <h4 className="mb-0">Customer Orders</h4>
 
                 <span className="badge bg-primary">
-                  Total Orders: {orders.length}
+                  Showing: {filteredOrders.length} / {orders.length}
                 </span>
               </div>
 
+              {/* Search and Filter */}
+              <div className="row g-3 mb-4">
+
+                {/* Search */}
+                <div className="col-md-7">
+                  <label
+                    htmlFor="orderSearch"
+                    className="form-label fw-bold"
+                  >
+                    Search Orders
+                  </label>
+
+                  <input
+                    id="orderSearch"
+                    type="text"
+                    className="form-control"
+                    placeholder="Search Order ID, customer name or mobile..."
+                    value={searchTerm}
+                    onChange={(event) =>
+                      setSearchTerm(event.target.value)
+                    }
+                  />
+                </div>
+
+                {/* Status Filter */}
+                <div className="col-md-3">
+                  <label
+                    htmlFor="statusFilter"
+                    className="form-label fw-bold"
+                  >
+                    Filter by Status
+                  </label>
+
+                  <select
+                    id="statusFilter"
+                    className="form-select"
+                    value={statusFilter}
+                    onChange={(event) =>
+                      setStatusFilter(event.target.value)
+                    }
+                  >
+                    <option value="ALL">All Statuses</option>
+                    <option value="PENDING">PENDING</option>
+                    <option value="CONFIRMED">CONFIRMED</option>
+                    <option value="PROCESSING">PROCESSING</option>
+                    <option value="SHIPPED">SHIPPED</option>
+                    <option value="DELIVERED">DELIVERED</option>
+                    <option value="CANCELLED">CANCELLED</option>
+                  </select>
+                </div>
+
+                {/* Clear Filters */}
+                <div className="col-md-2 d-flex align-items-end">
+                  <button
+                    className="btn btn-secondary w-100"
+                    onClick={() => {
+                      setSearchTerm("");
+                      setStatusFilter("ALL");
+                    }}
+                  >
+                    Clear
+                  </button>
+                </div>
+              </div>
+
+              {/* Empty Orders */}
               {orders.length === 0 ? (
                 <div className="text-center py-5">
                   <h5>No orders found</h5>
+
                   <p className="text-muted">
                     Customer orders will appear here.
                   </p>
+                </div>
+              ) : filteredOrders.length === 0 ? (
+                <div className="text-center py-5">
+                  <h5>No matching orders</h5>
+
+                  <p className="text-muted">
+                    Try another search or status filter.
+                  </p>
+
+                  <button
+                    className="btn btn-primary"
+                    onClick={() => {
+                      setSearchTerm("");
+                      setStatusFilter("ALL");
+                    }}
+                  >
+                    Reset Filters
+                  </button>
                 </div>
               ) : (
                 <div className="table-responsive">
@@ -181,13 +309,16 @@ const Orders = () => {
                     </thead>
 
                     <tbody>
-                      {orders.map((order, index) => (
-                        <tr key={order._id || order.orderId}>
-
+                      {filteredOrders.map((order, index) => (
+                        <tr
+                          key={order._id || order.orderId}
+                        >
                           <td>{index + 1}</td>
 
                           <td>
-                            <strong>{order.orderId}</strong>
+                            <strong>
+                              {order.orderId || "N/A"}
+                            </strong>
                           </td>
 
                           <td>
@@ -197,13 +328,16 @@ const Orders = () => {
                           </td>
 
                           <td>
-                            {order.customer?.mobile || "N/A"}
+                            {order.customer?.mobile ||
+                              order.customer?.phone ||
+                              "N/A"}
                           </td>
 
                           <td>
                             {order.items?.reduce(
                               (total, item) =>
-                                total + Number(item.quantity || 0),
+                                total +
+                                Number(item.quantity || 0),
                               0
                             )}
                           </td>
@@ -211,9 +345,9 @@ const Orders = () => {
                           <td>
                             <strong className="text-danger">
                               ₹
-                              {Number(order.total || 0).toLocaleString(
-                                "en-IN"
-                              )}
+                              {Number(
+                                order.total || 0
+                              ).toLocaleString("en-IN")}
                             </strong>
                           </td>
 
@@ -229,21 +363,24 @@ const Orders = () => {
                                 order.status
                               )}`}
                             >
-                              {order.status}
+                              {order.status || "PENDING"}
                             </span>
                           </td>
 
                           <td>
                             <select
                               className="form-select"
-                              value={order.status}
+                              value={order.status || "PENDING"}
                               disabled={
                                 updatingOrderId === order.orderId
                               }
                               onChange={(event) => {
-                                const newStatus = event.target.value;
+                                const newStatus =
+                                  event.target.value;
 
-                                if (newStatus !== order.status) {
+                                if (
+                                  newStatus !== order.status
+                                ) {
                                   updateOrderStatus(
                                     order.orderId,
                                     newStatus
@@ -251,12 +388,29 @@ const Orders = () => {
                                 }
                               }}
                             >
-                              <option value="PENDING">PENDING</option>
-                              <option value="CONFIRMED">CONFIRMED</option>
-                              <option value="PROCESSING">PROCESSING</option>
-                              <option value="SHIPPED">SHIPPED</option>
-                              <option value="DELIVERED">DELIVERED</option>
-                              <option value="CANCELLED">CANCELLED</option>
+                              <option value="PENDING">
+                                PENDING
+                              </option>
+
+                              <option value="CONFIRMED">
+                                CONFIRMED
+                              </option>
+
+                              <option value="PROCESSING">
+                                PROCESSING
+                              </option>
+
+                              <option value="SHIPPED">
+                                SHIPPED
+                              </option>
+
+                              <option value="DELIVERED">
+                                DELIVERED
+                              </option>
+
+                              <option value="CANCELLED">
+                                CANCELLED
+                              </option>
                             </select>
 
                             {updatingOrderId === order.orderId && (
@@ -278,7 +432,6 @@ const Orders = () => {
                               View Details
                             </button>
                           </td>
-
                         </tr>
                       ))}
                     </tbody>

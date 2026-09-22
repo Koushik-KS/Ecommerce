@@ -2,17 +2,29 @@
 import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import axios from "axios";
+
 import CircularProgress from "@mui/material/CircularProgress";
 import Alert from "@mui/material/Alert";
 
 const API_URL = "http://localhost:4000/api/orders";
+
+const STATUS_OPTIONS = [
+  "PENDING",
+  "CONFIRMED",
+  "PROCESSING",
+  "SHIPPED",
+  "DELIVERED",
+  "CANCELLED",
+];
 
 const OrderDetails = () => {
   const { orderId } = useParams();
 
   const [order, setOrder] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [updatingStatus, setUpdatingStatus] = useState(false);
   const [error, setError] = useState("");
+  const [successMessage, setSuccessMessage] = useState("");
 
   // Fetch selected order
   const fetchOrderDetails = async () => {
@@ -54,6 +66,47 @@ const OrderDetails = () => {
     fetchOrderDetails();
   }, [orderId]);
 
+  // Update order status
+  const handleStatusChange = async (event) => {
+    const newStatus = event.target.value;
+
+    if (!order?.orderId) {
+      setError("Order ID is missing.");
+      return;
+    }
+
+    try {
+      setUpdatingStatus(true);
+      setError("");
+      setSuccessMessage("");
+
+      await axios.patch(
+        `${API_URL}/${order.orderId}/status`,
+        {
+          status: newStatus,
+        }
+      );
+
+      setOrder((previousOrder) => ({
+        ...previousOrder,
+        status: newStatus,
+      }));
+
+      setSuccessMessage(
+        `Order status updated to ${newStatus}.`
+      );
+    } catch (err) {
+      console.error("Status update error:", err);
+
+      setError(
+        err.response?.data?.message ||
+          "Failed to update order status."
+      );
+    } finally {
+      setUpdatingStatus(false);
+    }
+  };
+
   const formatCurrency = (amount) => {
     return `₹${Number(amount || 0).toLocaleString("en-IN")}`;
   };
@@ -78,11 +131,25 @@ const OrderDetails = () => {
     );
   }
 
-  if (error || !order) {
+  if (error && !order) {
     return (
       <div className="right-content w-100">
         <Alert severity="error">
-          {error || "Order not found."}
+          {error}
+        </Alert>
+
+        <Link to="/orders" className="btn btn-primary mt-3">
+          Back to Orders
+        </Link>
+      </div>
+    );
+  }
+
+  if (!order) {
+    return (
+      <div className="right-content w-100">
+        <Alert severity="error">
+          Order not found.
         </Alert>
 
         <Link to="/orders" className="btn btn-primary mt-3">
@@ -127,7 +194,7 @@ const OrderDetails = () => {
           <h2 className="hd">Order Details</h2>
 
           <p className="text-muted mb-0">
-            View complete order information
+            View and manage order information
           </p>
         </div>
 
@@ -136,9 +203,22 @@ const OrderDetails = () => {
         </Link>
       </div>
 
+      {/* Messages */}
+      {error && (
+        <Alert severity="error" className="mb-4">
+          {error}
+        </Alert>
+      )}
+
+      {successMessage && (
+        <Alert severity="success" className="mb-4">
+          {successMessage}
+        </Alert>
+      )}
+
       {/* Order Header */}
       <div className="card shadow border-0 p-4 mb-4">
-        <div className="d-flex align-items-center justify-content-between flex-wrap gap-2">
+        <div className="d-flex align-items-center justify-content-between flex-wrap gap-3">
           <div>
             <h3 className="mb-2">
               {order.orderId || order._id}
@@ -153,6 +233,45 @@ const OrderDetails = () => {
           <span className="badge bg-primary p-2">
             {order.status || "PENDING"}
           </span>
+        </div>
+      </div>
+
+      {/* Update Order Status */}
+      <div className="card shadow border-0 p-4 mb-4">
+        <h3 className="hd">Update Order Status</h3>
+
+        <div className="row align-items-end mt-3">
+          <div className="col-md-6">
+            <label
+              htmlFor="orderStatus"
+              className="form-label fw-bold"
+            >
+              Current Order Status
+            </label>
+
+            <select
+              id="orderStatus"
+              className="form-select"
+              value={order.status || "PENDING"}
+              onChange={handleStatusChange}
+              disabled={updatingStatus}
+            >
+              {STATUS_OPTIONS.map((status) => (
+                <option key={status} value={status}>
+                  {status}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div className="col-md-6 mt-3 mt-md-0">
+            {updatingStatus && (
+              <div className="d-flex align-items-center gap-2 text-muted">
+                <CircularProgress size={20} />
+                Updating status...
+              </div>
+            )}
+          </div>
         </div>
       </div>
 
@@ -248,6 +367,7 @@ const OrderDetails = () => {
           <div className="col-md-6 ms-auto">
             <div className="d-flex justify-content-between mb-2">
               <span>Subtotal</span>
+
               <strong>
                 {formatCurrency(order.subtotal)}
               </strong>
@@ -255,6 +375,7 @@ const OrderDetails = () => {
 
             <div className="d-flex justify-content-between mb-2">
               <span>Delivery Charge</span>
+
               <strong>
                 {formatCurrency(order.deliveryCharge)}
               </strong>
