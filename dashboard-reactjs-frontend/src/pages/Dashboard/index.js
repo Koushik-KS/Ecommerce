@@ -1,633 +1,336 @@
-import { useContext, useEffect, useState } from "react";
+
+import { useEffect, useState } from "react";
+import axios from "axios";
+
 import DashboardBox from "./components/dashboardBox";
+
 import { FaRegUser } from "react-icons/fa";
 import { FaShoppingCart } from "react-icons/fa";
 import { FaBagShopping } from "react-icons/fa6";
 import { GiStarsStack } from "react-icons/gi";
-import Menu from '@mui/material/Menu';
-import MenuItem from '@mui/material/MenuItem';
-import Button from '@mui/material/Button';
-import { FaRegClock } from "react-icons/fa6";
-import { BsThreeDotsVertical } from "react-icons/bs";
+
 import { Chart } from "react-google-charts";
 
-import InputLabel from '@mui/material/InputLabel';
+import CircularProgress from "@mui/material/CircularProgress";
+import Alert from "@mui/material/Alert";
 
-import FormHelperText from '@mui/material/FormHelperText';
-import FormControl from '@mui/material/FormControl';
-import Select from '@mui/material/Select';
-import { FaEye } from "react-icons/fa";
-import { FaPencilAlt } from "react-icons/fa";
-import { MdDelete } from "react-icons/md";
-import Pagination from '@mui/material/Pagination';
-import { MyContext } from "../../App";
-import { Link } from "react-router-dom";
+const API_URL = "http://localhost:4000/api/orders";
 
+const Dashboard = () => {
+  const [orders, setOrders] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
 
-export const data=[
-  ["Year","Sales","Expenses"],
-  ["2013",1000,400],
-  ["2014",1170,460],
-  ["2015",660,1120],
-  ["2016",1030,540]
-];
+  const fetchOrders = async () => {
+    try {
+      setLoading(true);
+      setError("");
 
-export const options={
-  'backgroundColor':'transparent',
-};
+      const response = await axios.get(API_URL);
 
-const Dashboard=()=>{
-  
- const [anchorEl, setAnchorEl] = useState(null);
- const [showBy, setshowBy] =useState('');
- const [showBysetCat, setCatBy] =useState('');
-      const open = Boolean(anchorEl);
-    
-      const ITEM_HEIGHT = 48;
+      const orderData = Array.isArray(response.data)
+        ? response.data
+        : response.data.orders || [];
 
-      const context =useContext(MyContext);
+      setOrders(orderData);
+    } catch (err) {
+      console.error("Dashboard order fetch error:", err);
 
-      useEffect(()=>{
-        context.setisHideSidebarAndHeader(false);
+      setError(
+        err.response?.data?.message ||
+          "Failed to load dashboard statistics."
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
 
-        window.scrollTo(0,0);
+  useEffect(() => {
+    window.scrollTo(0, 0);
+    fetchOrders();
+  }, []);
 
-      },[]);
-    
-      const handleClick = (event) => {
-        setAnchorEl(event.currentTarget);
-      };
-    
-      const handleClose = () => {
-        setAnchorEl(null);
-      };
-    return(
-        <>
-        <div className="right-content w-100">
-            <div className="row dashboardBoxWrapperRow">
-                <div className="col-md-8">
-                    <div className="dashboardBoxWrapper d-flex">
-                
-              <DashboardBox color={["#1da256","#48d483"]} icon={<FaRegUser />}  grow={true}/> 
-                <DashboardBox color={["#c012e2","#eb64fe"]}  icon={<FaShoppingCart />}/>
-                <DashboardBox color={["#2c78e5","#60aff5"]}  icon={<FaBagShopping />}/>
-                <DashboardBox color={["#e1950e","#f3cd29"]}  icon={<GiStarsStack />}/>
-                   
-                </div>
-                </div> 
+  const totalOrders = orders.length;
 
-                <div className="col-md-4 pl-0">
-                    <div className="box graphBox">
-                       <div className="d-flex align-items-center w-100 bottomEle">
-        <h6 className="text-white mb-0 mt-0">Last Month</h6>
+  const totalRevenue = orders.reduce((total, order) => {
+    return total + Number(order.total || 0);
+  }, 0);
 
-        <div className="ml-auto">
-          <Button className="toggleIcon" onClick={handleClick}>
-            <BsThreeDotsVertical />
-          </Button>
+  const pendingOrders = orders.filter(
+    (order) => order.status === "PENDING"
+  ).length;
 
-          <Menu
-          className="dropdown_menu"
-            anchorEl={anchorEl}
-            open={open}
-            onClose={handleClose}
-            slotProps={{
-              paper: {
-                style: {
-                  maxHeight: ITEM_HEIGHT * 4.5,
-                  width: '20ch',
-                },
-              },
-            }}
-          >
-            <MenuItem onClick={handleClose}><FaRegClock />Last Day</MenuItem>
-            <MenuItem onClick={handleClose}><FaRegClock />Last Week</MenuItem>
-                <MenuItem onClick={handleClose}><FaRegClock />Last Month</MenuItem>
-            <MenuItem onClick={handleClose}><FaRegClock />Last Year</MenuItem>
-          </Menu>
+  const deliveredOrders = orders.filter(
+    (order) => order.status === "DELIVERED"
+  ).length;
+
+  const confirmedOrders = orders.filter(
+    (order) => order.status === "CONFIRMED"
+  ).length;
+
+  const processingOrders = orders.filter(
+    (order) => order.status === "PROCESSING"
+  ).length;
+
+  const shippedOrders = orders.filter(
+    (order) => order.status === "SHIPPED"
+  ).length;
+
+  const cancelledOrders = orders.filter(
+    (order) => order.status === "CANCELLED"
+  ).length;
+
+  const formatCurrency = (amount) => {
+    return `₹${amount.toLocaleString("en-IN")}`;
+  };
+
+  const chartData = [
+    ["Order Status", "Orders"],
+    ["Pending", pendingOrders],
+    ["Confirmed", confirmedOrders],
+    ["Processing", processingOrders],
+    ["Shipped", shippedOrders],
+    ["Delivered", deliveredOrders],
+    ["Cancelled", cancelledOrders],
+  ];
+
+  const chartOptions = {
+    backgroundColor: "transparent",
+    legend: {
+      textStyle: {
+        color: "#ffffff",
+      },
+    },
+    chartArea: {
+      width: "90%",
+      height: "80%",
+    },
+  };
+
+  const productSales = {};
+
+  orders.forEach((order) => {
+    order.items?.forEach((item) => {
+      const productName =
+        item.name ||
+        item.productName ||
+        item.title ||
+        "Unknown Product";
+
+      const quantity = Number(item.quantity || 1);
+      const price = Number(item.price || 0);
+
+      if (!productSales[productName]) {
+        productSales[productName] = {
+          name: productName,
+          quantity: 0,
+          sales: 0,
+        };
+      }
+
+      productSales[productName].quantity += quantity;
+      productSales[productName].sales += price * quantity;
+    });
+  });
+
+  const bestSellingProducts = Object.values(productSales)
+    .sort((a, b) => b.quantity - a.quantity)
+    .slice(0, 10);
+
+  if (loading) {
+    return (
+      <div className="right-content w-100 d-flex justify-content-center align-items-center">
+        <CircularProgress />
+      </div>
+    );
+  }
+
+  return (
+    <div className="right-content w-100">
+      <div className="d-flex align-items-center justify-content-between mb-4">
+        <div>
+          <h2 className="hd">Dashboard</h2>
+
+          <p className="text-muted mb-0">
+            Overview of your store performance
+          </p>
+        </div>
+
+        <button
+          className="btn btn-primary"
+          onClick={fetchOrders}
+        >
+          Refresh Statistics
+        </button>
+      </div>
+
+      {error && (
+        <Alert severity="error" className="mb-4">
+          {error}
+        </Alert>
+      )}
+
+      {/* Statistics Cards */}
+      <div className="row dashboardBoxWrapperRow">
+        <div className="col-md-8">
+          <div className="dashboardBoxWrapper d-flex flex-wrap">
+            <DashboardBox
+              title="Total Orders"
+              value={totalOrders}
+              subtitle="All Time"
+              color={["#1da256", "#48d483"]}
+              icon={<FaShoppingCart />}
+              grow={true}
+            />
+
+            <DashboardBox
+              title="Total Revenue"
+              value={formatCurrency(totalRevenue)}
+              subtitle="All Time"
+              color={["#c012e2", "#eb64fe"]}
+              icon={<FaBagShopping />}
+              grow={true}
+            />
+
+            <DashboardBox
+              title="Pending Orders"
+              value={pendingOrders}
+              subtitle="Needs Attention"
+              color={["#e1950e", "#f3cd29"]}
+              icon={<FaRegUser />}
+              grow={false}
+            />
+
+            <DashboardBox
+              title="Delivered Orders"
+              value={deliveredOrders}
+              subtitle="Completed"
+              color={["#2c78e5", "#60aff5"]}
+              icon={<GiStarsStack />}
+              grow={true}
+            />
+          </div>
+        </div>
+
+        {/* Order Status Chart */}
+        <div className="col-md-4 pl-0">
+          <div className="box graphBox">
+            <div className="d-flex align-items-center justify-content-between">
+              <h6 className="text-white mb-0">
+                Order Statistics
+              </h6>
+            </div>
+
+            <Chart
+              chartType="PieChart"
+              data={chartData}
+              options={chartOptions}
+              width="100%"
+              height="250px"
+            />
+          </div>
         </div>
       </div>
 
-                <h3 className="text-white font-weight-bold">Rs 3,787,681</h3>
-                <p >Rs 3,787,681 in last month</p>
+      {/* Best Selling Products */}
+      <div className="card shadow border-0 p-3 mt-4">
+        <div className="d-flex align-items-center justify-content-between">
+          <h3 className="hd">Best Selling Products</h3>
 
-                 <Chart
-      chartType="PieChart"
-     
-      options={options}
-      data={data}
-      width={"100%"}
-      height={"170px"}
-    />
-                    </div>
-                </div>
-
-
-
-            </div>
-
-
-
-            <div className="card shadow border-0 p-3 mt-4">
-              <h3 className="hd">Best Selling Products</h3>
-              <div className="row cardFilters mt-3">
-                <div className="col-md-3">
-                <h4>SHOW BY</h4>
-                 <FormControl  size="small" className="w-100">
-                 <Select
-          value={showBy}
-          onChange={(e)=>setshowBy(e.target.value)}
-          displayEmpty
-          inputProps={{ 'aria-label': 'Without label' }} 
-          labelId="demo-select-small-label"
-          className="w-100"
-        
-          >
-          <MenuItem value="">
-            <em>None</em>
-          </MenuItem>
-          <MenuItem value={10}>Ten</MenuItem>
-          <MenuItem value={20}>Twenty</MenuItem>
-          <MenuItem value={30}>Thirty</MenuItem>
-        </Select>
-         </FormControl>
-                </div>
-
-                <div className="col-md-3">
-                <h4>CATEGORY BY</h4>
-                 <FormControl  size="small" className="w-100">
-                 <Select
-          value={showBysetCat}
-          onChange={(e)=>setCatBy(e.target.value)}
-          displayEmpty
-          inputProps={{ 'aria-label': 'Without label' }} 
-          labelId="demo-select-small-label"
-          className="w-100"
-        
-          >
-          <MenuItem value="">
-            <em>None</em>
-          </MenuItem>
-          <MenuItem value={10}>Ten</MenuItem>
-          <MenuItem value={20}>Twenty</MenuItem>
-          <MenuItem value={30}>Thirty</MenuItem>
-        </Select>
-          </FormControl>
-                </div>
-
-
-
-              </div>
-              
-              <div className="table-responsive mt-3">
-                <table className="table table-bordered v-align">
-                  <thead className="thead-dark ">
-                    <tr>
-                    <th>UID </th>
-                   <th style={{width:'300px'}}>PRODUCT</th>
-                    <th>CATEGORY</th>
-                      <th>BRAND</th>
-                      <th>PRICE</th>
-                   <th>STOCK</th>
-                    <th>RATING</th>
-                      <th>ORDER </th>
-                       <th>SALES</th>
-                      <th>ACTION</th>
-                      </tr>
-
-                  </thead>
-                  <tbody>
-                    <tr>
-                      <td>#1</td>
-                      <td>
-                        <div className="d-flex align-items-center productBox">
-                          <div className="imgWrapper">
-                            <div className="img">
-                              <img src="https://i.pinimg.com/1200x/d5/f1/fc/d5f1fcea65a20b5b13960e080e70f7fa.jpg" className="w-100"/>
-                            </div>
-                          </div>
-                          <div className="info pl-0">
-                            <h6>Tops and skirt set for Female...</h6>
-                        <p>Women's exclusive summer Tops and skirt set for Female
-                          Tops and skirt set
-                        </p>
-                          </div>
-                        </div>
-                        </td>
-                      <td>Womans</td>
-                      <td>richman</td>
-                      <td>
-                       <div style={{width:'70px'}}>
-                         <del className="old">₹299</del>
-                         <span className="new text-danger">₹299</span>
-                       </div>
-                        </td>
-                      <td>30</td>
-                      <td>4.9(16)</td>
-                      <td>380</td>
-                      <td>₹38k</td>
-                      <td>
-                        <div className="actions d-flex align-items-center">
-                            <Link to="/product/details">
-                          <Button className="secondary" color="secondary"><FaEye /></Button></Link>
-                            <Button className="success" color="success"><FaPencilAlt /></Button>
-                              <Button className="error" color="error"><MdDelete /></Button>
-                        </div>
-                      </td>
-
-
-
-                    </tr>
-
-                    <tr>
-                      <td>#1</td>
-                      <td>
-                        <div className="d-flex align-items-center productBox">
-                          <div className="imgWrapper">
-                            <div className="img">
-                              <img src="https://i.pinimg.com/1200x/d5/f1/fc/d5f1fcea65a20b5b13960e080e70f7fa.jpg" className="w-100"/>
-                            </div>
-                          </div>
-                          <div className="info pl-0">
-                            <h6>Tops and skirt set for Female...</h6>
-                        <p>Women's exclusive summer Tops and skirt set for Female
-                          Tops and skirt set
-                        </p>
-                          </div>
-                        </div>
-                        </td>
-                      <td>Womans</td>
-                      <td>richman</td>
-                      <td>
-                       <div style={{width:'70px'}}>
-                         <del className="old">₹299</del>
-                         <span className="new text-danger">₹299</span>
-                       </div>
-                        </td>
-                      <td>30</td>
-                      <td>4.9(16)</td>
-                      <td>380</td>
-                      <td>₹38k</td>
-                      <td>
-                        <div className="actions d-flex align-items-center"><Link to="/product/details">
-                          <Button className="secondary" color="secondary"><FaEye /></Button></Link>
-                            <Button className="success" color="success"><FaPencilAlt /></Button>
-                              <Button className="error" color="error"><MdDelete /></Button>
-                        </div>
-                      </td>
-
-
-
-                    </tr>
-
-                    <tr>
-                      <td>#1</td>
-                      <td>
-                        <div className="d-flex align-items-center productBox">
-                          <div className="imgWrapper">
-                            <div className="img">
-                              <img src="https://i.pinimg.com/1200x/d5/f1/fc/d5f1fcea65a20b5b13960e080e70f7fa.jpg" className="w-100"/>
-                            </div>
-                          </div>
-                          <div className="info pl-0">
-                            <h6>Tops and skirt set for Female...</h6>
-                        <p>Women's exclusive summer Tops and skirt set for Female
-                          Tops and skirt set
-                        </p>
-                          </div>
-                        </div>
-                        </td>
-                      <td>Womans</td>
-                      <td>richman</td>
-                      <td>
-                       <div style={{width:'70px'}}>
-                         <del className="old">₹299</del>
-                         <span className="new text-danger">₹299</span>
-                       </div>
-                        </td>
-                      <td>30</td>
-                      <td>4.9(16)</td>
-                      <td>380</td>
-                      <td>₹38k</td>
-                      <td>
-                        <div className="actions d-flex align-items-center"><Link to="/product/details">
-                          <Button className="secondary" color="secondary"><FaEye /></Button></Link>
-                            <Button className="success" color="success"><FaPencilAlt /></Button>
-                              <Button className="error" color="error"><MdDelete /></Button>
-                        </div>
-                      </td>
-
-
-
-                    </tr>
-
-                    <tr>
-                      <td>#1</td>
-                      <td>
-                        <div className="d-flex align-items-center productBox">
-                          <div className="imgWrapper">
-                            <div className="img">
-                              <img src="https://i.pinimg.com/1200x/d5/f1/fc/d5f1fcea65a20b5b13960e080e70f7fa.jpg" className="w-100"/>
-                            </div>
-                          </div>
-                          <div className="info pl-0">
-                            <h6>Tops and skirt set for Female...</h6>
-                        <p>Women's exclusive summer Tops and skirt set for Female
-                          Tops and skirt set
-                        </p>
-                          </div>
-                        </div>
-                        </td>
-                      <td>Womans</td>
-                      <td>richman</td>
-                      <td>
-                       <div style={{width:'70px'}}>
-                         <del className="old">₹299</del>
-                         <span className="new text-danger">₹299</span>
-                       </div>
-                        </td>
-                      <td>30</td>
-                      <td>4.9(16)</td>
-                      <td>380</td>
-                      <td>₹38k</td>
-                      <td>
-                        <div className="actions d-flex align-items-center"><Link to="/product/details">
-                          <Button className="secondary" color="secondary"><FaEye /></Button></Link>
-                            <Button className="success" color="success"><FaPencilAlt /></Button>
-                              <Button className="error" color="error"><MdDelete /></Button>
-                        </div>
-                      </td>
-
-
-
-                    </tr>
-
-                    <tr>
-                      <td>#1</td>
-                      <td>
-                        <div className="d-flex align-items-center productBox">
-                          <div className="imgWrapper">
-                            <div className="img">
-                              <img src="https://i.pinimg.com/1200x/d5/f1/fc/d5f1fcea65a20b5b13960e080e70f7fa.jpg" className="w-100"/>
-                            </div>
-                          </div>
-                          <div className="info pl-0">
-                            <h6>Tops and skirt set for Female...</h6>
-                        <p>Women's exclusive summer Tops and skirt set for Female
-                          Tops and skirt set
-                        </p>
-                          </div>
-                        </div>
-                        </td>
-                      <td>Womans</td>
-                      <td>richman</td>
-                      <td>
-                       <div style={{width:'70px'}}>
-                         <del className="old">₹299</del>
-                         <span className="new text-danger">₹299</span>
-                       </div>
-                        </td>
-                      <td>30</td>
-                      <td>4.9(16)</td>
-                      <td>380</td>
-                      <td>₹38k</td>
-                      <td>
-                        <div className="actions d-flex align-items-center"><Link to="/product/details">
-                          <Button className="secondary" color="secondary"><FaEye /></Button></Link>
-                            <Button className="success" color="success"><FaPencilAlt /></Button>
-                              <Button className="error" color="error"><MdDelete /></Button>
-                        </div>
-                      </td>
-
-
-
-                    </tr>
-
-                    <tr>
-                      <td>#1</td>
-                      <td>
-                        <div className="d-flex align-items-center productBox">
-                          <div className="imgWrapper">
-                            <div className="img">
-                              <img src="https://i.pinimg.com/1200x/d5/f1/fc/d5f1fcea65a20b5b13960e080e70f7fa.jpg" className="w-100"/>
-                            </div>
-                          </div>
-                          <div className="info pl-0">
-                            <h6>Tops and skirt set for Female...</h6>
-                        <p>Women's exclusive summer Tops and skirt set for Female
-                          Tops and skirt set
-                        </p>
-                          </div>
-                        </div>
-                        </td>
-                      <td>Womans</td>
-                      <td>richman</td>
-                      <td>
-                       <div style={{width:'70px'}}>
-                         <del className="old">₹299</del>
-                         <span className="new text-danger">₹299</span>
-                       </div>
-                        </td>
-                      <td>30</td>
-                      <td>4.9(16)</td>
-                      <td>380</td>
-                      <td>₹38k</td>
-                      <td>
-                        <div className="actions d-flex align-items-center"><Link to="/product/details">
-                          <Button className="secondary" color="secondary"><FaEye /></Button></Link>
-                            <Button className="success" color="success"><FaPencilAlt /></Button>
-                              <Button className="error" color="error"><MdDelete /></Button>
-                        </div>
-                      </td>
-
-
-
-                    </tr>
-
-                    <tr>
-                      <td>#1</td>
-                      <td>
-                        <div className="d-flex align-items-center productBox">
-                          <div className="imgWrapper">
-                            <div className="img">
-                              <img src="https://i.pinimg.com/1200x/d5/f1/fc/d5f1fcea65a20b5b13960e080e70f7fa.jpg" className="w-100"/>
-                            </div>
-                          </div>
-                          <div className="info pl-0">
-                            <h6>Tops and skirt set for Female...</h6>
-                        <p>Women's exclusive summer Tops and skirt set for Female
-                          Tops and skirt set
-                        </p>
-                          </div>
-                        </div>
-                        </td>
-                      <td>Womans</td>
-                      <td>richman</td>
-                      <td>
-                       <div style={{width:'70px'}}>
-                         <del className="old">₹299</del>
-                         <span className="new text-danger">₹299</span>
-                       </div>
-                        </td>
-                      <td>30</td>
-                      <td>4.9(16)</td>
-                      <td>380</td>
-                      <td>₹38k</td>
-                      <td>
-                        <div className="actions d-flex align-items-center"><Link to="/product/details">
-                          <Button className="secondary" color="secondary"><FaEye /></Button></Link>
-                            <Button className="success" color="success"><FaPencilAlt /></Button>
-                              <Button className="error" color="error"><MdDelete /></Button>
-                        </div>
-                      </td>
-
-
-
-                    </tr>
-
-                    <tr>
-                      <td>#1</td>
-                      <td>
-                        <div className="d-flex align-items-center productBox">
-                          <div className="imgWrapper">
-                            <div className="img">
-                              <img src="https://i.pinimg.com/1200x/d5/f1/fc/d5f1fcea65a20b5b13960e080e70f7fa.jpg" className="w-100"/>
-                            </div>
-                          </div>
-                          <div className="info pl-0">
-                            <h6>Tops and skirt set for Female...</h6>
-                        <p>Women's exclusive summer Tops and skirt set for Female
-                          Tops and skirt set
-                        </p>
-                          </div>
-                        </div>
-                        </td>
-                      <td>Womans</td>
-                      <td>richman</td>
-                      <td>
-                       <div style={{width:'70px'}}>
-                         <del className="old">₹299</del>
-                         <span className="new text-danger">₹299</span>
-                       </div>
-                        </td>
-                      <td>30</td>
-                      <td>4.9(16)</td>
-                      <td>380</td>
-                      <td>₹38k</td>
-                      <td>
-                        <div className="actions d-flex align-items-center"><Link to="/product/details">
-                          <Button className="secondary" color="secondary"><FaEye /></Button></Link>
-                            <Button className="success" color="success"><FaPencilAlt /></Button>
-                              <Button className="error" color="error"><MdDelete /></Button>
-                        </div>
-                      </td>
-
-
-
-                    </tr>
-
-                    <tr>
-                      <td>#1</td>
-                      <td>
-                        <div className="d-flex align-items-center productBox">
-                          <div className="imgWrapper">
-                            <div className="img">
-                              <img src="https://i.pinimg.com/1200x/d5/f1/fc/d5f1fcea65a20b5b13960e080e70f7fa.jpg" className="w-100"/>
-                            </div>
-                          </div>
-                          <div className="info pl-0">
-                            <h6>Tops and skirt set for Female...</h6>
-                        <p>Women's exclusive summer Tops and skirt set for Female
-                          Tops and skirt set
-                        </p>
-                          </div>
-                        </div>
-                        </td>
-                      <td>Womans</td>
-                      <td>richman</td>
-                      <td>
-                       <div style={{width:'70px'}}>
-                         <del className="old">₹299</del>
-                         <span className="new text-danger">₹299</span>
-                       </div>
-                        </td>
-                      <td>30</td>
-                      <td>4.9(16)</td>
-                      <td>380</td>
-                      <td>₹38k</td>
-                      <td>
-                        <div className="actions d-flex align-items-center"><Link to="/product/details">
-                          <Button className="secondary" color="secondary"><FaEye /></Button></Link>
-                            <Button className="success" color="success"><FaPencilAlt /></Button>
-                              <Button className="error" color="error"><MdDelete /></Button>
-                        </div>
-                      </td>
-
-
-
-                    </tr>
-
-                    <tr>
-                      <td>#1</td>
-                      <td>
-                        <div className="d-flex align-items-center productBox">
-                          <div className="imgWrapper">
-                            <div className="img">
-                              <img src="https://i.pinimg.com/1200x/d5/f1/fc/d5f1fcea65a20b5b13960e080e70f7fa.jpg" className="w-100"/>
-                            </div>
-                          </div>
-                          <div className="info pl-0">
-                            <h6>Tops and skirt set for Female...</h6>
-                        <p>Women's exclusive summer Tops and skirt set for Female
-                          Tops and skirt set
-                        </p>
-                          </div>
-                        </div>
-                        </td>
-                      <td>Womans</td>
-                      <td>richman</td>
-                      <td>
-                       <div style={{width:'70px'}}>
-                         <del className="old">₹299</del>
-                         <span className="new text-danger">₹299</span>
-                       </div>
-                        </td>
-                      <td>30</td>
-                      <td>4.9(16)</td>
-                      <td>380</td>
-                      <td>₹38k</td>
-                      <td>
-                        <div className="actions d-flex align-items-center"><Link to="/product/details">
-                          <Button className="secondary" color="secondary"><FaEye /></Button></Link>
-                            <Button className="success" color="success"><FaPencilAlt /></Button>
-                              <Button className="error" color="error"><MdDelete /></Button>
-                        </div>
-                      </td>
-
-
-
-                    </tr>
-
-                  </tbody>
-                </table>
-   <div className="d-flex tableFooter">
-    <p>showing <b>12</b> of <b>60</b> results</p>
-    <Pagination count={10} color="primary" className="pagination" 
-     showFirstButton showLastButton/>
-   </div>
-
-              </div>
-
-
-              </div> 
-             
-        
+          <span className="badge bg-primary">
+            {bestSellingProducts.length} Products
+          </span>
         </div>
-      
-        </>
-    )
 
+        <div className="table-responsive mt-3">
+          <table className="table table-bordered v-align">
+            <thead className="thead-dark">
+              <tr>
+                <th>#</th>
+                <th>PRODUCT</th>
+                <th>QUANTITY SOLD</th>
+                <th>TOTAL SALES</th>
+              </tr>
+            </thead>
 
+            <tbody>
+              {bestSellingProducts.length === 0 ? (
+                <tr>
+                  <td colSpan="4" className="text-center">
+                    No product sales available.
+                  </td>
+                </tr>
+              ) : (
+                bestSellingProducts.map((product, index) => (
+                  <tr key={product.name}>
+                    <td>{index + 1}</td>
 
-}
-export default  Dashboard;
+                    <td>
+                      <strong>{product.name}</strong>
+                    </td>
+
+                    <td>{product.quantity}</td>
+
+                    <td className="text-danger">
+                      {formatCurrency(product.sales)}
+                    </td>
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      {/* Order Summary */}
+      <div className="card shadow border-0 p-3 mt-4">
+        <h3 className="hd">Order Summary</h3>
+
+        <div className="table-responsive mt-3">
+          <table className="table table-bordered">
+            <thead className="thead-dark">
+              <tr>
+                <th>STATUS</th>
+                <th>TOTAL ORDERS</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              <tr>
+                <td>PENDING</td>
+                <td>{pendingOrders}</td>
+              </tr>
+
+              <tr>
+                <td>CONFIRMED</td>
+                <td>{confirmedOrders}</td>
+              </tr>
+
+              <tr>
+                <td>PROCESSING</td>
+                <td>{processingOrders}</td>
+              </tr>
+
+              <tr>
+                <td>SHIPPED</td>
+                <td>{shippedOrders}</td>
+              </tr>
+
+              <tr>
+                <td>DELIVERED</td>
+                <td>{deliveredOrders}</td>
+              </tr>
+
+              <tr>
+                <td>CANCELLED</td>
+                <td>{cancelledOrders}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default Dashboard;
