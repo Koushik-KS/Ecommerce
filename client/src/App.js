@@ -18,6 +18,7 @@ import ProductDetails from "./Pages/ProductDetails";
 import Cart from "./Pages/Cart";
 import Checkout from "./Pages/Checkout";
 import OrderSuccess from "./Pages/OrderSuccess";
+import Track from "./Pages/Track";
 import SignIn from "./Pages/SignIn";
 import SignUp from "./Pages/SignUp";
 
@@ -112,6 +113,8 @@ function App() {
           <Route path="/checkout" element={<Checkout />} />
 
           <Route path="/order-success" element={<OrderSuccess />} />
+
+          <Route path="/track" element={<Track />} />
 
           <Route path="/signIn" element={<SignIn />} />
 
