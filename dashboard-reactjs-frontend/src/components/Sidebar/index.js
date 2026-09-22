@@ -1,5 +1,6 @@
 
 import Button from "@mui/material/Button";
+
 import { RiDashboardFill } from "react-icons/ri";
 import { IoIosArrowForward } from "react-icons/io";
 import { FaProductHunt } from "react-icons/fa6";
@@ -7,315 +8,236 @@ import { IoCartOutline } from "react-icons/io5";
 import { MdMessage } from "react-icons/md";
 import { FaBell } from "react-icons/fa";
 import { IoSettings } from "react-icons/io5";
+import { AiOutlineLogout } from "react-icons/ai";
+
 import { Link } from "react-router-dom";
 import { useState } from "react";
-import { AiOutlineLogout } from "react-icons/ai";
 
 const Sidebar = () => {
   const [activeTab, setActiveTab] = useState(0);
   const [isToggleSubmenu, setIsToggleSubmenu] = useState(false);
 
   const isOpenSubmenu = (index) => {
-    setActiveTab(index);
-    setIsToggleSubmenu(!isToggleSubmenu);
+    if (activeTab === index) {
+      setIsToggleSubmenu(!isToggleSubmenu);
+    } else {
+      setActiveTab(index);
+      setIsToggleSubmenu(true);
+    }
   };
 
   return (
-    <>
-      <div className="sidebar">
-        <ul>
-          {/* Dashboard */}
-          <li>
-            <Link to="/">
-              <Button
-                className={`w-100 ${
-                  activeTab === 0 ? "active" : ""
-                }`}
-                onClick={() => isOpenSubmenu(0)}
-              >
-                <span className="icon">
-                  <RiDashboardFill />
-                </span>
-                Dashboard
-
-                <span className="arrow">
-                  <IoIosArrowForward />
-                </span>
-              </Button>
-            </Link>
-          </li>
-
-          {/* Products */}
-          <li>
+    <div className="sidebar">
+      <ul>
+        {/* =========================
+            DASHBOARD
+        ========================= */}
+        <li>
+          <Link to="/">
             <Button
               className={`w-100 ${
-                activeTab === 1 && isToggleSubmenu === true
-                  ? "active"
-                  : ""
+                activeTab === 0 ? "active" : ""
               }`}
-              onClick={() => isOpenSubmenu(1)}
+              onClick={() => {
+                setActiveTab(0);
+                setIsToggleSubmenu(false);
+              }}
             >
               <span className="icon">
-                <FaProductHunt />
+                <RiDashboardFill />
               </span>
-              Products
+
+              Dashboard
 
               <span className="arrow">
                 <IoIosArrowForward />
               </span>
             </Button>
+          </Link>
+        </li>
 
-            <div
-              className={`submenuWrapper ${
-                activeTab === 1 && isToggleSubmenu === true
-                  ? "colapse"
-                  : "colapsed"
-              }`}
-            >
-              <ul className="submenu">
-                <li>
-                  <Link to="/products">Product List</Link>
-                </li>
+        {/* =========================
+            PRODUCTS
+        ========================= */}
+        <li>
+          <Button
+            className={`w-100 ${
+              activeTab === 1 && isToggleSubmenu
+                ? "active"
+                : ""
+            }`}
+            onClick={() => isOpenSubmenu(1)}
+          >
+            <span className="icon">
+              <FaProductHunt />
+            </span>
 
-                <li>
-                  <Link to="/product/details">
-                    Product View
-                  </Link>
-                </li>
+            Products
 
-                <li>
-                  <Link to="/product/upload">
-                    Product Upload
-                  </Link>
-                </li>
-              </ul>
-            </div>
-          </li>
+            <span className="arrow">
+              <IoIosArrowForward />
+            </span>
+          </Button>
 
-          {/* Orders */}
-          <li>
-            <Link to="/orders">
-              <Button
-                className={`w-100 ${
-                  activeTab === 2 ? "active" : ""
-                }`}
-                onClick={() => isOpenSubmenu(2)}
-              >
-                <span className="icon">
-                  <IoCartOutline />
-                </span>
-                Orders
+          <div
+            className={`submenuWrapper ${
+              activeTab === 1 && isToggleSubmenu
+                ? "colapse"
+                : "colapsed"
+            }`}
+          >
+            <ul className="submenu">
+              <li>
+                <Link to="/products">
+                  Product List
+                </Link>
+              </li>
 
-                <span className="arrow">
-                  <IoIosArrowForward />
-                </span>
-              </Button>
-            </Link>
-          </li>
+              <li>
+                <Link to="/product/details">
+                  Product View
+                </Link>
+              </li>
 
-          {/* Messages */}
-          <li>
-            <Link to="/">
-              <Button
-                className={`w-100 ${
-                  activeTab === 3 ? "active" : ""
-                }`}
-                onClick={() => isOpenSubmenu(3)}
-              >
-                <span className="icon">
-                  <MdMessage />
-                </span>
-                Messages
+              <li>
+                <Link to="/product/upload">
+                  Product Upload
+                </Link>
+              </li>
 
-                <span className="arrow">
-                  <IoIosArrowForward />
-                </span>
-              </Button>
-            </Link>
-          </li>
-
-          {/* Notifications */}
-          <li>
-            <Link to="/">
-              <Button
-                className={`w-100 ${
-                  activeTab === 4 ? "active" : ""
-                }`}
-                onClick={() => isOpenSubmenu(4)}
-              >
-                <span className="icon">
-                  <FaBell />
-                </span>
-                Notifications
-
-                <span className="arrow">
-                  <IoIosArrowForward />
-                </span>
-              </Button>
-            </Link>
-          </li>
-
-          {/* Settings */}
-          <li>
-            <Link to="/">
-              <Button
-                className={`w-100 ${
-                  activeTab === 5 ? "active" : ""
-                }`}
-                onClick={() => isOpenSubmenu(5)}
-              >
-                <span className="icon">
-                  <IoSettings />
-                </span>
-                Settings
-
-                <span className="arrow">
-                  <IoIosArrowForward />
-                </span>
-              </Button>
-            </Link>
-          </li>
-
-          {/* Second Dashboard */}
-          <li>
-            <Link to="/">
-              <Button
-                className={`w-100 ${
-                  activeTab === 6 ? "active" : ""
-                }`}
-                onClick={() => isOpenSubmenu(6)}
-              >
-                <span className="icon">
-                  <RiDashboardFill />
-                </span>
-                Dashboard
-
-                <span className="arrow">
-                  <IoIosArrowForward />
-                </span>
-              </Button>
-            </Link>
-          </li>
-
-          {/* Second Products */}
-          <li>
-            <Link to="/">
-              <Button
-                className={`w-100 ${
-                  activeTab === 7 ? "active" : ""
-                }`}
-                onClick={() => isOpenSubmenu(7)}
-              >
-                <span className="icon">
-                  <FaProductHunt />
-                </span>
-                Products
-
-                <span className="arrow">
-                  <IoIosArrowForward />
-                </span>
-              </Button>
-            </Link>
-          </li>
-
-          {/* Second Orders */}
-          <li>
-            <Link to="/orders">
-              <Button
-                className={`w-100 ${
-                  activeTab === 8 ? "active" : ""
-                }`}
-                onClick={() => isOpenSubmenu(8)}
-              >
-                <span className="icon">
-                  <IoCartOutline />
-                </span>
-                Orders
-
-                <span className="arrow">
-                  <IoIosArrowForward />
-                </span>
-              </Button>
-            </Link>
-          </li>
-
-          {/* Second Messages */}
-          <li>
-            <Link to="/">
-              <Button
-                className={`w-100 ${
-                  activeTab === 9 ? "active" : ""
-                }`}
-                onClick={() => isOpenSubmenu(9)}
-              >
-                <span className="icon">
-                  <MdMessage />
-                </span>
-                Messages
-
-                <span className="arrow">
-                  <IoIosArrowForward />
-                </span>
-              </Button>
-            </Link>
-          </li>
-
-          {/* Second Notifications */}
-          <li>
-            <Link to="/">
-              <Button
-                className={`w-100 ${
-                  activeTab === 10 ? "active" : ""
-                }`}
-                onClick={() => isOpenSubmenu(10)}
-              >
-                <span className="icon">
-                  <FaBell />
-                </span>
-                Notifications
-
-                <span className="arrow">
-                  <IoIosArrowForward />
-                </span>
-              </Button>
-            </Link>
-          </li>
-
-          {/* Second Settings */}
-          <li>
-            <Link to="/">
-              <Button
-                className={`w-100 ${
-                  activeTab === 11 ? "active" : ""
-                }`}
-                onClick={() => isOpenSubmenu(11)}
-              >
-                <span className="icon">
-                  <IoSettings />
-                </span>
-                Settings
-
-                <span className="arrow">
-                  <IoIosArrowForward />
-                </span>
-              </Button>
-            </Link>
-          </li>
-        </ul>
-
-        <br />
-
-        {/* Logout */}
-        <div className="logoutWrapper">
-          <div className="logoutBox">
-            <Button variant="contained">
-              <AiOutlineLogout />
-              Logout
-            </Button>
+              <li>
+                <Link to="/category/create">
+                  Category Create
+                </Link>
+              </li>
+            </ul>
           </div>
+        </li>
+
+        {/* =========================
+            ORDERS
+        ========================= */}
+        <li>
+          <Link to="/orders">
+            <Button
+              className={`w-100 ${
+                activeTab === 2 ? "active" : ""
+              }`}
+              onClick={() => {
+                setActiveTab(2);
+                setIsToggleSubmenu(false);
+              }}
+            >
+              <span className="icon">
+                <IoCartOutline />
+              </span>
+
+              Orders
+
+              <span className="arrow">
+                <IoIosArrowForward />
+              </span>
+            </Button>
+          </Link>
+        </li>
+
+        {/* =========================
+            MESSAGES
+        ========================= */}
+        <li>
+          <Link to="/messages">
+            <Button
+              className={`w-100 ${
+                activeTab === 3 ? "active" : ""
+              }`}
+              onClick={() => {
+                setActiveTab(3);
+                setIsToggleSubmenu(false);
+              }}
+            >
+              <span className="icon">
+                <MdMessage />
+              </span>
+
+              Messages
+
+              <span className="arrow">
+                <IoIosArrowForward />
+              </span>
+            </Button>
+          </Link>
+        </li>
+
+        {/* =========================
+            NOTIFICATIONS
+        ========================= */}
+        <li>
+          <Link to="/notifications">
+            <Button
+              className={`w-100 ${
+                activeTab === 4 ? "active" : ""
+              }`}
+              onClick={() => {
+                setActiveTab(4);
+                setIsToggleSubmenu(false);
+              }}
+            >
+              <span className="icon">
+                <FaBell />
+              </span>
+
+              Notifications
+
+              <span className="arrow">
+                <IoIosArrowForward />
+              </span>
+            </Button>
+          </Link>
+        </li>
+
+        {/* =========================
+            SETTINGS
+        ========================= */}
+        <li>
+          <Link to="/settings">
+            <Button
+              className={`w-100 ${
+                activeTab === 5 ? "active" : ""
+              }`}
+              onClick={() => {
+                setActiveTab(5);
+                setIsToggleSubmenu(false);
+              }}
+            >
+              <span className="icon">
+                <IoSettings />
+              </span>
+
+              Settings
+
+              <span className="arrow">
+                <IoIosArrowForward />
+              </span>
+            </Button>
+          </Link>
+        </li>
+      </ul>
+
+      <br />
+
+      {/* =========================
+          LOGOUT
+      ========================= */}
+      <div className="logoutWrapper">
+        <div className="logoutBox">
+          <Button variant="contained">
+            <AiOutlineLogout />
+
+            Logout
+          </Button>
         </div>
       </div>
-    </>
+    </div>
   );
 };
 

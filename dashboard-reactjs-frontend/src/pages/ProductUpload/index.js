@@ -6,7 +6,6 @@ import Breadcrumbs from "@mui/material/Breadcrumbs";
 import HomeIcon from "@mui/icons-material/Home";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import Chip from "@mui/material/Chip";
-
 import { styled, emphasize } from "@mui/material/styles";
 import MenuItem from "@mui/material/MenuItem";
 import Select from "@mui/material/Select";
@@ -63,6 +62,7 @@ const ProductUpload = () => {
 
   const [loadingCategories, setLoadingCategories] = useState(true);
   const [submitting, setSubmitting] = useState(false);
+
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
 
@@ -73,6 +73,7 @@ const ProductUpload = () => {
     const fetchCategories = async () => {
       try {
         setLoadingCategories(true);
+        setError("");
 
         const response = await fetch(`${API_URL}/category`);
 
@@ -95,7 +96,7 @@ const ProductUpload = () => {
   }, []);
 
   // =========================
-  // IMAGE TO BASE64
+  // CONVERT IMAGE TO BASE64
   // =========================
   const convertImageToBase64 = (file) => {
     return new Promise((resolve, reject) => {
@@ -110,7 +111,7 @@ const ProductUpload = () => {
   };
 
   // =========================
-  // IMAGE SELECT
+  // SELECT PRODUCT IMAGES
   // =========================
   const handleImageChange = async (event) => {
     const selectedFiles = Array.from(event.target.files);
@@ -119,14 +120,26 @@ const ProductUpload = () => {
       return;
     }
 
+    setMessage("");
+    setError("");
+
+    if (selectedFiles.length > 5) {
+      setError("Please select a maximum of 5 images.");
+      event.target.value = "";
+      return;
+    }
+
+    const invalidFile = selectedFiles.find(
+      (file) => !file.type.startsWith("image/")
+    );
+
+    if (invalidFile) {
+      setError("Please select only image files.");
+      event.target.value = "";
+      return;
+    }
+
     try {
-      setError("");
-
-      if (selectedFiles.length > 5) {
-        setError("Please select a maximum of 5 images.");
-        return;
-      }
-
       const base64Images = await Promise.all(
         selectedFiles.map((file) => convertImageToBase64(file))
       );
@@ -147,7 +160,9 @@ const ProductUpload = () => {
     setMessage("");
     setError("");
 
-    // Basic validation
+    // =========================
+    // VALIDATION
+    // =========================
     if (!name.trim()) {
       setError("Please enter a product name.");
       return;
@@ -169,11 +184,24 @@ const ProductUpload = () => {
     }
 
     if (!price || Number(price) <= 0) {
-      setError("Please enter a valid product price.");
+      setError("Please enter a valid selling price.");
       return;
     }
 
-    if (!countInStock || Number(countInStock) < 0) {
+    if (
+      regularPrice &&
+      Number(regularPrice) < Number(price)
+    ) {
+      setError(
+        "Regular price should be greater than or equal to selling price."
+      );
+      return;
+    }
+
+    if (
+      countInStock === "" ||
+      Number(countInStock) < 0
+    ) {
       setError("Please enter a valid stock quantity.");
       return;
     }
@@ -199,27 +227,44 @@ const ProductUpload = () => {
         isFeatured: false,
       };
 
-      const response = await fetch(`${API_URL}/products/create`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(productData),
-      });
+      const response = await fetch(
+        `${API_URL}/products/create`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(productData),
+        }
+      );
 
-      const data = await response.json();
+      const responseText = await response.text();
+
+      let data;
+
+      try {
+        data = JSON.parse(responseText);
+      } catch {
+        throw new Error(
+          "Server returned an invalid response. Check the backend terminal."
+        );
+      }
 
       if (!response.ok) {
         throw new Error(
           typeof data === "string"
             ? data
-            : data.message || "Product upload failed."
+            : data.message ||
+              data.error ||
+              "Product upload failed."
         );
       }
 
       setMessage("Product uploaded successfully!");
 
-      // Clear form
+      // =========================
+      // CLEAR FORM
+      // =========================
       setName("");
       setDescription("");
       setCategoryVal("");
@@ -230,7 +275,16 @@ const ProductUpload = () => {
       setCountInStock("");
       setImages([]);
 
-      // Navigate to product list after successful upload
+      // Clear file input
+      const fileInput = document.getElementById(
+        "product-images"
+      );
+
+      if (fileInput) {
+        fileInput.value = "";
+      }
+
+      // Navigate to products page
       setTimeout(() => {
         navigate("/products");
       }, 1000);
@@ -244,8 +298,10 @@ const ProductUpload = () => {
 
   return (
     <div className="right-content w-100">
+
       {/* HEADER */}
       <div className="card shadow border-0 w-100 flex-row p-4">
+
         <h5 className="title">Product Upload</h5>
 
         <Breadcrumbs
@@ -272,14 +328,21 @@ const ProductUpload = () => {
             deleteIcon={<ExpandMoreIcon />}
           />
         </Breadcrumbs>
+
       </div>
 
       {/* FORM */}
       <form className="form" onSubmit={handleSubmit}>
+
         <div className="row">
+
           <div className="col-sm-9">
+
             <div className="card p-4">
-              <h5 className="mb-4">Basic Information</h5>
+
+              <h5 className="mb-4">
+                Basic Information
+              </h5>
 
               {/* SUCCESS MESSAGE */}
               {message && (
@@ -303,7 +366,9 @@ const ProductUpload = () => {
                   type="text"
                   className="form-control"
                   value={name}
-                  onChange={(event) => setName(event.target.value)}
+                  onChange={(event) =>
+                    setName(event.target.value)
+                  }
                   placeholder="Enter product name"
                 />
               </div>
@@ -325,8 +390,11 @@ const ProductUpload = () => {
 
               {/* CATEGORY AND BRAND */}
               <div className="row">
+
+                {/* CATEGORY */}
                 <div className="col">
                   <div className="form-group">
+
                     <h6>CATEGORY</h6>
 
                     <Select
@@ -336,11 +404,14 @@ const ProductUpload = () => {
                       }
                       displayEmpty
                       className="w-100"
+                      disabled={loadingCategories}
                     >
                       <MenuItem value="">
                         <em>
                           {loadingCategories
                             ? "Loading categories..."
+                            : categories.length === 0
+                            ? "No categories found"
                             : "Select Category"}
                         </em>
                       </MenuItem>
@@ -354,11 +425,14 @@ const ProductUpload = () => {
                         </MenuItem>
                       ))}
                     </Select>
+
                   </div>
                 </div>
 
+                {/* BRAND */}
                 <div className="col">
                   <div className="form-group">
+
                     <h6>BRAND</h6>
 
                     <input
@@ -370,14 +444,19 @@ const ProductUpload = () => {
                       }
                       placeholder="Enter brand name"
                     />
+
                   </div>
                 </div>
+
               </div>
 
               {/* PRICE */}
               <div className="row">
+
+                {/* REGULAR PRICE */}
                 <div className="col">
                   <div className="form-group">
+
                     <h6>REGULAR PRICE</h6>
 
                     <input
@@ -390,11 +469,14 @@ const ProductUpload = () => {
                       placeholder="Enter regular price"
                       min="0"
                     />
+
                   </div>
                 </div>
 
+                {/* SELLING PRICE */}
                 <div className="col">
                   <div className="form-group">
+
                     <h6>SELLING PRICE</h6>
 
                     <input
@@ -407,14 +489,19 @@ const ProductUpload = () => {
                       placeholder="Enter selling price"
                       min="0"
                     />
+
                   </div>
                 </div>
+
               </div>
 
               {/* RATING AND STOCK */}
               <div className="row">
+
+                {/* RATING */}
                 <div className="col">
                   <div className="form-group">
+
                     <h6>RATING</h6>
 
                     <Rating
@@ -424,11 +511,14 @@ const ProductUpload = () => {
                         setRatingsValue(newValue || 0);
                       }}
                     />
+
                   </div>
                 </div>
 
+                {/* STOCK */}
                 <div className="col">
                   <div className="form-group">
+
                     <h6>PRODUCT STOCK</h6>
 
                     <input
@@ -441,15 +531,19 @@ const ProductUpload = () => {
                       placeholder="Enter stock quantity"
                       min="0"
                     />
+
                   </div>
                 </div>
+
               </div>
 
               {/* IMAGE UPLOAD */}
               <div className="form-group mt-3">
+
                 <h6>PRODUCT IMAGES</h6>
 
                 <input
+                  id="product-images"
                   type="file"
                   className="form-control"
                   accept="image/*"
@@ -466,13 +560,14 @@ const ProductUpload = () => {
                     {images.length} image(s) selected.
                   </p>
                 )}
+
               </div>
 
-              {/* SUBMIT */}
+              {/* SUBMIT BUTTON */}
               <Button
                 type="submit"
                 className="btn-blue btn-lg btn-big mt-3"
-                disabled={submitting}
+                disabled={submitting || loadingCategories}
               >
                 <FaCloudUploadAlt />
 
@@ -482,10 +577,15 @@ const ProductUpload = () => {
                   ? "UPLOADING..."
                   : "PUBLISH AND VIEW"}
               </Button>
+
             </div>
+
           </div>
+
         </div>
+
       </form>
+
     </div>
   );
 };
