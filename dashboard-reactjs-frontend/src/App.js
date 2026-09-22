@@ -16,15 +16,19 @@ import ProductDetails from "./pages/ProductDetails";
 import ProductUpload from "./pages/ProductUpload";
 import Products from "./pages/Products";
 import Orders from "./pages/Orders";
-import OrderDetails from "./components/OrderDetails";
+import OrderDetails from "./pages/Orders/OrderDetails";
 
 const MyContext = createContext();
 
 function App() {
   const [isToggleSidebar, setIsToggleSidebar] = useState(false);
   const [isLogin, setIsLogin] = useState(true);
-  const [isHideSidebarAndHeader, setisHideSidebarAndHeader] =
-    useState(false);
+
+  const [
+    isHideSidebarAndHeader,
+    setisHideSidebarAndHeader,
+  ] = useState(false);
+
   const [themeMode, setThemeMode] = useState(true);
 
   useEffect(() => {
@@ -49,15 +53,17 @@ function App() {
     isHideSidebarAndHeader,
     setisHideSidebarAndHeader,
     themeMode,
-    setThemeMode
+    setThemeMode,
   };
 
   return (
     <BrowserRouter>
       <MyContext.Provider value={values}>
+        {/* Header */}
         {isHideSidebarAndHeader !== true && <Header />}
 
         <div className="main d-flex">
+          {/* Sidebar */}
           {isHideSidebarAndHeader !== true && (
             <div
               className={`sidebarWrapper ${
@@ -68,6 +74,7 @@ function App() {
             </div>
           )}
 
+          {/* Main Content */}
           <div
             className={`content ${
               isHideSidebarAndHeader === true ? "full" : ""
@@ -79,61 +86,52 @@ function App() {
               {/* Dashboard */}
               <Route
                 path="/"
-                exact={true}
                 element={<Dashboard />}
               />
 
               <Route
                 path="/dashboard"
-                exact={true}
                 element={<Dashboard />}
               />
 
               {/* Authentication */}
               <Route
                 path="/login"
-                exact={true}
                 element={<Login />}
               />
 
               <Route
                 path="/signUp"
-                exact={true}
                 element={<SignUp />}
               />
 
               {/* Products */}
               <Route
                 path="/products"
-                exact={true}
                 element={<Products />}
               />
 
               <Route
                 path="/product/details"
-                exact={true}
                 element={<ProductDetails />}
               />
 
               <Route
                 path="/product/upload"
-                exact={true}
                 element={<ProductUpload />}
               />
 
               {/* Orders */}
               <Route
                 path="/orders"
-                exact={true}
                 element={<Orders />}
               />
 
+              {/* Order Details */}
               <Route
-  path="/orders/:orderId"
-  exact={true}
-  element={<OrderDetails />}
-/>
-
+                path="/orders/:orderId"
+                element={<OrderDetails />}
+              />
             </Routes>
           </div>
         </div>

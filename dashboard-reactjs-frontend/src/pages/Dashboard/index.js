@@ -5,8 +5,7 @@ import axios from "axios";
 import DashboardBox from "./components/dashboardBox";
 import RecentOrders from "./components/RecentOrders";
 
-import { FaRegUser } from "react-icons/fa";
-import { FaShoppingCart } from "react-icons/fa";
+import { FaRegUser, FaShoppingCart } from "react-icons/fa";
 import { FaBagShopping } from "react-icons/fa6";
 import { GiStarsStack } from "react-icons/gi";
 
@@ -89,7 +88,7 @@ const Dashboard = () => {
     return `₹${Number(amount || 0).toLocaleString("en-IN")}`;
   };
 
-  // Order chart data
+  // Order status chart data
   const chartData = [
     ["Order Status", "Orders"],
     ["Pending", pendingOrders],
@@ -122,6 +121,7 @@ const Dashboard = () => {
         item.name ||
         item.productName ||
         item.title ||
+        item.product?.name ||
         "Unknown Product";
 
       const quantity = Number(item.quantity || 1);
@@ -143,6 +143,68 @@ const Dashboard = () => {
   const bestSellingProducts = Object.values(productSales)
     .sort((a, b) => b.quantity - a.quantity)
     .slice(0, 10);
+
+  // Calculate monthly revenue
+  const monthlyRevenue = {};
+
+  orders.forEach((order) => {
+    const orderDate = new Date(
+      order.createdAt || order.orderDate
+    );
+
+    if (isNaN(orderDate.getTime())) {
+      return;
+    }
+
+    const monthKey = `${orderDate.getFullYear()}-${String(
+      orderDate.getMonth() + 1
+    ).padStart(2, "0")}`;
+
+    const monthName = orderDate.toLocaleDateString("en-IN", {
+      month: "short",
+      year: "numeric",
+    });
+
+    if (!monthlyRevenue[monthKey]) {
+      monthlyRevenue[monthKey] = {
+        month: monthName,
+        revenue: 0,
+      };
+    }
+
+    monthlyRevenue[monthKey].revenue += Number(
+      order.total || 0
+    );
+  });
+
+  const monthlyRevenueData = [
+    ["Month", "Revenue"],
+    ...Object.keys(monthlyRevenue)
+      .sort()
+      .map((monthKey) => [
+        monthlyRevenue[monthKey].month,
+        monthlyRevenue[monthKey].revenue,
+      ]),
+  ];
+
+  const revenueChartOptions = {
+    title: "Monthly Revenue",
+    curveType: "function",
+    legend: {
+      position: "bottom",
+    },
+    hAxis: {
+      title: "Month",
+    },
+    vAxis: {
+      title: "Revenue (₹)",
+      format: "₹#,##0",
+    },
+    chartArea: {
+      width: "80%",
+      height: "70%",
+    },
+  };
 
   // Loading screen
   if (loading) {
@@ -339,6 +401,25 @@ const Dashboard = () => {
             </tbody>
           </table>
         </div>
+      </div>
+
+      {/* Monthly Revenue Chart */}
+      <div className="card shadow border-0 p-3 mt-4">
+        <h3 className="hd">Monthly Revenue</h3>
+
+        {monthlyRevenueData.length > 1 ? (
+          <Chart
+            chartType="LineChart"
+            width="100%"
+            height="350px"
+            data={monthlyRevenueData}
+            options={revenueChartOptions}
+          />
+        ) : (
+          <p className="text-muted mb-0">
+            Not enough data to display monthly revenue.
+          </p>
+        )}
       </div>
 
       {/* Recent Orders */}

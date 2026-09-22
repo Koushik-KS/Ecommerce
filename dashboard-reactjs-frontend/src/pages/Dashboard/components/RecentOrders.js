@@ -114,9 +114,14 @@ const RecentOrders = () => {
                   </td>
 
                   <td>
-                    {order.customer?.name ||
-                      order.customerName ||
-                      "Unknown"}
+                <td>
+  {order.customer?.fullName ||
+    order.customer?.full_name ||
+    order.customer?.name ||
+    order.customerName ||
+    order.name ||
+    "Unknown"}
+</td>
                   </td>
 
                   <td className="text-danger fw-bold">
