@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 
 import DashboardBox from "./components/dashboardBox";
+import RecentOrders from "./components/RecentOrders";
 
 import { FaRegUser } from "react-icons/fa";
 import { FaShoppingCart } from "react-icons/fa";
@@ -21,6 +22,7 @@ const Dashboard = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
+  // Fetch orders
   const fetchOrders = async () => {
     try {
       setLoading(true);
@@ -45,11 +47,13 @@ const Dashboard = () => {
     }
   };
 
+  // Load orders when dashboard opens
   useEffect(() => {
     window.scrollTo(0, 0);
     fetchOrders();
   }, []);
 
+  // Dashboard statistics
   const totalOrders = orders.length;
 
   const totalRevenue = orders.reduce((total, order) => {
@@ -80,10 +84,12 @@ const Dashboard = () => {
     (order) => order.status === "CANCELLED"
   ).length;
 
+  // Format currency
   const formatCurrency = (amount) => {
-    return `₹${amount.toLocaleString("en-IN")}`;
+    return `₹${Number(amount || 0).toLocaleString("en-IN")}`;
   };
 
+  // Order chart data
   const chartData = [
     ["Order Status", "Orders"],
     ["Pending", pendingOrders],
@@ -107,6 +113,7 @@ const Dashboard = () => {
     },
   };
 
+  // Calculate best-selling products
   const productSales = {};
 
   orders.forEach((order) => {
@@ -137,6 +144,7 @@ const Dashboard = () => {
     .sort((a, b) => b.quantity - a.quantity)
     .slice(0, 10);
 
+  // Loading screen
   if (loading) {
     return (
       <div className="right-content w-100 d-flex justify-content-center align-items-center">
@@ -147,6 +155,7 @@ const Dashboard = () => {
 
   return (
     <div className="right-content w-100">
+      {/* Dashboard Header */}
       <div className="d-flex align-items-center justify-content-between mb-4">
         <div>
           <h2 className="hd">Dashboard</h2>
@@ -159,18 +168,20 @@ const Dashboard = () => {
         <button
           className="btn btn-primary"
           onClick={fetchOrders}
+          disabled={loading}
         >
-          Refresh Statistics
+          {loading ? "Refreshing..." : "Refresh Statistics"}
         </button>
       </div>
 
+      {/* Error Message */}
       {error && (
         <Alert severity="error" className="mb-4">
           {error}
         </Alert>
       )}
 
-      {/* Statistics Cards */}
+      {/* Dashboard Statistics */}
       <div className="row dashboardBoxWrapperRow">
         <div className="col-md-8">
           <div className="dashboardBoxWrapper d-flex flex-wrap">
@@ -329,6 +340,9 @@ const Dashboard = () => {
           </table>
         </div>
       </div>
+
+      {/* Recent Orders */}
+      <RecentOrders />
     </div>
   );
 };
