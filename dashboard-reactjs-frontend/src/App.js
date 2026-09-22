@@ -17,7 +17,7 @@ import ProductUpload from "./pages/ProductUpload";
 import Products from "./pages/Products";
 import Orders from "./pages/Orders";
 import OrderDetails from "./pages/Orders/OrderDetails";
-
+import Category from "./pages/Category";
 const MyContext = createContext();
 
 function App() {
@@ -132,6 +132,7 @@ function App() {
                 path="/orders/:orderId"
                 element={<OrderDetails />}
               />
+              <Route path="/category/create" element={<Category />} />
             </Routes>
           </div>
         </div>
