@@ -1,3 +1,4 @@
+
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./App.css";
 
@@ -51,8 +52,7 @@ function App() {
 
   const [countryList, setCountryList] = useState([]);
 
-  const [selectCountry, setSelectCountry] =
-    useState("");
+  const [selectCountry, setSelectCountry] = useState("");
 
   // =========================
   // PRODUCT MODAL STATE
@@ -89,9 +89,7 @@ function App() {
     const savedUser = localStorage.getItem("user");
 
     try {
-      return savedUser
-        ? JSON.parse(savedUser)
-        : null;
+      return savedUser ? JSON.parse(savedUser) : null;
     } catch (error) {
       console.error(
         "Error loading user from localStorage:",
@@ -107,13 +105,10 @@ function App() {
   // =========================
 
   const [cartItems, setCartItems] = useState(() => {
-    const savedCart =
-      localStorage.getItem("cartItems");
+    const savedCart = localStorage.getItem("cartItems");
 
     try {
-      return savedCart
-        ? JSON.parse(savedCart)
-        : [];
+      return savedCart ? JSON.parse(savedCart) : [];
     } catch (error) {
       console.error(
         "Error loading cart from localStorage:",
@@ -175,23 +170,133 @@ function App() {
   };
 
   // =========================
+  // ADD PRODUCT TO CART
+  // =========================
+
+  const addToCart = (product, quantity = 1) => {
+    if (!product || !product._id) {
+      console.error("Invalid product data");
+
+      return;
+    }
+
+    setCartItems((previousItems) => {
+      const existingProduct = previousItems.find(
+        (item) => item._id === product._id
+      );
+
+      if (existingProduct) {
+        return previousItems.map((item) =>
+          item._id === product._id
+            ? {
+                ...item,
+                quantity: (item.quantity || 1) + quantity,
+              }
+            : item
+        );
+      }
+
+      return [
+        ...previousItems,
+        {
+          ...product,
+          quantity,
+        },
+      ];
+    });
+  };
+
+  // =========================
+  // REMOVE PRODUCT FROM CART
+  // =========================
+
+  const removeFromCart = (productId) => {
+    setCartItems((previousItems) =>
+      previousItems.filter(
+        (item) => item._id !== productId
+      )
+    );
+  };
+
+  // =========================
+  // UPDATE PRODUCT QUANTITY
+  // =========================
+
+  const updateQuantity = (productId, quantity) => {
+    const newQuantity = Number(quantity);
+
+    if (!Number.isFinite(newQuantity) || newQuantity < 1) {
+      return;
+    }
+
+    setCartItems((previousItems) =>
+      previousItems.map((item) =>
+        item._id === productId
+          ? {
+              ...item,
+              quantity: Math.floor(newQuantity),
+            }
+          : item
+      )
+    );
+  };
+
+  // =========================
+  // CLEAR CART
+  // =========================
+
+  const clearCart = () => {
+    setCartItems([]);
+  };
+
+  // =========================
+  // CART TOTAL QUANTITY
+  // =========================
+
+  const cartCount = cartItems.reduce(
+    (total, item) => total + (item.quantity || 0),
+    0
+  );
+
+  // =========================
+  // CART TOTAL PRICE
+  // =========================
+
+  const cartTotal = cartItems.reduce(
+    (total, item) => {
+      const productPrice = Number(
+        item.price || item.salePrice || 0
+      );
+
+      const quantity = Number(item.quantity || 0);
+
+      return total + productPrice * quantity;
+    },
+    0
+  );
+
+  // =========================
   // CONTEXT VALUES
   // =========================
 
   const values = {
+    // Country
     countryList,
     selectCountry,
     setSelectCountry,
 
+    // Product Modal
     isOpenProductModal,
     setisOpenProductModal,
 
     selectedProduct,
     setSelectedProduct,
 
+    // Header and Footer
     isHeaderFooterShow,
     setisHeaderFooterShow,
 
+    // Login
     isLogin,
     setIsLogin,
 
@@ -200,8 +305,15 @@ function App() {
 
     logout,
 
+    // Cart
     cartItems,
     setCartItems,
+    addToCart,
+    removeFromCart,
+    updateQuantity,
+    clearCart,
+    cartCount,
+    cartTotal,
   };
 
   return (

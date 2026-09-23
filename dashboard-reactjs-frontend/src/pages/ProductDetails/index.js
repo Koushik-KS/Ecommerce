@@ -1,5 +1,11 @@
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 
-import React, { useEffect, useRef, useState } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 
 import { emphasize, styled } from "@mui/material/styles";
@@ -8,6 +14,8 @@ import Chip from "@mui/material/Chip";
 import HomeIcon from "@mui/icons-material/Home";
 import Rating from "@mui/material/Rating";
 import Button from "@mui/material/Button";
+import Alert from "@mui/material/Alert";
+import CircularProgress from "@mui/material/CircularProgress";
 
 import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
@@ -18,6 +26,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import {
   MdBrandingWatermark,
   MdReplyAll,
+  MdDelete,
 } from "react-icons/md";
 
 import { BiSolidCategory } from "react-icons/bi";
@@ -25,13 +34,16 @@ import { BiSolidCategory } from "react-icons/bi";
 import UserAvatarImgComponent from "../../components/userAvatarImg";
 
 // =====================================================
-// API URL
+// API CONFIGURATION
 // =====================================================
 
-const API_URL = "http://localhost:4000/api/products";
+const API_URL = "http://localhost:4000/api";
 
 const FALLBACK_IMAGE =
   "https://via.placeholder.com/600x600?text=No+Image";
+
+const FALLBACK_AVATAR =
+  "https://via.placeholder.com/100?text=User";
 
 // =====================================================
 // BREADCRUMB STYLE
@@ -61,6 +73,18 @@ const StyledBreadcrumb = styled(Chip)(({ theme }) => {
 });
 
 // =====================================================
+// EMPTY RATING DISTRIBUTION
+// =====================================================
+
+const EMPTY_DISTRIBUTION = {
+  1: 0,
+  2: 0,
+  3: 0,
+  4: 0,
+  5: 0,
+};
+
+// =====================================================
 // PRODUCT DETAILS COMPONENT
 // =====================================================
 
@@ -72,8 +96,23 @@ const ProductDetails = () => {
   const productSliderSml = useRef(null);
 
   const [product, setProduct] = useState(null);
+
+  const [reviews, setReviews] = useState([]);
+  const [averageRating, setAverageRating] = useState(0);
+  const [totalReviews, setTotalReviews] = useState(0);
+
+  const [ratingDistribution, setRatingDistribution] =
+    useState(EMPTY_DISTRIBUTION);
+
   const [loading, setLoading] = useState(true);
+  const [reviewsLoading, setReviewsLoading] = useState(true);
+
   const [error, setError] = useState("");
+  const [reviewsError, setReviewsError] = useState("");
+
+  const [replyTexts, setReplyTexts] = useState({});
+  const [replyLoading, setReplyLoading] = useState({});
+  const [replyMessages, setReplyMessages] = useState({});
 
   // =====================================================
   // SLIDER OPTIONS
@@ -98,65 +137,122 @@ const ProductDetails = () => {
   };
 
   // =====================================================
-  // FETCH SINGLE PRODUCT
+  // FETCH PRODUCT
   // =====================================================
 
-  useEffect(() => {
-    const fetchProduct = async () => {
-      if (!id) {
-        setError(
-          "No product selected. Please go to Product List and click the Eye button."
-        );
+  const fetchProduct = useCallback(async () => {
+    if (!id) {
+      setError("No product selected.");
+      setLoading(false);
+      return;
+    }
 
-        setLoading(false);
-        return;
+    try {
+      setLoading(true);
+      setError("");
+
+      const response = await fetch(
+        `${API_URL}/products/${id}`
+      );
+
+      const data = await response.json().catch(() => ({}));
+
+      if (!response.ok) {
+        throw new Error(
+          data.message || "Failed to fetch product details"
+        );
       }
 
-      try {
-        setLoading(true);
-        setError("");
+      const productData =
+        data.product || data.data || data;
 
-        const response = await fetch(
-          `${API_URL}/${id}`
-        );
-
-        if (!response.ok) {
-          throw new Error(
-            "Failed to fetch product details"
-          );
-        }
-
-        const data = await response.json();
-
-        const productData =
-          data.product || data.data || data;
-
-        if (!productData || !productData._id) {
-          throw new Error(
-            "Invalid product data received"
-          );
-        }
-
-        setProduct(productData);
-      } catch (fetchError) {
-        console.error(
-          "Fetch product details error:",
-          fetchError
-        );
-
-        setError(
-          "Unable to load product details. Please check the backend server and product ID."
-        );
-      } finally {
-        setLoading(false);
+      if (!productData || !productData._id) {
+        throw new Error("Invalid product data received");
       }
-    };
 
-    fetchProduct();
+      setProduct(productData);
+    } catch (fetchError) {
+      console.error("Fetch product error:", fetchError);
+
+      setError(
+        fetchError.message ||
+          "Unable to load product details. Check the backend server."
+      );
+    } finally {
+      setLoading(false);
+    }
   }, [id]);
 
   // =====================================================
-  // GO TO SLIDE
+  // FETCH REVIEWS
+  // =====================================================
+
+  const fetchReviews = useCallback(async () => {
+    if (!id) {
+      return;
+    }
+
+    try {
+      setReviewsLoading(true);
+      setReviewsError("");
+
+      const response = await fetch(
+        `${API_URL}/reviews/product/${id}`
+      );
+
+      const data = await response.json().catch(() => ({}));
+
+      if (!response.ok || !data.success) {
+        throw new Error(
+          data.message || "Failed to fetch reviews"
+        );
+      }
+
+      setReviews(
+        Array.isArray(data.reviews)
+          ? data.reviews
+          : []
+      );
+
+      setAverageRating(
+        Number(data.averageRating || 0)
+      );
+
+      setTotalReviews(
+        Number(data.totalReviews || 0)
+      );
+
+      setRatingDistribution({
+        1: Number(data.ratingDistribution?.[1] || 0),
+        2: Number(data.ratingDistribution?.[2] || 0),
+        3: Number(data.ratingDistribution?.[3] || 0),
+        4: Number(data.ratingDistribution?.[4] || 0),
+        5: Number(data.ratingDistribution?.[5] || 0),
+      });
+    } catch (fetchError) {
+      console.error("Fetch reviews error:", fetchError);
+
+      setReviewsError(
+        fetchError.message || "Unable to load reviews."
+      );
+    } finally {
+      setReviewsLoading(false);
+    }
+  }, [id]);
+
+  // =====================================================
+  // LOAD PRODUCT AND REVIEWS
+  // =====================================================
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+
+    fetchProduct();
+    fetchReviews();
+  }, [fetchProduct, fetchReviews]);
+
+  // =====================================================
+  // SLIDER NAVIGATION
   // =====================================================
 
   const goToSlide = (index) => {
@@ -170,37 +266,243 @@ const ProductDetails = () => {
   };
 
   // =====================================================
-  // LOADING
+  // REPLY TEXT CHANGE
+  // =====================================================
+
+  const handleReplyTextChange = (reviewId, value) => {
+    setReplyTexts((previous) => ({
+      ...previous,
+      [reviewId]: value,
+    }));
+  };
+
+  // =====================================================
+  // REPLY MESSAGE
+  // =====================================================
+
+  const setReplyMessage = (reviewId, type, text) => {
+    setReplyMessages((previous) => ({
+      ...previous,
+      [reviewId]: {
+        type,
+        text,
+      },
+    }));
+  };
+
+  // =====================================================
+  // SUBMIT ADMIN REPLY
+  // =====================================================
+
+  const handleReplySubmit = async (event, reviewId) => {
+    event.preventDefault();
+
+    const replyText = String(
+      replyTexts[reviewId] || ""
+    ).trim();
+
+    if (replyText.length < 3) {
+      setReplyMessage(
+        reviewId,
+        "error",
+        "Reply must contain at least 3 characters."
+      );
+
+      return;
+    }
+
+    if (replyText.length > 1000) {
+      setReplyMessage(
+        reviewId,
+        "error",
+        "Reply cannot exceed 1000 characters."
+      );
+
+      return;
+    }
+
+    try {
+      setReplyLoading((previous) => ({
+        ...previous,
+        [reviewId]: true,
+      }));
+
+      setReplyMessages((previous) => ({
+        ...previous,
+        [reviewId]: null,
+      }));
+
+      const response = await fetch(
+        `${API_URL}/reviews/${reviewId}/reply`,
+        {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            adminReply: replyText,
+          }),
+        }
+      );
+
+      const data = await response.json().catch(() => ({}));
+
+      if (!response.ok || !data.success) {
+        throw new Error(
+          data.message || "Failed to save admin reply"
+        );
+      }
+
+      setReplyTexts((previous) => ({
+        ...previous,
+        [reviewId]: "",
+      }));
+
+      setReplyMessage(
+        reviewId,
+        "success",
+        "Reply saved successfully."
+      );
+
+      await fetchReviews();
+    } catch (replyError) {
+      console.error(
+        "Reply submission error:",
+        replyError
+      );
+
+      setReplyMessage(
+        reviewId,
+        "error",
+        replyError.message ||
+          "Failed to save admin reply."
+      );
+    } finally {
+      setReplyLoading((previous) => ({
+        ...previous,
+        [reviewId]: false,
+      }));
+    }
+  };
+
+  // =====================================================
+  // DELETE ADMIN REPLY
+  // =====================================================
+
+  const handleDeleteReply = async (reviewId) => {
+    const shouldDelete = window.confirm(
+      "Are you sure you want to delete this reply?"
+    );
+
+    if (!shouldDelete) {
+      return;
+    }
+
+    try {
+      setReplyLoading((previous) => ({
+        ...previous,
+        [reviewId]: true,
+      }));
+
+      const response = await fetch(
+        `${API_URL}/reviews/${reviewId}/reply`,
+        {
+          method: "DELETE",
+        }
+      );
+
+      const data = await response.json().catch(() => ({}));
+
+      if (!response.ok || !data.success) {
+        throw new Error(
+          data.message || "Failed to delete reply"
+        );
+      }
+
+      setReplyMessage(
+        reviewId,
+        "success",
+        "Reply deleted successfully."
+      );
+
+      await fetchReviews();
+    } catch (deleteError) {
+      console.error(
+        "Delete reply error:",
+        deleteError
+      );
+
+      setReplyMessage(
+        reviewId,
+        "error",
+        deleteError.message ||
+          "Failed to delete reply."
+      );
+    } finally {
+      setReplyLoading((previous) => ({
+        ...previous,
+        [reviewId]: false,
+      }));
+    }
+  };
+
+  // =====================================================
+  // RATING ANALYTICS
+  // =====================================================
+
+  const ratingRows = useMemo(() => {
+    return [5, 4, 3, 2, 1].map((ratingValue) => {
+      const count =
+        ratingDistribution[ratingValue] || 0;
+
+      const percentage =
+        totalReviews > 0
+          ? (count / totalReviews) * 100
+          : 0;
+
+      return {
+        rating: ratingValue,
+        count,
+        percentage,
+      };
+    });
+  }, [ratingDistribution, totalReviews]);
+
+  // =====================================================
+  // LOADING SCREEN
   // =====================================================
 
   if (loading) {
     return (
       <div className="card shadow border-0 p-4 mt-4">
-        <h4>Loading product details...</h4>
+        <div className="d-flex align-items-center gap-3">
+          <CircularProgress size={25} />
+
+          <h4 className="mb-0">
+            Loading product details...
+          </h4>
+        </div>
       </div>
     );
   }
 
   // =====================================================
-  // ERROR
+  // ERROR SCREEN
   // =====================================================
 
   if (error) {
     return (
       <div className="card shadow border-0 p-4 mt-4">
-        <div className="alert alert-warning mb-3">
+        <Alert severity="error" className="mb-3">
           {error}
-        </div>
+        </Alert>
 
-        <div>
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={() => navigate("/products")}
-          >
-            Go to Product List
-          </Button>
-        </div>
+        <Button
+          variant="contained"
+          onClick={() => navigate("/products")}
+        >
+          Go to Product List
+        </Button>
       </div>
     );
   }
@@ -215,10 +517,7 @@ const ProductDetails = () => {
         <h4>Product not found</h4>
 
         <Link to="/products">
-          <Button
-            variant="contained"
-            color="primary"
-          >
+          <Button variant="contained">
             Go to Product List
           </Button>
         </Link>
@@ -240,9 +539,7 @@ const ProductDetails = () => {
 
   const brandName =
     typeof product.brand === "object"
-      ? String(
-          product.brand?.name || "No Brand"
-        )
+      ? String(product.brand?.name || "No Brand")
       : String(product.brand || "No Brand");
 
   const categoryName =
@@ -266,14 +563,6 @@ const ProductDetails = () => {
     product.countInStock || 0
   );
 
-  const rating = Number(
-    product.rating || 0
-  );
-
-  const numReviews = Number(
-    product.numReviews || 0
-  );
-
   const discount =
     regularPrice > 0 &&
     sellingPrice < regularPrice
@@ -285,7 +574,7 @@ const ProductDetails = () => {
       : 0;
 
   // =====================================================
-  // NORMALIZE PRODUCT IMAGES
+  // PRODUCT IMAGES
   // =====================================================
 
   const productImages = Array.isArray(
@@ -326,9 +615,8 @@ const ProductDetails = () => {
 
   return (
     <div className="right-content">
-      {/* =====================================================
-          HEADER
-      ===================================================== */}
+
+      {/* HEADER */}
 
       <div className="card header-row">
         <h5 className="title">
@@ -337,6 +625,7 @@ const ProductDetails = () => {
 
         <div className="breadcrumb-wrapper">
           <Breadcrumbs aria-label="breadcrumb">
+
             <StyledBreadcrumb
               component={Link}
               to="/dashboard"
@@ -355,22 +644,22 @@ const ProductDetails = () => {
             <StyledBreadcrumb
               label="Product View"
             />
+
           </Breadcrumbs>
         </div>
       </div>
 
-      {/* =====================================================
-          PRODUCT DETAILS CARD
-      ===================================================== */}
+      {/* PRODUCT DETAILS */}
 
       <div className="card productDetailsSEction">
+
         <div className="row">
-          {/* =====================================================
-              LEFT SIDE - PRODUCT GALLERY
-          ===================================================== */}
+
+          {/* PRODUCT GALLERY */}
 
           <div className="col-md-5">
             <div className="SliderWrapper pt-3 pb-3 ps-4 pe-4">
+
               <h6 className="mb-4">
                 Product Gallery
               </h6>
@@ -385,13 +674,11 @@ const ProductDetails = () => {
                 {images.map((image, index) => (
                   <div
                     className="item"
-                    key={index}
+                    key={`${image}-${index}`}
                   >
                     <img
                       src={image}
-                      alt={`${productName} ${
-                        index + 1
-                      }`}
+                      alt={`${productName} ${index + 1}`}
                       className="w-100"
                       style={{
                         height: "380px",
@@ -417,19 +704,15 @@ const ProductDetails = () => {
                 {images.map((image, index) => (
                   <div
                     className="item px-1"
-                    key={index}
-                    onClick={() =>
-                      goToSlide(index)
-                    }
+                    key={`${image}-thumbnail-${index}`}
+                    onClick={() => goToSlide(index)}
                     style={{
                       cursor: "pointer",
                     }}
                   >
                     <img
                       src={image}
-                      alt={`Thumbnail ${
-                        index + 1
-                      }`}
+                      alt={`Thumbnail ${index + 1}`}
                       className="w-100"
                       style={{
                         height: "85px",
@@ -444,15 +727,15 @@ const ProductDetails = () => {
                   </div>
                 ))}
               </Slider>
+
             </div>
           </div>
 
-          {/* =====================================================
-              RIGHT SIDE - PRODUCT INFORMATION
-          ===================================================== */}
+          {/* PRODUCT INFORMATION */}
 
           <div className="col-md-7">
             <div className="pt-3 pb-3 ps-4 pe-4">
+
               <h6 className="mb-4">
                 Product Details
               </h6>
@@ -462,11 +745,11 @@ const ProductDetails = () => {
               {/* PRICE */}
 
               <div className="mt-3 mb-3">
+
                 {regularPrice > sellingPrice && (
                   <span
                     style={{
-                      textDecoration:
-                        "line-through",
+                      textDecoration: "line-through",
                       color: "#777",
                       fontSize: "18px",
                       marginRight: "15px",
@@ -502,6 +785,7 @@ const ProductDetails = () => {
                     {discount}% OFF
                   </span>
                 )}
+
               </div>
 
               {/* RATING */}
@@ -509,7 +793,7 @@ const ProductDetails = () => {
               <div className="mb-3">
                 <Rating
                   value={Math.min(
-                    Math.max(rating, 0),
+                    Math.max(averageRating, 0),
                     5
                   )}
                   precision={0.5}
@@ -517,7 +801,7 @@ const ProductDetails = () => {
                 />
 
                 <span className="ms-2">
-                  ({numReviews} reviews)
+                  ({totalReviews} reviews)
                 </span>
               </div>
 
@@ -526,6 +810,7 @@ const ProductDetails = () => {
               {/* PRODUCT INFORMATION */}
 
               <div className="productInfo mt-3">
+
                 {/* BRAND */}
 
                 <div className="row mb-3">
@@ -577,6 +862,7 @@ const ProductDetails = () => {
 
                   <div className="col-sm-8">
                     :
+
                     <span
                       className={`badge ms-2 ${
                         stock > 0
@@ -623,171 +909,313 @@ const ProductDetails = () => {
                   </div>
 
                   <div className="col-sm-8">
-                    :
+                    :{" "}
                     {product.dateCreated
                       ? new Date(
                           product.dateCreated
-                        ).toLocaleDateString(
-                          "en-IN"
-                        )
+                        ).toLocaleDateString("en-IN")
                       : "N/A"}
                   </div>
                 </div>
+
               </div>
             </div>
           </div>
+
         </div>
 
-        {/* =====================================================
-            PRODUCT DESCRIPTION
-        ===================================================== */}
+        {/* DESCRIPTION AND REVIEWS */}
 
         <div className="p-4">
+
           <h6 className="mt-4 mb-3">
             Product Description
           </h6>
 
-          <p
-            style={{
-              whiteSpace: "pre-line",
-            }}
-          >
+          <p style={{ whiteSpace: "pre-line" }}>
             {productDescription}
           </p>
 
-          {/* =====================================================
-              RATING ANALYTICS
-          ===================================================== */}
+          {/* RATING ANALYTICS */}
 
           <h6 className="mt-4 mb-4">
             Rating Analytics
           </h6>
 
           <div className="ratingSection">
-            {[
-              {
-                label: "5 star",
-                required: 5,
-                width: "100%",
-              },
-              {
-                label: "4 star",
-                required: 4,
-                width: "80%",
-              },
-              {
-                label: "3 star",
-                required: 3,
-                width: "60%",
-              },
-              {
-                label: "2 star",
-                required: 2,
-                width: "40%",
-              },
-              {
-                label: "1 star",
-                required: 1,
-                width: "20%",
-              },
-            ].map((item) => (
+
+            {ratingRows.map((item) => (
               <div
-                className="ratingrow d-flex align-items-center mb-2"
-                key={item.label}
+                className="ratingrow d-flex align-items-center mb-3"
+                key={item.rating}
               >
-                <span className="col1">
-                  {item.label}
+                <span
+                  className="col1"
+                  style={{ minWidth: "65px" }}
+                >
+                  {item.rating} star
                 </span>
 
                 <div className="col2 flex-grow-1 mx-3">
-                  <div className="progress">
+                  <div
+                    className="progress"
+                    style={{ height: "6px" }}
+                  >
                     <div
                       className="progress-bar"
+                      role="progressbar"
                       style={{
-                        width:
-                          rating >= item.required
-                            ? item.width
-                            : "0%",
+                        width: `${item.percentage}%`,
+                        backgroundColor: "#f5b400",
                       }}
+                      aria-valuenow={item.percentage}
+                      aria-valuemin="0"
+                      aria-valuemax="100"
                     />
                   </div>
                 </div>
 
-                <span className="col3">
-                  -
+                <span
+                  className="col3"
+                  style={{ minWidth: "35px" }}
+                >
+                  {item.count}
                 </span>
               </div>
             ))}
+
           </div>
 
-          {/* =====================================================
-              CUSTOMER REVIEWS
-          ===================================================== */}
+          {/* CUSTOMER REVIEWS */}
 
-          <h6 className="mt-4 mb-4">
+          <h6 className="mt-5 mb-4">
             Customer Reviews
           </h6>
 
-          <div className="reviewSecrion">
-            <div className="reviewsrow">
-              <div className="row">
-                <div className="col-sm-7 d-flex">
-                  <div className="d-flex flex-column">
-                    <div className="userInfo d-flex align-items-center mb-3">
-                      <UserAvatarImgComponent
-                        img="https://via.placeholder.com/100?text=User"
-                        lg={true}
-                      />
+          {reviewsError && (
+            <Alert severity="error" className="mb-3">
+              {reviewsError}
+            </Alert>
+          )}
 
-                      <div className="info ms-2">
-                        <h6>
-                          No reviews yet
-                        </h6>
+          {reviewsLoading ? (
+            <div className="text-center p-4">
+              <CircularProgress size={28} />
 
-                        <span>
-                          Be the first to review
-                          this product.
-                        </span>
-                      </div>
-                    </div>
+              <p className="mt-2 mb-0">
+                Loading reviews...
+              </p>
+            </div>
+          ) : reviews.length === 0 ? (
+
+            <div className="reviewSecrion">
+              <div className="reviewsrow">
+
+                <div className="userInfo d-flex align-items-center">
+
+                  <UserAvatarImgComponent
+                    img={FALLBACK_AVATAR}
+                    lg={true}
+                  />
+
+                  <div className="info ms-3">
+                    <h6>No reviews yet</h6>
+
+                    <span>
+                      Be the first to review this product.
+                    </span>
                   </div>
+
                 </div>
+
               </div>
             </div>
-          </div>
 
-          <br />
+          ) : (
 
-          {/* =====================================================
-              REVIEW REPLY FORM
-          ===================================================== */}
+            reviews.map((review) => {
+              const reviewId = review._id;
 
-          <h6 className="mt-4 mb-4">
-            Review Reply Form
-          </h6>
+              const customerName =
+                review.user?.name ||
+                review.user?.email ||
+                "Customer";
 
-          <form
-            className="reviewForm"
-            onSubmit={(event) =>
-              event.preventDefault()
-            }
-          >
-            <textarea
-              className="form-control"
-              placeholder="Write here..."
-              rows="4"
-            />
+              const existingReply =
+                review.adminReply || "";
 
-            <Button
-              type="submit"
-              className="btn-blue btn-big btn-lg w-100 mt-4"
-            >
-              <MdReplyAll />
-              &nbsp; Drop your replies
-            </Button>
-          </form>
+              const replyMessage =
+                replyMessages[reviewId];
+
+              const isReplyLoading =
+                Boolean(replyLoading[reviewId]);
+
+              return (
+                <div
+                  className="card border p-3 mb-4"
+                  key={reviewId}
+                >
+
+                  <div className="d-flex align-items-start">
+
+                    <UserAvatarImgComponent
+                      img={FALLBACK_AVATAR}
+                      lg={true}
+                    />
+
+                    <div className="ms-3 flex-grow-1">
+
+                      <div className="d-flex justify-content-between align-items-center flex-wrap">
+
+                        <h6 className="mb-1">
+                          {customerName}
+                        </h6>
+
+                        <small className="text-muted">
+                          {review.createdAt
+                            ? new Date(
+                                review.createdAt
+                              ).toLocaleDateString("en-IN")
+                            : ""}
+                        </small>
+
+                      </div>
+
+                      <Rating
+                        value={Number(
+                          review.rating || 0
+                        )}
+                        readOnly
+                        size="small"
+                      />
+
+                      <p className="mt-2 mb-2">
+                        {review.reviewText}
+                      </p>
+
+                      {/* EXISTING ADMIN REPLY */}
+
+                      {existingReply && (
+                        <div
+                          className="p-3 mt-3"
+                          style={{
+                            backgroundColor: "#f1f5ff",
+                            borderLeft: "4px solid #1769e0",
+                            borderRadius: "5px",
+                          }}
+                        >
+
+                          <strong>
+                            Admin Reply
+                          </strong>
+
+                          <p className="mb-1 mt-2">
+                            {existingReply}
+                          </p>
+
+                          {review.repliedAt && (
+                            <small className="text-muted">
+                              Replied on{" "}
+                              {new Date(
+                                review.repliedAt
+                              ).toLocaleDateString("en-IN")}
+                            </small>
+                          )}
+
+                        </div>
+                      )}
+
+                      {/* REPLY MESSAGE */}
+
+                      {replyMessage && (
+                        <Alert
+                          severity={replyMessage.type}
+                          className="mt-3"
+                        >
+                          {replyMessage.text}
+                        </Alert>
+                      )}
+
+                      {/* REPLY FORM */}
+
+                      <form
+                        className="mt-3"
+                        onSubmit={(event) =>
+                          handleReplySubmit(
+                            event,
+                            reviewId
+                          )
+                        }
+                      >
+
+                        <textarea
+                          className="form-control"
+                          rows="3"
+                          placeholder={
+                            existingReply
+                              ? "Update admin reply..."
+                              : "Write admin reply..."
+                          }
+                          value={
+                            replyTexts[reviewId] || ""
+                          }
+                          onChange={(event) =>
+                            handleReplyTextChange(
+                              reviewId,
+                              event.target.value
+                            )
+                          }
+                          maxLength={1000}
+                          disabled={isReplyLoading}
+                        />
+
+                        <div className="d-flex gap-2 mt-3">
+
+                          <Button
+                            type="submit"
+                            variant="contained"
+                            disabled={isReplyLoading}
+                            startIcon={<MdReplyAll />}
+                          >
+                            {isReplyLoading
+                              ? "Saving..."
+                              : existingReply
+                              ? "Update Reply"
+                              : "Drop Your Reply"}
+                          </Button>
+
+                          {existingReply && (
+                            <Button
+                              type="button"
+                              variant="outlined"
+                              color="error"
+                              disabled={isReplyLoading}
+                              startIcon={<MdDelete />}
+                              onClick={() =>
+                                handleDeleteReply(
+                                  reviewId
+                                )
+                              }
+                            >
+                              Delete
+                            </Button>
+                          )}
+
+                        </div>
+                      </form>
+
+                    </div>
+                  </div>
+
+                </div>
+              );
+            })
+
+          )}
+
         </div>
       </div>
+
     </div>
   );
 };

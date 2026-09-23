@@ -2,36 +2,92 @@
 import { TiMinus } from "react-icons/ti";
 import { FaPlus } from "react-icons/fa";
 import Button from "@mui/material/Button";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
-const QuantityBox = ({ onChange }) => {
-  const [inputVal, setInputVal] = useState(1);
+const QuantityBox = ({
+  onChange,
+  initialValue = 1,
+  maxQuantity = Infinity,
+}) => {
+  const getValidQuantity = (value) => {
+    const numericValue = Number(value);
 
-  const minus = () => {
-    if (inputVal > 1) {
-      const newValue = inputVal - 1;
-
-      setInputVal(newValue);
-
-      if (onChange) {
-        onChange(newValue);
-      }
+    if (!Number.isFinite(numericValue)) {
+      return 1;
     }
+
+    return Math.min(
+      Math.max(Math.floor(numericValue), 1),
+      maxQuantity
+    );
   };
 
+  const [inputVal, setInputVal] = useState(
+    getValidQuantity(initialValue)
+  );
+
+  // Update quantity if the initial value or maximum changes
+  useEffect(() => {
+    setInputVal((previousValue) => {
+      const updatedValue = Math.min(
+        Math.max(previousValue, 1),
+        maxQuantity
+      );
+
+      if (updatedValue !== previousValue && onChange) {
+        onChange(updatedValue);
+      }
+
+      return updatedValue;
+    });
+  }, [maxQuantity, onChange]);
+
+  // =====================================================
+  // DECREASE QUANTITY
+  // =====================================================
+
+  const minus = () => {
+    setInputVal((previousValue) => {
+      const newValue = Math.max(
+        previousValue - 1,
+        1
+      );
+
+      if (newValue !== previousValue && onChange) {
+        onChange(newValue);
+      }
+
+      return newValue;
+    });
+  };
+
+  // =====================================================
+  // INCREASE QUANTITY
+  // =====================================================
+
   const plus = () => {
-    const newValue = inputVal + 1;
+    setInputVal((previousValue) => {
+      const newValue = Math.min(
+        previousValue + 1,
+        maxQuantity
+      );
 
-    setInputVal(newValue);
+      if (newValue !== previousValue && onChange) {
+        onChange(newValue);
+      }
 
-    if (onChange) {
-      onChange(newValue);
-    }
+      return newValue;
+    });
   };
 
   return (
     <div className="quantityDrop d-flex align-items-center">
-      <Button onClick={minus}>
+      <Button
+        type="button"
+        onClick={minus}
+        disabled={inputVal <= 1}
+        aria-label="Decrease quantity"
+      >
         <TiMinus />
       </Button>
 
@@ -39,9 +95,15 @@ const QuantityBox = ({ onChange }) => {
         type="text"
         value={inputVal}
         readOnly
+        aria-label="Product quantity"
       />
 
-      <Button onClick={plus}>
+      <Button
+        type="button"
+        onClick={plus}
+        disabled={inputVal >= maxQuantity}
+        aria-label="Increase quantity"
+      >
         <FaPlus />
       </Button>
     </div>

@@ -1,5 +1,5 @@
 
-import React, { useContext } from "react";
+import React from "react";
 
 import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
@@ -13,10 +13,10 @@ import { CiHeart } from "react-icons/ci";
 
 import { Navigation } from "swiper/modules";
 
-import { MyContext } from "../../App";
+import { useNavigate } from "react-router-dom";
 
 const ProductItem = (props) => {
-  const context = useContext(MyContext);
+  const navigate = useNavigate();
 
   const product = props.product;
 
@@ -38,30 +38,23 @@ const ProductItem = (props) => {
 
   const productBrand = product.brand || "No brand";
 
-  const productDescription =
-    product.description || "";
+  const productDescription = product.description || "";
 
   // Selling price
-  const productPrice = Number(
-    product.price || 0
-  );
+  const productPrice = Number(product.price || 0);
 
   // Original / regular price
   const productRegularPrice = Number(
     product.regularPrice || 0
   );
 
-  const productRating = Number(
-    product.rating || 0
-  );
+  const productRating = Number(product.rating || 0);
 
   const productStock = Number(
     product.countInStock ?? 0
   );
 
-  const productImages = Array.isArray(
-    product.images
-  )
+  const productImages = Array.isArray(product.images)
     ? product.images.filter((image) => image)
     : [];
 
@@ -92,13 +85,16 @@ const ProductItem = (props) => {
     : 0;
 
   // =========================
-  // OPEN PRODUCT MODAL
+  // OPEN PRODUCT DETAILS PAGE
   // =========================
 
   const viewProductDetails = () => {
-    context.setSelectedProduct(product);
+    if (!productId) {
+      console.error("Product ID is missing");
+      return;
+    }
 
-    context.setisOpenProductModal(true);
+    navigate(`/product/${productId}`);
   };
 
   // =========================
@@ -129,10 +125,12 @@ const ProductItem = (props) => {
               >
                 <img
                   src={image}
-                  alt={`${productName} ${
-                    index + 1
-                  }`}
+                  alt={`${productName} ${index + 1}`}
                   className="w-100"
+                  onClick={viewProductDetails}
+                  style={{
+                    cursor: "pointer",
+                  }}
                 />
               </SwiperSlide>
             ))
@@ -142,6 +140,10 @@ const ProductItem = (props) => {
                 src={productImage}
                 alt={productName}
                 className="w-100"
+                onClick={viewProductDetails}
+                style={{
+                  cursor: "pointer",
+                }}
               />
             </SwiperSlide>
           )}
@@ -165,9 +167,7 @@ const ProductItem = (props) => {
             <TfiFullscreen />
           </Button>
 
-          <Button
-            aria-label="Add to wishlist"
-          >
+          <Button aria-label="Add to wishlist">
             <CiHeart />
           </Button>
         </div>
@@ -177,7 +177,14 @@ const ProductItem = (props) => {
           PRODUCT NAME
       ========================= */}
 
-      <h4>{productName}</h4>
+      <h4
+        onClick={viewProductDetails}
+        style={{
+          cursor: "pointer",
+        }}
+      >
+        {productName}
+      </h4>
 
       {/* =========================
           BRAND
@@ -246,9 +253,7 @@ const ProductItem = (props) => {
             }}
           >
             ₹
-            {productRegularPrice.toLocaleString(
-              "en-IN"
-            )}
+            {productRegularPrice.toLocaleString("en-IN")}
           </span>
         )}
 

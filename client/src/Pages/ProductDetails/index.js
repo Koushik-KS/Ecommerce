@@ -1,21 +1,58 @@
-
 import ProductZoom from "../../Components/ProductZoom";
 import Rating from "@mui/material/Rating";
 import QuantityBox from "../../Components/QuantityBox";
 import Button from "@mui/material/Button";
-import { FaShoppingCart, FaRegHeart } from "react-icons/fa";
-import { MdOutlineCompareArrows } from "react-icons/md";
 import Tooltip from "@mui/material/Tooltip";
-import { useEffect, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
-import RelatedProducts from "./RelatedProducts";
 
-const PRODUCT_API_URL = "http://localhost:4000/api/products";
-const REVIEW_API_URL = "http://localhost:4000/api/reviews";
+import {
+  FaShoppingCart,
+  FaRegHeart,
+} from "react-icons/fa";
+
+import { MdOutlineCompareArrows } from "react-icons/md";
+
+import {
+  useCallback,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
+
+import {
+  useParams,
+  useNavigate,
+} from "react-router-dom";
+
+import RelatedProducts from "./RelatedProducts";
+import { MyContext } from "../../App";
+
+// =====================================================
+// API URLS
+// =====================================================
+
+const PRODUCT_API_URL =
+  "http://localhost:4000/api/products";
+
+const REVIEW_API_URL =
+  "http://localhost:4000/api/reviews";
+
+// =====================================================
+// PRODUCT DETAILS COMPONENT
+// =====================================================
 
 const ProductDetails = () => {
   const { id } = useParams();
   const navigate = useNavigate();
+
+  // =====================================================
+  // CONTEXT
+  // =====================================================
+
+  const { addToCart } = useContext(MyContext);
+
+  // =====================================================
+  // PRODUCT AND REVIEW STATES
+  // =====================================================
 
   const [product, setProduct] = useState(null);
   const [reviews, setReviews] = useState([]);
@@ -23,15 +60,32 @@ const ProductDetails = () => {
   const [totalReviews, setTotalReviews] = useState(0);
   const [averageRating, setAverageRating] = useState(0);
 
+  // =====================================================
+  // UI STATES
+  // =====================================================
+
   const [activeSize, setActiveSize] = useState(null);
   const [activeTabs, setActiveTabs] = useState(0);
+  const [selectedQuantity, setSelectedQuantity] = useState(1);
+
+  // =====================================================
+  // REVIEW FORM STATES
+  // =====================================================
 
   const [reviewMessage, setReviewMessage] = useState("");
   const [rating, setRating] = useState(0);
 
+  // =====================================================
+  // LOADING STATES
+  // =====================================================
+
   const [loadingProduct, setLoadingProduct] = useState(true);
   const [loadingReviews, setLoadingReviews] = useState(false);
   const [submittingReview, setSubmittingReview] = useState(false);
+
+  // =====================================================
+  // ERROR STATES
+  // =====================================================
 
   const [error, setError] = useState("");
   const [reviewError, setReviewError] = useState("");
@@ -41,32 +95,91 @@ const ProductDetails = () => {
   // FETCH PRODUCT
   // =====================================================
 
-  const fetchProduct = async () => {
+  const fetchProduct = useCallback(async () => {
+    if (!id) {
+      setError("Product ID is missing.");
+      setLoadingProduct(false);
+      return;
+    }
+
     try {
       setLoadingProduct(true);
       setError("");
 
-      const response = await fetch(`${PRODUCT_API_URL}/${id}`);
-      const data = await response.json();
+      const response = await fetch(
+        `${PRODUCT_API_URL}/${id}`
+      );
 
-      if (!response.ok) {
-        throw new Error(data.message || "Failed to fetch product.");
+      const responseText = await response.text();
+
+      console.log(
+        "Product API status:",
+        response.status
+      );
+
+      console.log(
+        "Product API response:",
+        responseText
+      );
+
+      let data = {};
+
+      try {
+        data = responseText
+          ? JSON.parse(responseText)
+          : {};
+      } catch (parseError) {
+        throw new Error(
+          "Invalid response from product server."
+        );
       }
 
-      setProduct(data.data || data);
-    } catch (error) {
-      console.error("Fetch product error:", error);
-      setError("Failed to load product.");
+      if (!response.ok) {
+        throw new Error(
+          data.message ||
+            "Failed to fetch product."
+        );
+      }
+
+      const productData =
+        data.product ||
+        data.data ||
+        data;
+
+      if (
+        !productData ||
+        !productData._id
+      ) {
+        throw new Error(
+          "Invalid product data received."
+        );
+      }
+
+      setProduct(productData);
+    } catch (fetchError) {
+      console.error(
+        "Fetch product error:",
+        fetchError
+      );
+
+      setError(
+        fetchError.message ||
+          "Failed to load product."
+      );
     } finally {
       setLoadingProduct(false);
     }
-  };
+  }, [id]);
 
   // =====================================================
   // FETCH PRODUCT REVIEWS
   // =====================================================
 
-  const fetchReviews = async () => {
+  const fetchReviews = useCallback(async () => {
+    if (!id) {
+      return;
+    }
+
     try {
       setLoadingReviews(true);
       setReviewError("");
@@ -75,33 +188,89 @@ const ProductDetails = () => {
         `${REVIEW_API_URL}/product/${id}`
       );
 
-      const data = await response.json();
+      const responseText = await response.text();
 
-      if (!response.ok) {
-        throw new Error(data.message || "Failed to fetch reviews.");
+      console.log(
+        "Reviews API status:",
+        response.status
+      );
+
+      console.log(
+        "Reviews API response:",
+        responseText
+      );
+
+      let data = {};
+
+      try {
+        data = responseText
+          ? JSON.parse(responseText)
+          : {};
+      } catch (parseError) {
+        throw new Error(
+          "Invalid response from reviews server."
+        );
       }
 
-      setReviews(data.reviews || []);
-      setTotalReviews(data.totalReviews || 0);
-      setAverageRating(data.averageRating || 0);
-    } catch (error) {
-      console.error("Fetch reviews error:", error);
-      setReviewError("Failed to load reviews.");
+      if (
+        !response.ok ||
+        data.success === false
+      ) {
+        throw new Error(
+          data.message ||
+            "Failed to fetch reviews."
+        );
+      }
+
+      const reviewList =
+        data.reviews ||
+        data.data ||
+        [];
+
+      setReviews(
+        Array.isArray(reviewList)
+          ? reviewList
+          : []
+      );
+
+      setTotalReviews(
+        Number(
+          data.totalReviews ??
+            data.total ??
+            reviewList.length
+        )
+      );
+
+      setAverageRating(
+        Number(
+          data.averageRating ??
+            data.avgRating ??
+            0
+        )
+      );
+    } catch (fetchError) {
+      console.error(
+        "Fetch reviews error:",
+        fetchError
+      );
+
+      setReviewError(
+        fetchError.message ||
+          "Failed to load reviews."
+      );
     } finally {
       setLoadingReviews(false);
     }
-  };
+  }, [id]);
 
   // =====================================================
-  // LOAD DATA WHEN PRODUCT ID CHANGES
+  // LOAD PRODUCT AND REVIEWS
   // =====================================================
 
   useEffect(() => {
-    if (id) {
-      fetchProduct();
-      fetchReviews();
-    }
-  }, [id]);
+    fetchProduct();
+    fetchReviews();
+  }, [fetchProduct, fetchReviews]);
 
   // =====================================================
   // SUBMIT REVIEW
@@ -115,63 +284,201 @@ const ProductDetails = () => {
 
     const token = localStorage.getItem("token");
 
-    // Check whether the user is logged in
+    console.log(
+      "Token available:",
+      Boolean(token)
+    );
+
+    // =================================================
+    // CHECK LOGIN
+    // =================================================
+
     if (!token) {
-      alert("Please log in to submit a review.");
+      setReviewError(
+        "Please log in to submit a review."
+      );
+
       navigate("/signIn");
       return;
     }
 
-    // Validate review text
-    if (!reviewMessage.trim()) {
-      setReviewError("Please write a review.");
+    // =================================================
+    // CHECK REVIEW TEXT
+    // =================================================
+
+    const trimmedReviewMessage =
+      reviewMessage.trim();
+
+    if (!trimmedReviewMessage) {
+      setReviewError(
+        "Please write a review."
+      );
       return;
     }
 
-    // Validate rating
-    if (rating < 1 || rating > 5) {
-      setReviewError("Please select a rating between 1 and 5.");
+    if (trimmedReviewMessage.length < 3) {
+      setReviewError(
+        "Review must contain at least 3 characters."
+      );
+      return;
+    }
+
+    if (trimmedReviewMessage.length > 1000) {
+      setReviewError(
+        "Review cannot exceed 1000 characters."
+      );
+      return;
+    }
+
+    // =================================================
+    // CHECK RATING
+    // =================================================
+
+    if (
+      !Number.isInteger(Number(rating)) ||
+      rating < 1 ||
+      rating > 5
+    ) {
+      setReviewError(
+        "Please select a rating between 1 and 5."
+      );
+      return;
+    }
+
+    // =================================================
+    // CHECK PRODUCT ID
+    // =================================================
+
+    if (!id) {
+      setReviewError(
+        "Product ID is missing."
+      );
       return;
     }
 
     try {
       setSubmittingReview(true);
 
-      const response = await fetch(REVIEW_API_URL, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({
-          productId: id,
-          rating: Number(rating),
-          reviewText: reviewMessage.trim(),
-        }),
-      });
+      const requestBody = {
+        productId: id,
+        rating: Number(rating),
+        reviewText: trimmedReviewMessage,
+      };
 
-      const data = await response.json();
+      // Debug request data
+      console.log(
+        "Submitting review request:",
+        requestBody
+      );
 
-      if (!response.ok) {
-        throw new Error(data.message || "Failed to submit review.");
+      const response = await fetch(
+        REVIEW_API_URL,
+        {
+          method: "POST",
+
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+
+          body: JSON.stringify(requestBody),
+        }
+      );
+
+      // Read response as text first
+      const responseText = await response.text();
+
+      // Debug response
+      console.log(
+        "Review API status:",
+        response.status
+      );
+
+      console.log(
+        "Review API response:",
+        responseText
+      );
+
+      let data = {};
+
+      try {
+        data = responseText
+          ? JSON.parse(responseText)
+          : {};
+      } catch (parseError) {
+        console.error(
+          "JSON parsing error:",
+          parseError
+        );
+
+        throw new Error(
+          "Server returned an invalid response."
+        );
       }
 
+      // =================================================
+      // HANDLE API ERROR
+      // =================================================
+
+      if (
+        !response.ok ||
+        data.success === false
+      ) {
+        if (response.status === 401) {
+          localStorage.removeItem("token");
+          localStorage.removeItem("user");
+
+          setReviewError(
+            data.message ||
+              "Your session has expired. Please log in again."
+          );
+
+          return;
+        }
+
+        throw new Error(
+          data.message ||
+            `Review submission failed. Status: ${response.status}`
+        );
+      }
+
+      // =================================================
+      // SUCCESS
+      // =================================================
+
+      console.log(
+        "Review submitted successfully:",
+        data
+      );
+
       setReviewSuccess(
-        data.message || "Review submitted successfully!"
+        data.message ||
+          "Review submitted successfully!"
       );
 
       // Clear form
       setReviewMessage("");
       setRating(0);
 
-      // Update rating information immediately
-      setAverageRating(data.averageRating || 0);
-      setTotalReviews(data.totalReviews || 0);
+      // Update average rating
+      if (
+        data.averageRating !== undefined
+      ) {
+        setAverageRating(
+          Number(data.averageRating)
+        );
+      }
 
-      // Refresh reviews
-      await fetchReviews();
+      // Update total reviews
+      if (
+        data.totalReviews !== undefined
+      ) {
+        setTotalReviews(
+          Number(data.totalReviews)
+        );
+      }
 
-      // Update product rating locally
+      // Update product rating
       setProduct((previousProduct) => {
         if (!previousProduct) {
           return previousProduct;
@@ -179,23 +486,28 @@ const ProductDetails = () => {
 
         return {
           ...previousProduct,
-          rating: data.averageRating || previousProduct.rating,
-          numReviews: data.totalReviews || previousProduct.numReviews,
+
+          rating:
+            data.averageRating ??
+            previousProduct.rating,
+
+          numReviews:
+            data.totalReviews ??
+            previousProduct.numReviews,
         };
       });
-    } catch (error) {
-      console.error("Submit review error:", error);
 
-      if (error.message === "Invalid or expired token.") {
-        localStorage.removeItem("token");
-        localStorage.removeItem("user");
-
-        setReviewError("Your session has expired. Please log in again.");
-        return;
-      }
+      // Fetch updated reviews
+      await fetchReviews();
+    } catch (submitError) {
+      console.error(
+        "Submit review error:",
+        submitError
+      );
 
       setReviewError(
-        error.message || "Failed to submit review."
+        submitError.message ||
+          "Failed to submit review."
       );
     } finally {
       setSubmittingReview(false);
@@ -210,7 +522,9 @@ const ProductDetails = () => {
     return (
       <section className="section">
         <div className="container">
-          <h3>Loading product...</h3>
+          <h3>
+            Loading product...
+          </h3>
         </div>
       </section>
     );
@@ -224,7 +538,17 @@ const ProductDetails = () => {
     return (
       <section className="section">
         <div className="container">
-          <h3>{error || "Product not found."}</h3>
+          <h3>
+            {error || "Product not found."}
+          </h3>
+
+          <Button
+            variant="contained"
+            onClick={() => navigate("/")}
+            className="mt-3"
+          >
+            Go to Home
+          </Button>
         </div>
       </section>
     );
@@ -234,60 +558,135 @@ const ProductDetails = () => {
   // PRODUCT DATA
   // =====================================================
 
-  const productName = product.name || "Product";
+  const productName =
+    product.name || "Product";
 
   const productDescription =
-    product.description || "No description available.";
+    product.description ||
+    "No description available.";
 
-  const productBrand = product.brand || "Not specified";
+  const productBrand =
+    typeof product.brand === "object"
+      ? product.brand?.name ||
+        "Not specified"
+      : product.brand ||
+        "Not specified";
 
-  const productPrice = product.price ?? 0;
+  const productPrice = Number(
+    product.price ?? 0
+  );
 
-  const productRegularPrice =
-    product.regularPrice ?? productPrice;
+  const productRegularPrice = Number(
+    product.regularPrice ??
+      productPrice
+  );
 
-  const productRating = Number(product.rating || 0);
+  const productRating = Number(
+    product.rating || 0
+  );
 
-  const productStock = Number(product.countInStock || 0);
+  const productStock = Number(
+    product.countInStock || 0
+  );
 
-  const isInStock = productStock > 0;
+  const isInStock =
+    productStock > 0;
 
   const displayRating =
-    totalReviews > 0 ? averageRating : productRating;
+    totalReviews > 0
+      ? averageRating
+      : productRating;
+
+  const categoryName =
+    typeof product.category === "object"
+      ? product.category?.name ||
+        "Not specified"
+      : product.category ||
+        "Not specified";
+
+  // =====================================================
+  // ADD TO CART
+  // =====================================================
+
+  const handleAddToCart = () => {
+    if (!product) {
+      alert(
+        "Product information is unavailable."
+      );
+      return;
+    }
+
+    if (!isInStock) {
+      alert(
+        "This product is currently out of stock."
+      );
+      return;
+    }
+
+    addToCart(
+      product,
+      selectedQuantity
+    );
+
+    alert(
+      `${productName} added to cart successfully!`
+    );
+  };
+
+  // =====================================================
+  // RENDER
+  // =====================================================
 
   return (
     <section className="productDetails section">
       <div className="container">
+
+        {/* PRODUCT SECTION */}
+
         <div className="row">
+
           {/* PRODUCT IMAGES */}
 
           <div className="col-md-4 pl-5">
-            <ProductZoom product={product} />
+            <ProductZoom
+              product={product}
+            />
           </div>
 
           {/* PRODUCT INFORMATION */}
 
           <div className="col-md-7 pl-5 pr-5">
+
             <h2 className="hd text-capitalize">
               {productName}
             </h2>
 
             <ul className="list list-inline d-flex align-items-center">
+
               <li className="list-inline-item">
                 <div className="d-flex align-items-center">
                   <span className="text-light mr-2">
                     Brand:
                   </span>
 
-                  <span>{productBrand}</span>
+                  <span>
+                    {productBrand}
+                  </span>
                 </div>
               </li>
 
               <li className="list-inline-item">
                 <div className="d-flex align-items-center">
+
                   <Rating
                     name="product-rating"
-                    value={displayRating}
+                    value={Math.min(
+                      Math.max(
+                        displayRating,
+                        0
+                      ),
+                      5
+                    )}
                     precision={0.5}
                     readOnly
                     size="small"
@@ -296,29 +695,50 @@ const ProductDetails = () => {
                   <span className="text-light cursor ml-2">
                     {totalReviews} Reviews
                   </span>
+
                 </div>
               </li>
+
             </ul>
 
+            {/* PRICE */}
+
             <div className="d-flex info mb-3">
-              {productRegularPrice > productPrice && (
+
+              {productRegularPrice >
+                productPrice && (
                 <span className="oldPrice">
-                  ₹{productRegularPrice}
+                  ₹
+                  {productRegularPrice.toLocaleString(
+                    "en-IN"
+                  )}
                 </span>
               )}
 
               <span className="netPrice text-danger ml-3">
-                ₹{productPrice}
+                ₹
+                {productPrice.toLocaleString(
+                  "en-IN"
+                )}
               </span>
+
             </div>
+
+            {/* STOCK */}
 
             <span
               className={`badge ${
-                isInStock ? "badge-success" : "badge-danger"
+                isInStock
+                  ? "badge-success"
+                  : "badge-danger"
               }`}
             >
-              {isInStock ? "IN STOCK" : "OUT OF STOCK"}
+              {isInStock
+                ? `IN STOCK (${productStock})`
+                : "OUT OF STOCK"}
             </span>
+
+            {/* DESCRIPTION */}
 
             <p className="mt-3">
               {productDescription}
@@ -327,40 +747,60 @@ const ProductDetails = () => {
             {/* SIZE */}
 
             <div className="productSize d-flex align-items-center">
-              <span>Size/Weight:</span>
+
+              <span>
+                Size/Weight:
+              </span>
 
               <ul className="list list-inline mb-0 pl-4">
-                {["50g", "100g", "200g", "300g", "500g"].map(
-                  (size, index) => (
-                    <li
-                      className="list-inline-item"
-                      key={size}
+
+                {[
+                  "50g",
+                  "100g",
+                  "200g",
+                  "300g",
+                  "500g",
+                ].map((size, index) => (
+                  <li
+                    className="list-inline-item"
+                    key={size}
+                  >
+                    <button
+                      type="button"
+                      className={`tag ${
+                        activeSize === index
+                          ? "active"
+                          : ""
+                      }`}
+                      onClick={() =>
+                        setActiveSize(index)
+                      }
                     >
-                      <button
-                        type="button"
-                        className={`tag ${
-                          activeSize === index ? "active" : ""
-                        }`}
-                        onClick={() => setActiveSize(index)}
-                      >
-                        {size}
-                      </button>
-                    </li>
-                  )
-                )}
+                      {size}
+                    </button>
+                  </li>
+                ))}
+
               </ul>
             </div>
 
-            {/* CART */}
+            {/* CART CONTROLS */}
 
             <div className="d-flex align-items-center mt-3">
-              <QuantityBox />
+
+              <QuantityBox
+                onChange={setSelectedQuantity}
+                maxQuantity={productStock}
+              />
 
               <Button
+                type="button"
                 className="btn-blue btn-lg btn-big btn-round"
                 disabled={!isInStock}
+                onClick={handleAddToCart}
               >
-                <FaShoppingCart /> &nbsp; Add to Cart
+                <FaShoppingCart />
+                &nbsp; Add to Cart
               </Button>
 
               <Tooltip title="Add to Wishlist">
@@ -374,19 +814,30 @@ const ProductDetails = () => {
                   <MdOutlineCompareArrows />
                 </Button>
               </Tooltip>
+
             </div>
+
           </div>
         </div>
 
         {/* TABS */}
 
         <div className="card mt-5 p-5 detailsPageTabs">
+
           <div className="customTabs">
+
             <ul className="list list-inline">
+
               <li className="list-inline-item">
                 <Button
-                  className={activeTabs === 0 ? "active" : ""}
-                  onClick={() => setActiveTabs(0)}
+                  className={
+                    activeTabs === 0
+                      ? "active"
+                      : ""
+                  }
+                  onClick={() =>
+                    setActiveTabs(0)
+                  }
                 >
                   Description
                 </Button>
@@ -394,8 +845,14 @@ const ProductDetails = () => {
 
               <li className="list-inline-item">
                 <Button
-                  className={activeTabs === 1 ? "active" : ""}
-                  onClick={() => setActiveTabs(1)}
+                  className={
+                    activeTabs === 1
+                      ? "active"
+                      : ""
+                  }
+                  onClick={() =>
+                    setActiveTabs(1)
+                  }
                 >
                   Additional Info
                 </Button>
@@ -403,12 +860,19 @@ const ProductDetails = () => {
 
               <li className="list-inline-item">
                 <Button
-                  className={activeTabs === 2 ? "active" : ""}
-                  onClick={() => setActiveTabs(2)}
+                  className={
+                    activeTabs === 2
+                      ? "active"
+                      : ""
+                  }
+                  onClick={() =>
+                    setActiveTabs(2)
+                  }
                 >
                   Reviews
                 </Button>
               </li>
+
             </ul>
 
             <br />
@@ -417,7 +881,9 @@ const ProductDetails = () => {
 
             {activeTabs === 0 && (
               <div className="tabContent">
-                <p>{productDescription}</p>
+                <p>
+                  {productDescription}
+                </p>
               </div>
             )}
 
@@ -425,29 +891,50 @@ const ProductDetails = () => {
 
             {activeTabs === 1 && (
               <div className="tabContent">
+
                 <div className="table-responsive">
+
                   <table className="table table-bordered">
                     <tbody>
+
                       <tr>
                         <th>Brand</th>
-                        <td>{productBrand}</td>
+                        <td>
+                          {productBrand}
+                        </td>
                       </tr>
 
                       <tr>
                         <th>Stock</th>
-                        <td>{productStock}</td>
+                        <td>
+                          {productStock}
+                        </td>
                       </tr>
 
                       <tr>
                         <th>Category</th>
                         <td>
-                          {product.category?.name ||
-                            product.category ||
-                            "Not specified"}
+                          {categoryName}
                         </td>
                       </tr>
+
+                      <tr>
+                        <th>Rating</th>
+                        <td>
+                          {displayRating.toFixed(1)} / 5
+                        </td>
+                      </tr>
+
+                      <tr>
+                        <th>Total Reviews</th>
+                        <td>
+                          {totalReviews}
+                        </td>
+                      </tr>
+
                     </tbody>
                   </table>
+
                 </div>
               </div>
             )}
@@ -456,13 +943,27 @@ const ProductDetails = () => {
 
             {activeTabs === 2 && (
               <div className="tabContent">
+
                 <div className="row">
+
                   <div className="col-md-8">
-                    <h3>Customer Reviews</h3>
+
+                    {/* REVIEW SUMMARY */}
+
+                    <h3>
+                      Customer Reviews
+                    </h3>
 
                     <div className="d-flex align-items-center mb-3">
+
                       <Rating
-                        value={displayRating}
+                        value={Math.min(
+                          Math.max(
+                            displayRating,
+                            0
+                          ),
+                          5
+                        )}
                         precision={0.5}
                         readOnly
                       />
@@ -474,9 +975,10 @@ const ProductDetails = () => {
                       <span className="ml-3 text-muted">
                         ({totalReviews} reviews)
                       </span>
+
                     </div>
 
-                    <br />
+                    {/* ERROR MESSAGE */}
 
                     {reviewError && (
                       <div className="alert alert-danger">
@@ -484,95 +986,160 @@ const ProductDetails = () => {
                       </div>
                     )}
 
+                    {/* SUCCESS MESSAGE */}
+
                     {reviewSuccess && (
                       <div className="alert alert-success">
                         {reviewSuccess}
                       </div>
                     )}
 
+                    {/* REVIEWS LIST */}
+
                     {loadingReviews ? (
-                      <p>Loading reviews...</p>
+                      <div className="text-center py-4">
+                        <p>
+                          Loading reviews...
+                        </p>
+                      </div>
                     ) : reviews.length === 0 ? (
-                      <p>
-                        No reviews yet. Be the first to review!
-                      </p>
+                      <div className="alert alert-light">
+                        No reviews yet.
+                        Be the first to review!
+                      </div>
                     ) : (
-                      reviews.map((review) => (
-                        <div
-                          className="card p-4 mb-3 reviewsCard"
-                          key={review._id}
-                        >
-                          <div className="d-flex align-items-center">
-                            <h5 className="text-g">
-                              {review.user?.name || "Customer"}
-                            </h5>
+                      reviews.map((review) => {
 
-                            <div className="ml-auto">
-                              <Rating
-                                value={Number(review.rating || 0)}
-                                precision={0.5}
-                                readOnly
-                              />
+                        const reviewer =
+                          review.user?.name ||
+                          review.user?.username ||
+                          review.user?.email ||
+                          review.userName ||
+                          "Customer";
+
+                        const reviewText =
+                          review.reviewText ||
+                          review.comment ||
+                          review.review ||
+                          "";
+
+                        return (
+                          <div
+                            className="card p-4 mb-3 reviewsCard"
+                            key={
+                              review._id ||
+                              review.id
+                            }
+                          >
+
+                            <div className="d-flex align-items-center flex-wrap">
+
+                              <h5 className="text-g mb-0">
+                                {reviewer}
+                              </h5>
+
+                              <div className="ml-auto">
+
+                                <Rating
+                                  value={Math.min(
+                                    Math.max(
+                                      Number(
+                                        review.rating ||
+                                          0
+                                      ),
+                                      0
+                                    ),
+                                    5
+                                  )}
+                                  precision={0.5}
+                                  readOnly
+                                />
+
+                              </div>
                             </div>
+
+                            <small className="text-muted">
+
+                              {review.createdAt
+                                ? new Date(
+                                    review.createdAt
+                                  ).toLocaleDateString(
+                                    "en-IN"
+                                  )
+                                : ""}
+
+                            </small>
+
+                            <p className="mt-2 mb-0">
+                              {reviewText}
+                            </p>
+
+                            {/* ADMIN REPLY */}
+
+                            {review.adminReply && (
+                              <div className="alert alert-info mt-3 mb-0">
+
+                                <strong>
+                                  Admin Reply:
+                                </strong>
+
+                                <p className="mb-0 mt-1">
+                                  {review.adminReply}
+                                </p>
+
+                                {review.repliedAt && (
+                                  <small className="text-muted">
+
+                                    Replied on:{" "}
+
+                                    {new Date(
+                                      review.repliedAt
+                                    ).toLocaleDateString(
+                                      "en-IN"
+                                    )}
+
+                                  </small>
+                                )}
+
+                              </div>
+                            )}
+
                           </div>
-
-                          <small className="text-muted">
-                            {review.createdAt
-                              ? new Date(
-                                  review.createdAt
-                                ).toLocaleDateString()
-                              : ""}
-                          </small>
-
-                          <p className="mt-2">
-                            {review.reviewText}
-                          </p>
-
-                          {review.adminReply && (
-                            <div className="alert alert-info mt-3">
-                              <strong>
-                                Admin Reply:
-                              </strong>
-
-                              <p className="mb-0 mt-1">
-                                {review.adminReply}
-                              </p>
-
-                              {review.repliedAt && (
-                                <small className="text-muted">
-                                  Replied on:{" "}
-                                  {new Date(
-                                    review.repliedAt
-                                  ).toLocaleDateString()}
-                                </small>
-                              )}
-                            </div>
-                          )}
-                        </div>
-                      ))
+                        );
+                      })
                     )}
 
                     {/* REVIEW FORM */}
 
                     <form
-                      className="reviewForm"
+                      className="reviewForm mt-4"
                       onSubmit={handleSubmitReview}
                     >
-                      <h4>Add a Review</h4>
 
-                      <br />
+                      <h4>
+                        Add a Review
+                      </h4>
 
                       <p className="text-muted">
                         You must be logged in to submit a review.
                       </p>
 
+                      {/* REVIEW TEXT */}
+
                       <div className="form-group">
+
+                        <label>
+                          Your Review
+                        </label>
+
                         <textarea
                           className="form-control"
-                          placeholder="Write a review"
+                          placeholder="Write your review..."
                           value={reviewMessage}
                           onChange={(event) =>
-                            setReviewMessage(event.target.value)
+                            setReviewMessage(
+                              event.target.value
+                            )
                           }
                           rows={4}
                           maxLength={1000}
@@ -582,10 +1149,16 @@ const ProductDetails = () => {
                         <small className="text-muted">
                           {reviewMessage.length}/1000 characters
                         </small>
+
                       </div>
 
-                      <div className="form-group">
-                        <label>Select Rating</label>
+                      {/* RATING */}
+
+                      <div className="form-group mt-3">
+
+                        <label>
+                          Select Rating
+                        </label>
 
                         <br />
 
@@ -593,38 +1166,58 @@ const ProductDetails = () => {
                           name="review-rating"
                           value={rating}
                           precision={1}
-                          onChange={(event, newValue) =>
-                            setRating(newValue || 0)
+                          onChange={(
+                            event,
+                            newValue
+                          ) =>
+                            setRating(
+                              newValue || 0
+                            )
                           }
                         />
+
                       </div>
 
-                      <br />
+                      {/* SUBMIT BUTTON */}
 
-                      <div className="form-group">
+                      <div className="form-group mt-3">
+
                         <Button
                           type="submit"
                           className="btn-blue btn-lg btn-big btn-round"
-                          disabled={submittingReview}
+                          disabled={
+                            submittingReview
+                          }
                         >
                           {submittingReview
                             ? "Submitting..."
                             : "Submit Review"}
                         </Button>
+
                       </div>
+
                     </form>
+
                   </div>
                 </div>
               </div>
             )}
+
           </div>
         </div>
 
         <br />
 
-        <RelatedProducts title="RELATED PRODUCTS" />
+        {/* RELATED PRODUCTS */}
 
-        <RelatedProducts title="RECENTLY VIEWED PRODUCTS" />
+        <RelatedProducts
+          title="RELATED PRODUCTS"
+        />
+
+        <RelatedProducts
+          title="RECENTLY VIEWED PRODUCTS"
+        />
+
       </div>
     </section>
   );
