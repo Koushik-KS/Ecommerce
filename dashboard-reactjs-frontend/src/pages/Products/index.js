@@ -17,6 +17,9 @@ import { MdDelete } from "react-icons/md";
 
 const API_URL = "http://localhost:4000/api/products";
 
+const FALLBACK_IMAGE =
+  "https://via.placeholder.com/100?text=No+Image";
+
 // =====================================================
 // PRODUCTS COMPONENT
 // =====================================================
@@ -52,16 +55,17 @@ const Products = () => {
 
       const data = await response.json();
 
-      // Supports direct array or { products: [] }
       const productData = Array.isArray(data)
         ? data
         : Array.isArray(data.products)
         ? data.products
+        : Array.isArray(data.data)
+        ? data.data
         : [];
 
       setProducts(productData);
-    } catch (error) {
-      console.error("Fetch products error:", error);
+    } catch (fetchError) {
+      console.error("Fetch products error:", fetchError);
 
       setError(
         "Unable to load products. Please check your backend server."
@@ -88,12 +92,24 @@ const Products = () => {
   };
 
   // =====================================================
+  // GET BRAND NAME
+  // =====================================================
+
+  const getBrandName = (brand) => {
+    if (typeof brand === "object" && brand !== null) {
+      return brand.name || "No Brand";
+    }
+
+    return brand || "No Brand";
+  };
+
+  // =====================================================
   // GET PRODUCT IMAGE
   // =====================================================
 
   const getProductImage = (images) => {
     if (!Array.isArray(images) || images.length === 0) {
-      return "https://via.placeholder.com/100?text=No+Image";
+      return FALLBACK_IMAGE;
     }
 
     const firstImage = images[0];
@@ -108,11 +124,11 @@ const Products = () => {
         firstImage.secure_url ||
         firstImage.src ||
         firstImage.image ||
-        "https://via.placeholder.com/100?text=No+Image"
+        FALLBACK_IMAGE
       );
     }
 
-    return "https://via.placeholder.com/100?text=No+Image";
+    return FALLBACK_IMAGE;
   };
 
   // =====================================================
@@ -141,7 +157,7 @@ const Products = () => {
       );
 
       const productName = String(product.name || "");
-      const brandName = String(product.brand || "");
+      const brandName = getBrandName(product.brand);
 
       const searchValue = search.toLowerCase().trim();
 
@@ -182,8 +198,7 @@ const Products = () => {
     filteredProducts.length / productsPerPage
   );
 
-  const startIndex =
-    (page - 1) * productsPerPage;
+  const startIndex = (page - 1) * productsPerPage;
 
   const currentProducts = filteredProducts.slice(
     startIndex,
@@ -226,8 +241,8 @@ const Products = () => {
           (product) => product._id !== productId
         )
       );
-    } catch (error) {
-      console.error("Delete product error:", error);
+    } catch (deleteError) {
+      console.error("Delete product error:", deleteError);
 
       alert("Unable to delete product");
     }
@@ -263,31 +278,19 @@ const Products = () => {
 
   return (
     <div className="card shadow border-0 p-3 mt-4">
-
-      {/* =================================================
-          HEADER
-      ================================================= */}
+      {/* HEADER */}
 
       <div className="d-flex justify-content-between align-items-center">
-
-        <h3 className="hd">
-          Products
-        </h3>
+        <h3 className="hd">Products</h3>
 
         <Link to="/product/upload">
-          <Button
-            variant="contained"
-            color="primary"
-          >
+          <Button variant="contained" color="primary">
             Add Product
           </Button>
         </Link>
-
       </div>
 
-      {/* =================================================
-          ERROR
-      ================================================= */}
+      {/* ERROR */}
 
       {error && (
         <div className="alert alert-danger mt-3">
@@ -295,19 +298,13 @@ const Products = () => {
         </div>
       )}
 
-      {/* =================================================
-          FILTERS
-      ================================================= */}
+      {/* FILTERS */}
 
       <div className="row cardFilters mt-3">
-
         {/* SEARCH */}
 
         <div className="col-md-4 mb-3">
-
-          <h4>
-            SEARCH PRODUCT
-          </h4>
+          <h4>SEARCH PRODUCT</h4>
 
           <input
             type="text"
@@ -318,21 +315,14 @@ const Products = () => {
               setSearch(event.target.value)
             }
           />
-
         </div>
 
         {/* CATEGORY FILTER */}
 
         <div className="col-md-3 mb-3">
+          <h4>CATEGORY BY</h4>
 
-          <h4>
-            CATEGORY BY
-          </h4>
-
-          <FormControl
-            size="small"
-            className="w-100"
-          >
+          <FormControl size="small" className="w-100">
             <Select
               value={categoryFilter}
               onChange={(event) =>
@@ -340,37 +330,25 @@ const Products = () => {
               }
               displayEmpty
             >
-
               <MenuItem value="">
                 <em>All Categories</em>
               </MenuItem>
 
               {categories.map((category, index) => (
-                <MenuItem
-                  key={index}
-                  value={category}
-                >
+                <MenuItem key={index} value={category}>
                   {category}
                 </MenuItem>
               ))}
-
             </Select>
           </FormControl>
-
         </div>
 
         {/* STOCK FILTER */}
 
         <div className="col-md-3 mb-3">
+          <h4>STOCK BY</h4>
 
-          <h4>
-            STOCK BY
-          </h4>
-
-          <FormControl
-            size="small"
-            className="w-100"
-          >
+          <FormControl size="small" className="w-100">
             <Select
               value={stockFilter}
               onChange={(event) =>
@@ -378,7 +356,6 @@ const Products = () => {
               }
               displayEmpty
             >
-
               <MenuItem value="">
                 <em>All Stock</em>
               </MenuItem>
@@ -390,16 +367,13 @@ const Products = () => {
               <MenuItem value="outOfStock">
                 Out of Stock
               </MenuItem>
-
             </Select>
           </FormControl>
-
         </div>
 
         {/* CLEAR FILTERS */}
 
         <div className="col-md-2 mb-3 d-flex align-items-end">
-
           <Button
             variant="outlined"
             color="secondary"
@@ -407,39 +381,30 @@ const Products = () => {
           >
             Clear
           </Button>
-
         </div>
-
       </div>
 
-      {/* =================================================
-          PRODUCT COUNT
-      ================================================= */}
+      {/* PRODUCT COUNT */}
 
       <div className="mt-2 mb-3">
-
         <p>
           Total Products:{" "}
           <b>{filteredProducts.length}</b>
         </p>
-
       </div>
 
-      {/* =================================================
-          PRODUCT TABLE
-      ================================================= */}
+      {/* PRODUCT TABLE */}
 
       <div className="table-responsive mt-3">
-
         <table className="table table-bordered v-align">
-
           <thead className="thead-dark">
-
             <tr>
               <th>UID</th>
+
               <th style={{ width: "300px" }}>
                 PRODUCT
               </th>
+
               <th>CATEGORY</th>
               <th>BRAND</th>
               <th>REGULAR PRICE</th>
@@ -450,30 +415,26 @@ const Products = () => {
               <th>SALES</th>
               <th>ACTION</th>
             </tr>
-
           </thead>
 
           <tbody>
-
             {currentProducts.length === 0 ? (
-
               <tr>
-
                 <td
                   colSpan="11"
                   className="text-center p-4"
                 >
                   No products found
                 </td>
-
               </tr>
-
             ) : (
-
               currentProducts.map((product, index) => {
-
                 const categoryName = getCategoryName(
                   product.category
+                );
+
+                const brandName = getBrandName(
+                  product.brand
                 );
 
                 const image = getProductImage(
@@ -501,11 +462,7 @@ const Products = () => {
                 );
 
                 return (
-
-                  <tr
-                    key={product._id}
-                  >
-
+                  <tr key={product._id}>
                     {/* UID */}
 
                     <td>
@@ -515,18 +472,13 @@ const Products = () => {
                     {/* PRODUCT */}
 
                     <td>
-
                       <div className="d-flex align-items-center productBox">
-
                         <div className="imgWrapper">
-
                           <div className="img">
-
                             <img
                               src={image}
                               alt={
-                                product.name ||
-                                "Product"
+                                product.name || "Product"
                               }
                               className="w-100"
                               style={{
@@ -537,16 +489,13 @@ const Products = () => {
                               }}
                               onError={(event) => {
                                 event.currentTarget.src =
-                                  "https://via.placeholder.com/100?text=Image";
+                                  FALLBACK_IMAGE;
                               }}
                             />
-
                           </div>
-
                         </div>
 
                         <div className="info pl-2">
-
                           <h6>
                             {product.name ||
                               "Unnamed Product"}
@@ -560,33 +509,24 @@ const Products = () => {
                               : "No description"}
                             ...
                           </p>
-
                         </div>
-
                       </div>
-
                     </td>
 
                     {/* CATEGORY */}
 
-                    <td>
-                      {categoryName}
-                    </td>
+                    <td>{categoryName}</td>
 
                     {/* BRAND */}
 
-                    <td>
-                      {product.brand || "No Brand"}
-                    </td>
+                    <td>{brandName}</td>
 
                     {/* REGULAR PRICE */}
 
                     <td>
-
                       <span
                         style={{
-                          textDecoration:
-                            "line-through",
+                          textDecoration: "line-through",
                           color: "#777",
                         }}
                       >
@@ -595,13 +535,11 @@ const Products = () => {
                           "en-IN"
                         )}
                       </span>
-
                     </td>
 
                     {/* SELLING PRICE */}
 
                     <td>
-
                       <span
                         className="text-danger"
                         style={{
@@ -613,13 +551,11 @@ const Products = () => {
                           "en-IN"
                         )}
                       </span>
-
                     </td>
 
                     {/* STOCK */}
 
                     <td>
-
                       <span
                         className={
                           stock > 0
@@ -629,47 +565,41 @@ const Products = () => {
                       >
                         {stock}
                       </span>
-
                     </td>
 
                     {/* RATING */}
 
                     <td>
-
                       ⭐ {rating}
-
                       <br />
-
                       <small>
                         ({numReviews})
                       </small>
-
                     </td>
 
                     {/* ORDER */}
 
-                    <td>
-                      -
-                    </td>
+                    <td>-</td>
 
                     {/* SALES */}
 
-                    <td>
-                      -
-                    </td>
+                    <td>-</td>
 
                     {/* ACTIONS */}
 
                     <td>
-
                       <div className="actions d-flex align-items-center">
-
                         {/* VIEW PRODUCT */}
 
                         <Link
                           to={`/product/details/${product._id}`}
+                          onClick={() => {
+                            localStorage.setItem(
+                              "lastViewedProductId",
+                              product._id
+                            );
+                          }}
                         >
-
                           <Button
                             className="secondary"
                             color="secondary"
@@ -677,7 +607,6 @@ const Products = () => {
                           >
                             <FaEye />
                           </Button>
-
                         </Link>
 
                         {/* EDIT PRODUCT */}
@@ -685,7 +614,6 @@ const Products = () => {
                         <Link
                           to={`/product/upload?edit=${product._id}`}
                         >
-
                           <Button
                             className="success"
                             color="success"
@@ -693,7 +621,6 @@ const Products = () => {
                           >
                             <FaPencilAlt />
                           </Button>
-
                         </Link>
 
                         {/* DELETE PRODUCT */}
@@ -708,38 +635,24 @@ const Products = () => {
                         >
                           <MdDelete />
                         </Button>
-
                       </div>
-
                     </td>
-
                   </tr>
-
                 );
               })
-
             )}
-
           </tbody>
-
         </table>
 
-        {/* =================================================
-            TABLE FOOTER
-        ================================================= */}
+        {/* TABLE FOOTER */}
 
         <div className="d-flex tableFooter justify-content-between align-items-center">
-
           <p>
-            Showing{" "}
-            <b>{currentProducts.length}</b>{" "}
-            of{" "}
-            <b>{filteredProducts.length}</b>{" "}
-            results
+            Showing <b>{currentProducts.length}</b> of{" "}
+            <b>{filteredProducts.length}</b> results
           </p>
 
           {totalPages > 1 && (
-
             <Pagination
               count={totalPages}
               page={page}
@@ -751,13 +664,9 @@ const Products = () => {
               showFirstButton
               showLastButton
             />
-
           )}
-
         </div>
-
       </div>
-
     </div>
   );
 };

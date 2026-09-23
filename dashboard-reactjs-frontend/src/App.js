@@ -47,19 +47,36 @@ const MyContext = createContext();
 // =====================================================
 
 function App() {
-  // Sidebar toggle state
-  const [isToggleSidebar, setIsToggleSidebar] = useState(false);
+  // =====================================================
+  // SIDEBAR STATE
+  // =====================================================
 
-  // Login state
+  const [
+    isToggleSidebar,
+    setIsToggleSidebar,
+  ] = useState(false);
+
+  // =====================================================
+  // LOGIN STATE
+  // =====================================================
+
   const [isLogin, setIsLogin] = useState(true);
 
-  // Hide Header and Sidebar
+  // =====================================================
+  // HEADER AND SIDEBAR VISIBILITY
+  // =====================================================
+
   const [
     isHideSidebarAndHeader,
     setisHideSidebarAndHeader,
   ] = useState(false);
 
-  // Theme mode
+  // =====================================================
+  // THEME STATE
+  // true  = light mode
+  // false = dark mode
+  // =====================================================
+
   const [themeMode, setThemeMode] = useState(true);
 
   // =====================================================
@@ -71,12 +88,18 @@ function App() {
       document.body.classList.remove("dark");
       document.body.classList.add("light");
 
-      localStorage.setItem("themeMode", "light");
+      localStorage.setItem(
+        "themeMode",
+        "light"
+      );
     } else {
       document.body.classList.remove("light");
       document.body.classList.add("dark");
 
-      localStorage.setItem("themeMode", "dark");
+      localStorage.setItem(
+        "themeMode",
+        "dark"
+      );
     }
   }, [themeMode]);
 
@@ -105,51 +128,68 @@ function App() {
   return (
     <BrowserRouter>
       <MyContext.Provider value={values}>
-        {/* =========================
+        {/* =====================================================
             HEADER
-        ========================= */}
+        ===================================================== */}
 
-        {isHideSidebarAndHeader !== true && <Header />}
+        {isHideSidebarAndHeader !== true && (
+          <Header />
+        )}
 
-        {/* =========================
+        {/* =====================================================
             MAIN LAYOUT
-        ========================= */}
+        ===================================================== */}
 
         <div className="main d-flex">
-          {/* =========================
+          {/* =====================================================
               SIDEBAR
-          ========================= */}
+          ===================================================== */}
 
           {isHideSidebarAndHeader !== true && (
             <div
               className={`sidebarWrapper ${
-                isToggleSidebar === true ? "toggle" : ""
+                isToggleSidebar === true
+                  ? "toggle"
+                  : ""
               }`}
             >
               <Sidebar />
             </div>
           )}
 
-          {/* =========================
+          {/* =====================================================
               MAIN CONTENT
-          ========================= */}
+          ===================================================== */}
 
           <div
             className={`content ${
-              isHideSidebarAndHeader === true ? "full" : ""
+              isHideSidebarAndHeader === true
+                ? "full"
+                : ""
             } ${
-              isToggleSidebar === true ? "toggle" : ""
+              isToggleSidebar === true
+                ? "toggle"
+                : ""
             }`}
           >
             <Routes>
               {/* =================================================
-                  DASHBOARD
+                  DEFAULT ROUTE
               ================================================= */}
 
               <Route
                 path="/"
-                element={<Navigate to="/dashboard" replace />}
+                element={
+                  <Navigate
+                    to="/dashboard"
+                    replace
+                  />
+                }
               />
+
+              {/* =================================================
+                  DASHBOARD
+              ================================================= */}
 
               <Route
                 path="/dashboard"
@@ -181,14 +221,27 @@ function App() {
                 element={<Products />}
               />
 
+              {/* =================================================
+                  PRODUCT DETAILS
+              ================================================= */}
+
               {/* 
-                Sidebar Product View
+                The Eye button navigates to:
 
-                A product ID is required to display
-                a particular product.
+                /product/details/:id
+              */}
 
-                Clicking Product View in the sidebar
-                opens the Product List first.
+              <Route
+                path="/product/details/:id"
+                element={<ProductDetails />}
+              />
+
+              {/* 
+                If Product View is clicked without
+                a product ID, redirect to Product List.
+
+                The Sidebar component uses the last
+                selected product ID from localStorage.
               */}
 
               <Route
@@ -201,20 +254,6 @@ function App() {
                 }
               />
 
-              {/* 
-                Product Details
-
-                The Eye button from Product List
-                must navigate to:
-
-                /product/details/:id
-              */}
-
-              <Route
-                path="/product/details/:id"
-                element={<ProductDetails />}
-              />
-
               {/* Product Upload */}
 
               <Route
@@ -225,6 +264,8 @@ function App() {
               {/* =================================================
                   ORDERS
               ================================================= */}
+
+              {/* Orders List */}
 
               <Route
                 path="/orders"

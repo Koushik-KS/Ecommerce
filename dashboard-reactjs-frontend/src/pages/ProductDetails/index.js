@@ -15,7 +15,11 @@ import "slick-carousel/slick/slick-theme.css";
 
 import "bootstrap/dist/css/bootstrap.min.css";
 
-import { MdBrandingWatermark, MdReplyAll } from "react-icons/md";
+import {
+  MdBrandingWatermark,
+  MdReplyAll,
+} from "react-icons/md";
+
 import { BiSolidCategory } from "react-icons/bi";
 
 import UserAvatarImgComponent from "../../components/userAvatarImg";
@@ -25,6 +29,9 @@ import UserAvatarImgComponent from "../../components/userAvatarImg";
 // =====================================================
 
 const API_URL = "http://localhost:4000/api/products";
+
+const FALLBACK_IMAGE =
+  "https://via.placeholder.com/600x600?text=No+Image";
 
 // =====================================================
 // BREADCRUMB STYLE
@@ -100,6 +107,7 @@ const ProductDetails = () => {
         setError(
           "No product selected. Please go to Product List and click the Eye button."
         );
+
         setLoading(false);
         return;
       }
@@ -108,23 +116,33 @@ const ProductDetails = () => {
         setLoading(true);
         setError("");
 
-        const response = await fetch(`${API_URL}/${id}`);
+        const response = await fetch(
+          `${API_URL}/${id}`
+        );
 
         if (!response.ok) {
-          throw new Error("Failed to fetch product details");
+          throw new Error(
+            "Failed to fetch product details"
+          );
         }
 
         const data = await response.json();
 
-        const productData = data.product || data.data || data;
+        const productData =
+          data.product || data.data || data;
 
         if (!productData || !productData._id) {
-          throw new Error("Invalid product data received");
+          throw new Error(
+            "Invalid product data received"
+          );
         }
 
         setProduct(productData);
       } catch (fetchError) {
-        console.error("Fetch product details error:", fetchError);
+        console.error(
+          "Fetch product details error:",
+          fetchError
+        );
 
         setError(
           "Unable to load product details. Please check the backend server and product ID."
@@ -170,7 +188,9 @@ const ProductDetails = () => {
   if (error) {
     return (
       <div className="card shadow border-0 p-4 mt-4">
-        <div className="alert alert-warning mb-3">{error}</div>
+        <div className="alert alert-warning mb-3">
+          {error}
+        </div>
 
         <div>
           <Button
@@ -195,7 +215,10 @@ const ProductDetails = () => {
         <h4>Product not found</h4>
 
         <Link to="/products">
-          <Button variant="contained" color="primary">
+          <Button
+            variant="contained"
+            color="primary"
+          >
             Go to Product List
           </Button>
         </Link>
@@ -207,7 +230,9 @@ const ProductDetails = () => {
   // PRODUCT DATA
   // =====================================================
 
-  const productName = String(product.name || "Unnamed Product");
+  const productName = String(
+    product.name || "Unnamed Product"
+  );
 
   const productDescription = String(
     product.description || "No description available."
@@ -215,28 +240,47 @@ const ProductDetails = () => {
 
   const brandName =
     typeof product.brand === "object"
-      ? String(product.brand?.name || "No Brand")
+      ? String(
+          product.brand?.name || "No Brand"
+        )
       : String(product.brand || "No Brand");
 
   const categoryName =
     typeof product.category === "object"
-      ? String(product.category?.name || "No Category")
-      : String(product.category || "No Category");
+      ? String(
+          product.category?.name || "No Category"
+        )
+      : String(
+          product.category || "No Category"
+        );
 
-  const regularPrice = Number(product.regularPrice || 0);
+  const regularPrice = Number(
+    product.regularPrice || 0
+  );
 
-  const sellingPrice = Number(product.price || 0);
+  const sellingPrice = Number(
+    product.price || 0
+  );
 
-  const stock = Number(product.countInStock || 0);
+  const stock = Number(
+    product.countInStock || 0
+  );
 
-  const rating = Number(product.rating || 0);
+  const rating = Number(
+    product.rating || 0
+  );
 
-  const numReviews = Number(product.numReviews || 0);
+  const numReviews = Number(
+    product.numReviews || 0
+  );
 
   const discount =
-    regularPrice > 0 && sellingPrice < regularPrice
+    regularPrice > 0 &&
+    sellingPrice < regularPrice
       ? Math.round(
-          ((regularPrice - sellingPrice) / regularPrice) * 100
+          ((regularPrice - sellingPrice) /
+            regularPrice) *
+            100
         )
       : 0;
 
@@ -244,14 +288,19 @@ const ProductDetails = () => {
   // NORMALIZE PRODUCT IMAGES
   // =====================================================
 
-  const productImages = Array.isArray(product.images)
+  const productImages = Array.isArray(
+    product.images
+  )
     ? product.images
         .map((image) => {
           if (typeof image === "string") {
             return image;
           }
 
-          if (typeof image === "object" && image !== null) {
+          if (
+            typeof image === "object" &&
+            image !== null
+          ) {
             return (
               image.url ||
               image.secure_url ||
@@ -269,9 +318,7 @@ const ProductDetails = () => {
   const images =
     productImages.length > 0
       ? productImages
-      : [
-          "https://via.placeholder.com/600x600?text=No+Image",
-        ];
+      : [FALLBACK_IMAGE];
 
   // =====================================================
   // RENDER
@@ -279,12 +326,14 @@ const ProductDetails = () => {
 
   return (
     <div className="right-content">
-      {/* =========================
+      {/* =====================================================
           HEADER
-      ========================= */}
+      ===================================================== */}
 
       <div className="card header-row">
-        <h5 className="title">Product View</h5>
+        <h5 className="title">
+          Product View
+        </h5>
 
         <div className="breadcrumb-wrapper">
           <Breadcrumbs aria-label="breadcrumb">
@@ -292,7 +341,9 @@ const ProductDetails = () => {
               component={Link}
               to="/dashboard"
               label="Dashboard"
-              icon={<HomeIcon fontSize="small" />}
+              icon={
+                <HomeIcon fontSize="small" />
+              }
             />
 
             <StyledBreadcrumb
@@ -301,24 +352,28 @@ const ProductDetails = () => {
               label="Products"
             />
 
-            <StyledBreadcrumb label="Product View" />
+            <StyledBreadcrumb
+              label="Product View"
+            />
           </Breadcrumbs>
         </div>
       </div>
 
-      {/* =========================
+      {/* =====================================================
           PRODUCT DETAILS CARD
-      ========================= */}
+      ===================================================== */}
 
       <div className="card productDetailsSEction">
         <div className="row">
-          {/* =========================
-              LEFT SIDE - GALLERY
-          ========================= */}
+          {/* =====================================================
+              LEFT SIDE - PRODUCT GALLERY
+          ===================================================== */}
 
           <div className="col-md-5">
             <div className="SliderWrapper pt-3 pb-3 ps-4 pe-4">
-              <h6 className="mb-4">Product Gallery</h6>
+              <h6 className="mb-4">
+                Product Gallery
+              </h6>
 
               {/* BIG SLIDER */}
 
@@ -328,10 +383,15 @@ const ProductDetails = () => {
                 className="sliderBig mb-2"
               >
                 {images.map((image, index) => (
-                  <div className="item" key={index}>
+                  <div
+                    className="item"
+                    key={index}
+                  >
                     <img
                       src={image}
-                      alt={`${productName} ${index + 1}`}
+                      alt={`${productName} ${
+                        index + 1
+                      }`}
                       className="w-100"
                       style={{
                         height: "380px",
@@ -340,7 +400,7 @@ const ProductDetails = () => {
                       }}
                       onError={(event) => {
                         event.currentTarget.src =
-                          "https://via.placeholder.com/600x600?text=Image+Not+Found";
+                          FALLBACK_IMAGE;
                       }}
                     />
                   </div>
@@ -358,14 +418,18 @@ const ProductDetails = () => {
                   <div
                     className="item px-1"
                     key={index}
-                    onClick={() => goToSlide(index)}
+                    onClick={() =>
+                      goToSlide(index)
+                    }
                     style={{
                       cursor: "pointer",
                     }}
                   >
                     <img
                       src={image}
-                      alt={`Thumbnail ${index + 1}`}
+                      alt={`Thumbnail ${
+                        index + 1
+                      }`}
                       className="w-100"
                       style={{
                         height: "85px",
@@ -374,7 +438,7 @@ const ProductDetails = () => {
                       }}
                       onError={(event) => {
                         event.currentTarget.src =
-                          "https://via.placeholder.com/100?text=Image";
+                          FALLBACK_IMAGE;
                       }}
                     />
                   </div>
@@ -383,13 +447,15 @@ const ProductDetails = () => {
             </div>
           </div>
 
-          {/* =========================
-              RIGHT SIDE - INFORMATION
-          ========================= */}
+          {/* =====================================================
+              RIGHT SIDE - PRODUCT INFORMATION
+          ===================================================== */}
 
           <div className="col-md-7">
             <div className="pt-3 pb-3 ps-4 pe-4">
-              <h6 className="mb-4">Product Details</h6>
+              <h6 className="mb-4">
+                Product Details
+              </h6>
 
               <h4>{productName}</h4>
 
@@ -399,13 +465,17 @@ const ProductDetails = () => {
                 {regularPrice > sellingPrice && (
                   <span
                     style={{
-                      textDecoration: "line-through",
+                      textDecoration:
+                        "line-through",
                       color: "#777",
                       fontSize: "18px",
                       marginRight: "15px",
                     }}
                   >
-                    ₹{regularPrice.toLocaleString("en-IN")}
+                    ₹
+                    {regularPrice.toLocaleString(
+                      "en-IN"
+                    )}
                   </span>
                 )}
 
@@ -416,7 +486,10 @@ const ProductDetails = () => {
                     fontSize: "24px",
                   }}
                 >
-                  ₹{sellingPrice.toLocaleString("en-IN")}
+                  ₹
+                  {sellingPrice.toLocaleString(
+                    "en-IN"
+                  )}
                 </span>
 
                 {discount > 0 && (
@@ -435,7 +508,10 @@ const ProductDetails = () => {
 
               <div className="mb-3">
                 <Rating
-                  value={Math.min(Math.max(rating, 0), 5)}
+                  value={Math.min(
+                    Math.max(rating, 0),
+                    5
+                  )}
                   precision={0.5}
                   readOnly
                 />
@@ -458,10 +534,14 @@ const ProductDetails = () => {
                       <MdBrandingWatermark />
                     </span>
 
-                    <span className="name">Brand</span>
+                    <span className="name">
+                      Brand
+                    </span>
                   </div>
 
-                  <div className="col-sm-8">: {brandName}</div>
+                  <div className="col-sm-8">
+                    : {brandName}
+                  </div>
                 </div>
 
                 {/* CATEGORY */}
@@ -472,10 +552,14 @@ const ProductDetails = () => {
                       <BiSolidCategory />
                     </span>
 
-                    <span className="name">Category</span>
+                    <span className="name">
+                      Category
+                    </span>
                   </div>
 
-                  <div className="col-sm-8">: {categoryName}</div>
+                  <div className="col-sm-8">
+                    : {categoryName}
+                  </div>
                 </div>
 
                 {/* STOCK */}
@@ -486,14 +570,18 @@ const ProductDetails = () => {
                       <BiSolidCategory />
                     </span>
 
-                    <span className="name">Stock</span>
+                    <span className="name">
+                      Stock
+                    </span>
                   </div>
 
                   <div className="col-sm-8">
                     :
                     <span
                       className={`badge ms-2 ${
-                        stock > 0 ? "bg-success" : "bg-danger"
+                        stock > 0
+                          ? "bg-success"
+                          : "bg-danger"
                       }`}
                     >
                       {stock > 0
@@ -511,7 +599,9 @@ const ProductDetails = () => {
                       <BiSolidCategory />
                     </span>
 
-                    <span className="name">Product ID</span>
+                    <span className="name">
+                      Product ID
+                    </span>
                   </div>
 
                   <div className="col-sm-8">
@@ -527,7 +617,9 @@ const ProductDetails = () => {
                       <BiSolidCategory />
                     </span>
 
-                    <span className="name">Published</span>
+                    <span className="name">
+                      Published
+                    </span>
                   </div>
 
                   <div className="col-sm-8">
@@ -535,7 +627,9 @@ const ProductDetails = () => {
                     {product.dateCreated
                       ? new Date(
                           product.dateCreated
-                        ).toLocaleDateString("en-IN")
+                        ).toLocaleDateString(
+                          "en-IN"
+                        )
                       : "N/A"}
                   </div>
                 </div>
@@ -544,12 +638,14 @@ const ProductDetails = () => {
           </div>
         </div>
 
-        {/* =========================
+        {/* =====================================================
             PRODUCT DESCRIPTION
-        ========================= */}
+        ===================================================== */}
 
         <div className="p-4">
-          <h6 className="mt-4 mb-3">Product Description</h6>
+          <h6 className="mt-4 mb-3">
+            Product Description
+          </h6>
 
           <p
             style={{
@@ -559,25 +655,49 @@ const ProductDetails = () => {
             {productDescription}
           </p>
 
-          {/* =========================
+          {/* =====================================================
               RATING ANALYTICS
-          ========================= */}
+          ===================================================== */}
 
-          <h6 className="mt-4 mb-4">Rating Analytics</h6>
+          <h6 className="mt-4 mb-4">
+            Rating Analytics
+          </h6>
 
           <div className="ratingSection">
             {[
-              { label: "5 star", required: 5, width: "100%" },
-              { label: "4 star", required: 4, width: "80%" },
-              { label: "3 star", required: 3, width: "60%" },
-              { label: "2 star", required: 2, width: "40%" },
-              { label: "1 star", required: 1, width: "20%" },
+              {
+                label: "5 star",
+                required: 5,
+                width: "100%",
+              },
+              {
+                label: "4 star",
+                required: 4,
+                width: "80%",
+              },
+              {
+                label: "3 star",
+                required: 3,
+                width: "60%",
+              },
+              {
+                label: "2 star",
+                required: 2,
+                width: "40%",
+              },
+              {
+                label: "1 star",
+                required: 1,
+                width: "20%",
+              },
             ].map((item) => (
               <div
                 className="ratingrow d-flex align-items-center mb-2"
                 key={item.label}
               >
-                <span className="col1">{item.label}</span>
+                <span className="col1">
+                  {item.label}
+                </span>
 
                 <div className="col2 flex-grow-1 mx-3">
                   <div className="progress">
@@ -593,16 +713,20 @@ const ProductDetails = () => {
                   </div>
                 </div>
 
-                <span className="col3">-</span>
+                <span className="col3">
+                  -
+                </span>
               </div>
             ))}
           </div>
 
-          {/* =========================
+          {/* =====================================================
               CUSTOMER REVIEWS
-          ========================= */}
+          ===================================================== */}
 
-          <h6 className="mt-4 mb-4">Customer Reviews</h6>
+          <h6 className="mt-4 mb-4">
+            Customer Reviews
+          </h6>
 
           <div className="reviewSecrion">
             <div className="reviewsrow">
@@ -616,10 +740,13 @@ const ProductDetails = () => {
                       />
 
                       <div className="info ms-2">
-                        <h6>No reviews yet</h6>
+                        <h6>
+                          No reviews yet
+                        </h6>
 
                         <span>
-                          Be the first to review this product.
+                          Be the first to review
+                          this product.
                         </span>
                       </div>
                     </div>
@@ -631,15 +758,19 @@ const ProductDetails = () => {
 
           <br />
 
-          {/* =========================
+          {/* =====================================================
               REVIEW REPLY FORM
-          ========================= */}
+          ===================================================== */}
 
-          <h6 className="mt-4 mb-4">Review Reply Form</h6>
+          <h6 className="mt-4 mb-4">
+            Review Reply Form
+          </h6>
 
           <form
             className="reviewForm"
-            onSubmit={(event) => event.preventDefault()}
+            onSubmit={(event) =>
+              event.preventDefault()
+            }
           >
             <textarea
               className="form-control"
