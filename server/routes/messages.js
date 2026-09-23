@@ -1,12 +1,13 @@
 
 const express = require("express");
+const mongoose = require("mongoose");
 
 const Message = require("../models/message");
 
 const router = express.Router();
 
 // =====================================================
-// CUSTOMER: SEND MESSAGE ABOUT AN ORDER
+// CUSTOMER: SEND CONTACT OR ORDER MESSAGE
 // POST /api/messages
 // =====================================================
 
@@ -19,8 +20,8 @@ router.post("/", async (req, res) => {
       message,
     } = req.body;
 
+    // Validate required fields
     if (
-      !orderId ||
       !customerName ||
       !customerEmail ||
       !message
@@ -28,15 +29,41 @@ router.post("/", async (req, res) => {
       return res.status(400).json({
         success: false,
         message:
-          "Order ID, customer name, email and message are required.",
+          "Customer name, email and message are required.",
       });
     }
 
+    const trimmedName = customerName.trim();
+    const trimmedEmail = customerEmail.trim().toLowerCase();
+    const trimmedMessage = message.trim();
+    const trimmedOrderId = orderId
+      ? orderId.trim()
+      : "";
+
+    if (
+      !trimmedName ||
+      !trimmedEmail ||
+      !trimmedMessage
+    ) {
+      return res.status(400).json({
+        success: false,
+        message:
+          "Customer name, email and message cannot be empty.",
+      });
+    }
+
+    // Order ID exists = order message
+    // No Order ID = contact message
+    const messageType = trimmedOrderId
+      ? "order"
+      : "contact";
+
     const newMessage = await Message.create({
-      orderId,
-      customerName,
-      customerEmail,
-      message,
+      orderId: trimmedOrderId,
+      customerName: trimmedName,
+      customerEmail: trimmedEmail,
+      message: trimmedMessage,
+      messageType,
     });
 
     res.status(201).json({
@@ -45,10 +72,7 @@ router.post("/", async (req, res) => {
       data: newMessage,
     });
   } catch (error) {
-    console.error(
-      "Create message error:",
-      error
-    );
+    console.error("Create message error:", error);
 
     res.status(500).json({
       success: false,
@@ -58,24 +82,140 @@ router.post("/", async (req, res) => {
 });
 
 // =====================================================
+// CUSTOMER: SUBMIT PRODUCT REVIEW
+// POST /api/messages/review
+// =====================================================
+
+router.post("/review", async (req, res) => {
+  try {
+    const {
+      productId,
+      customerName,
+      customerEmail,
+      message,
+      rating,
+    } = req.body;
+
+    if (
+      !productId ||
+      !customerName ||
+      !customerEmail ||
+      !message ||
+      rating === undefined ||
+      rating === null
+    ) {
+      return res.status(400).json({
+        success: false,
+        message:
+          "Product ID, customer name, email, review and rating are required.",
+      });
+    }
+
+    if (!mongoose.Types.ObjectId.isValid(productId)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid product ID.",
+      });
+    }
+
+    const numericRating = Number(rating);
+
+    if (
+      !Number.isFinite(numericRating) ||
+      numericRating < 1 ||
+      numericRating > 5
+    ) {
+      return res.status(400).json({
+        success: false,
+        message: "Rating must be between 1 and 5.",
+      });
+    }
+
+    const newReview = await Message.create({
+      productId,
+      customerName: customerName.trim(),
+      customerEmail: customerEmail.trim().toLowerCase(),
+      message: message.trim(),
+      rating: numericRating,
+      messageType: "review",
+      status: "unread",
+    });
+
+    res.status(201).json({
+      success: true,
+      message: "Review submitted successfully.",
+      data: newReview,
+    });
+  } catch (error) {
+    console.error("Create review error:", error);
+
+    res.status(500).json({
+      success: false,
+      message: "Failed to submit review.",
+    });
+  }
+});
+
+// =====================================================
+// CUSTOMER: GET REVIEWS FOR A PRODUCT
+// GET /api/messages/product/:productId
+// =====================================================
+
+router.get(
+  "/product/:productId",
+  async (req, res) => {
+    try {
+      const { productId } = req.params;
+
+      if (!mongoose.Types.ObjectId.isValid(productId)) {
+        return res.status(400).json({
+          success: false,
+          message: "Invalid product ID.",
+        });
+      }
+
+      const reviews = await Message.find({
+        productId,
+        messageType: "review",
+      }).sort({
+        createdAt: -1,
+      });
+
+      res.status(200).json({
+        success: true,
+        data: reviews,
+      });
+    } catch (error) {
+      console.error(
+        "Get product reviews error:",
+        error
+      );
+
+      res.status(500).json({
+        success: false,
+        message: "Failed to fetch product reviews.",
+      });
+    }
+  }
+);
+
+// =====================================================
 // ADMIN: GET ALL MESSAGES
 // GET /api/messages
 // =====================================================
 
 router.get("/", async (req, res) => {
   try {
-    const messages = await Message.find()
-      .sort({ createdAt: -1 });
+    const messages = await Message.find().sort({
+      createdAt: -1,
+    });
 
     res.status(200).json({
       success: true,
       data: messages,
     });
   } catch (error) {
-    console.error(
-      "Get messages error:",
-      error
-    );
+    console.error("Get messages error:", error);
 
     res.status(500).json({
       success: false,

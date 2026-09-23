@@ -19,6 +19,7 @@ import axios from "axios";
 // =========================
 // COMPONENTS
 // =========================
+
 import Header from "./Components/Header";
 import Footer from "./Components/Footer";
 import ProductModal from "./Components/ProductModal";
@@ -26,6 +27,7 @@ import ProductModal from "./Components/ProductModal";
 // =========================
 // PAGES
 // =========================
+
 import Home from "./Pages/Home";
 import Listing from "./Pages/Home/Listing";
 import ProductDetails from "./Pages/ProductDetails";
@@ -33,18 +35,21 @@ import Cart from "./Pages/Cart";
 import Checkout from "./Pages/Checkout";
 import OrderSuccess from "./Pages/OrderSuccess";
 import Track from "./Pages/Track";
+import Contact from "./Pages/Contact";
 import SignIn from "./Pages/SignIn";
 import SignUp from "./Pages/SignUp";
 
 // =========================
 // CREATE CONTEXT
 // =========================
+
 const MyContext = createContext();
 
 function App() {
   // =========================
   // COUNTRY STATE
   // =========================
+
   const [countryList, setCountryList] = useState([]);
 
   const [selectCountry, setSelectCountry] =
@@ -53,16 +58,21 @@ function App() {
   // =========================
   // PRODUCT MODAL STATE
   // =========================
-  const [isOpenProductModal, setisOpenProductModal] =
-    useState(false);
 
-  // Selected product for modal
-  const [selectedProduct, setSelectedProduct] =
-    useState(null);
+  const [
+    isOpenProductModal,
+    setisOpenProductModal,
+  ] = useState(false);
+
+  const [
+    selectedProduct,
+    setSelectedProduct,
+  ] = useState(null);
 
   // =========================
   // HEADER AND FOOTER
   // =========================
+
   const [
     isHeaderFooterShow,
     setisHeaderFooterShow,
@@ -71,16 +81,21 @@ function App() {
   // =========================
   // LOGIN STATE
   // =========================
+
   const [isLogin, setIsLogin] = useState(false);
 
   // =========================
   // CART STATE
   // =========================
+
   const [cartItems, setCartItems] = useState(() => {
-    const savedCart = localStorage.getItem("cartItems");
+    const savedCart =
+      localStorage.getItem("cartItems");
 
     try {
-      return savedCart ? JSON.parse(savedCart) : [];
+      return savedCart
+        ? JSON.parse(savedCart)
+        : [];
     } catch (error) {
       console.error(
         "Error loading cart from localStorage:",
@@ -94,6 +109,7 @@ function App() {
   // =========================
   // GET COUNTRIES
   // =========================
+
   useEffect(() => {
     getCountry(
       "https://countriesnow.space/api/v0.1/countries/"
@@ -103,6 +119,7 @@ function App() {
   // =========================
   // SAVE CART TO LOCAL STORAGE
   // =========================
+
   useEffect(() => {
     localStorage.setItem(
       "cartItems",
@@ -113,6 +130,7 @@ function App() {
   // =========================
   // COUNTRY API
   // =========================
+
   const getCountry = async (url) => {
     try {
       const response = await axios.get(url);
@@ -129,28 +147,24 @@ function App() {
   // =========================
   // CONTEXT VALUES
   // =========================
+
   const values = {
-    // Country
     countryList,
     selectCountry,
     setSelectCountry,
 
-    // Product modal
     isOpenProductModal,
     setisOpenProductModal,
 
     selectedProduct,
     setSelectedProduct,
 
-    // Header and footer
     isHeaderFooterShow,
     setisHeaderFooterShow,
 
-    // Login
     isLogin,
     setIsLogin,
 
-    // Cart
     cartItems,
     setCartItems,
   };
@@ -196,6 +210,11 @@ function App() {
           <Route
             path="/track"
             element={<Track />}
+          />
+
+          <Route
+            path="/contact"
+            element={<Contact />}
           />
 
           <Route
