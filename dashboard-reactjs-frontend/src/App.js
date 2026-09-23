@@ -35,6 +35,7 @@ import ProductUpload from "./pages/ProductUpload";
 import Orders from "./pages/Orders";
 import OrderDetails from "./pages/Orders/OrderDetails";
 import Category from "./pages/Category";
+import Messages from "./pages/Messages";
 
 // =====================================================
 // CONTEXT
@@ -301,6 +302,10 @@ function App() {
                   />
                 }
               />
+              <Route
+  path="/messages"
+  element={<Messages />}
+/>
             </Routes>
           </div>
         </div>

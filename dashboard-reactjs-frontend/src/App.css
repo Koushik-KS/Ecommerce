@@ -601,3 +601,190 @@ border:1px solid #233557 !important;color: rgba(255,255,255,0.8) !important;}
 
 
 
+/* =====================================================
+   MESSAGES PAGE
+===================================================== */
+
+.messages-page {
+  padding: 25px;
+  min-height: 100vh;
+}
+
+.messages-page h2 {
+  font-weight: 600;
+  color: #343a40;
+}
+
+/* =====================================================
+   MESSAGES HEADER
+===================================================== */
+
+.messages-header {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 5px;
+}
+
+.messages-header h2 {
+  margin-bottom: 5px;
+}
+
+.messages-header p {
+  margin-bottom: 12px !important;
+}
+
+.messages-header .btn {
+  margin-top: 0;
+  border-radius: 6px;
+}
+
+/* =====================================================
+   SUMMARY CARDS
+===================================================== */
+
+.messages-page .card {
+  border-radius: 12px;
+}
+
+.message-summary-card {
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.message-summary-card:hover {
+  transform: translateY(-3px);
+
+  box-shadow:
+    0 6px 18px
+    rgba(0, 0, 0, 0.08) !important;
+}
+
+.message-summary-card h3 {
+  font-size: 28px;
+  font-weight: 600;
+  margin-bottom: 0;
+}
+
+.message-summary-card h6 {
+  font-size: 14px;
+  font-weight: 500;
+}
+
+/* =====================================================
+   MESSAGES TABLE
+===================================================== */
+
+.messages-table-card {
+  overflow: hidden;
+}
+
+.messages-table {
+  margin-bottom: 0;
+}
+
+.messages-table th {
+  white-space: nowrap;
+  background-color: #f5f7fb;
+  color: #343a40;
+  font-weight: 600;
+}
+
+.messages-table td {
+  vertical-align: middle;
+}
+
+.messages-table tbody tr {
+  transition: background-color 0.2s ease;
+}
+
+.message-actions {
+  white-space: nowrap;
+}
+
+.message-actions .btn {
+  width: 34px;
+  height: 34px;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 6px;
+}
+
+/* =====================================================
+   MESSAGE CONTENT
+===================================================== */
+
+.message-content,
+.message-reply {
+  padding: 15px;
+  border-radius: 8px;
+
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+
+  line-height: 1.6;
+}
+
+.message-content {
+  background-color: #f5f7fb;
+  border: 1px solid #e5e7eb;
+}
+
+.message-reply {
+  background-color: #e8f7ed;
+  border: 1px solid #c9e8d2;
+}
+
+/* =====================================================
+   MODAL
+===================================================== */
+
+.messages-page .modal-content {
+  border: none;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.messages-page .modal-header {
+  background-color: #f5f7fb;
+}
+
+.messages-page .modal-title {
+  font-weight: 600;
+}
+
+.messages-page .btn {
+  border-radius: 6px;
+}
+
+/* =====================================================
+   RESPONSIVE DESIGN
+===================================================== */
+
+@media (max-width: 768px) {
+  .messages-page {
+    padding: 15px;
+  }
+
+  .messages-header {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 5px;
+  }
+
+  .messages-header .btn {
+    width: auto;
+  }
+
+  .messages-table {
+    font-size: 13px;
+  }
+
+  .message-actions {
+    gap: 4px !important;
+  }
+}
