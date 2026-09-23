@@ -1,3 +1,4 @@
+
 import React, {
   useCallback,
   useEffect,
@@ -41,9 +42,6 @@ const API_URL = "http://localhost:4000/api";
 
 const FALLBACK_IMAGE =
   "https://via.placeholder.com/600x600?text=No+Image";
-
-const FALLBACK_AVATAR =
-  "https://via.placeholder.com/100?text=User";
 
 // =====================================================
 // BREADCRUMB STYLE
@@ -189,6 +187,8 @@ const ProductDetails = () => {
 
   const fetchReviews = useCallback(async () => {
     if (!id) {
+      console.error("Product ID is missing");
+      setReviewsLoading(false);
       return;
     }
 
@@ -196,11 +196,18 @@ const ProductDetails = () => {
       setReviewsLoading(true);
       setReviewsError("");
 
-      const response = await fetch(
-        `${API_URL}/reviews/product/${id}`
-      );
+      const reviewUrl =
+        `${API_URL}/reviews/product/${id}`;
+
+      console.log("Fetching reviews from:", reviewUrl);
+      console.log("Admin Product ID:", id);
+
+      const response = await fetch(reviewUrl);
 
       const data = await response.json().catch(() => ({}));
+
+      console.log("Review API status:", response.status);
+      console.log("Review API response:", data);
 
       if (!response.ok || !data.success) {
         throw new Error(
@@ -208,11 +215,18 @@ const ProductDetails = () => {
         );
       }
 
-      setReviews(
-        Array.isArray(data.reviews)
-          ? data.reviews
-          : []
+      const fetchedReviews = Array.isArray(data.reviews)
+        ? data.reviews
+        : [];
+
+      console.log("Fetched reviews:", fetchedReviews);
+      console.log("Total reviews:", data.totalReviews);
+      console.log(
+        "Rating distribution:",
+        data.ratingDistribution
       );
+
+      setReviews(fetchedReviews);
 
       setAverageRating(
         Number(data.averageRating || 0)
@@ -1014,7 +1028,7 @@ const ProductDetails = () => {
                 <div className="userInfo d-flex align-items-center">
 
                   <UserAvatarImgComponent
-                    img={FALLBACK_AVATAR}
+                    name="User"
                     lg={true}
                   />
 
@@ -1036,9 +1050,15 @@ const ProductDetails = () => {
             reviews.map((review) => {
               const reviewId = review._id;
 
+              // =================================================
+              // CUSTOMER NAME
+              // =================================================
+
               const customerName =
                 review.user?.name ||
+                review.user?.username ||
                 review.user?.email ||
+                review.userName ||
                 "Customer";
 
               const existingReply =
@@ -1058,8 +1078,10 @@ const ProductDetails = () => {
 
                   <div className="d-flex align-items-start">
 
+                    {/* CUSTOMER INITIAL AVATAR */}
+
                     <UserAvatarImgComponent
-                      img={FALLBACK_AVATAR}
+                      name={customerName}
                       lg={true}
                     />
 

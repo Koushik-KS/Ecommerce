@@ -3,7 +3,6 @@ import { Link } from "react-router-dom";
 import Logo from "../../assets/images/eshop.png";
 import Button from "@mui/material/Button";
 import CountryDropdown from "../CountryDropdown";
-import { FaRegCircleUser } from "react-icons/fa6";
 import { IoBagOutline } from "react-icons/io5";
 import SearchBox from "./SearcBox";
 import Navigation from "./Navigation";
@@ -25,9 +24,19 @@ const Header = () => {
     0
   );
 
+  // Generate the logged-in user's initial
+  const getUserInitial = () => {
+    const userName = context.user?.name?.trim();
+
+    if (!userName) {
+      return "U";
+    }
+
+    return userName.charAt(0).toUpperCase();
+  };
+
   return (
     <div className="headerWrapper">
-
       {/* Top Strip */}
       <div className="top-strip bg-blue">
         <div className="container">
@@ -40,9 +49,7 @@ const Header = () => {
       {/* Header */}
       <header className="header">
         <div className="container">
-
           <div className="row">
-
             {/* Logo */}
             <div className="logoWrapper d-flex align-items-center col-sm-2">
               <Link to="/">
@@ -52,7 +59,6 @@ const Header = () => {
 
             {/* Header Right Section */}
             <div className="col-sm-10 d-flex align-items-center part2">
-
               {/* Country Dropdown */}
               {context.countryList.length !== 0 && (
                 <CountryDropdown />
@@ -63,8 +69,7 @@ const Header = () => {
 
               {/* Sign In and Cart */}
               <div className="part3 d-flex align-items-center ml-auto">
-
-                {/* Sign In */}
+                {/* User Profile / Sign In */}
                 {context.isLogin !== true ? (
                   <Link to="/signIn">
                     <Button className="btn-blue btn-round mr-3">
@@ -72,14 +77,35 @@ const Header = () => {
                     </Button>
                   </Link>
                 ) : (
-                  <Button className="circle mr-3">
-                    <FaRegCircleUser />
+                  <Button
+                    className="circle mr-3"
+                    title={context.user?.name || "User Profile"}
+                    sx={{
+                      minWidth: "44px",
+                      width: "44px",
+                      height: "44px",
+                      padding: 0,
+                      borderRadius: "50%",
+                      border: "1px solid #dddddd",
+                      backgroundColor: "#ffffff",
+                      color: "#333333",
+                      fontSize: "20px",
+                      fontWeight: "600",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      textTransform: "none",
+                      "&:hover": {
+                        backgroundColor: "#f0f4ff",
+                      },
+                    }}
+                  >
+                    {getUserInitial()}
                   </Button>
                 )}
 
                 {/* Cart */}
                 <div className="ml-auto cartTab d-flex align-items-center">
-
                   {/* Dynamic Total Price */}
                   <span>
                     ₹{totalPrice}
@@ -87,7 +113,6 @@ const Header = () => {
 
                   {/* Cart Icon */}
                   <div className="position-relative ml-2">
-
                     <Link to="/cart">
                       <Button className="circle">
                         <IoBagOutline />
@@ -98,23 +123,16 @@ const Header = () => {
                     <span className="count d-flex align-items-center justify-content-center">
                       {totalQuantity}
                     </span>
-
                   </div>
-
                 </div>
-
               </div>
-
             </div>
-
           </div>
-
         </div>
       </header>
 
       {/* Navigation */}
       <Navigation />
-
     </div>
   );
 };

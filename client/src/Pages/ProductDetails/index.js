@@ -1,8 +1,10 @@
+
 import ProductZoom from "../../Components/ProductZoom";
 import Rating from "@mui/material/Rating";
 import QuantityBox from "../../Components/QuantityBox";
 import Button from "@mui/material/Button";
 import Tooltip from "@mui/material/Tooltip";
+import Avatar from "@mui/material/Avatar";
 
 import {
   FaShoppingCart,
@@ -35,6 +37,18 @@ const PRODUCT_API_URL =
 
 const REVIEW_API_URL =
   "http://localhost:4000/api/reviews";
+
+// =====================================================
+// CUSTOMER INITIAL HELPER
+// =====================================================
+
+const getUserInitial = (name) => {
+  if (!name || typeof name !== "string") {
+    return "C";
+  }
+
+  return name.trim().charAt(0).toUpperCase() || "C";
+};
 
 // =====================================================
 // PRODUCT DETAILS COMPONENT
@@ -336,8 +350,8 @@ const ProductDetails = () => {
 
     if (
       !Number.isInteger(Number(rating)) ||
-      rating < 1 ||
-      rating > 5
+      Number(rating) < 1 ||
+      Number(rating) > 5
     ) {
       setReviewError(
         "Please select a rating between 1 and 5."
@@ -365,7 +379,6 @@ const ProductDetails = () => {
         reviewText: trimmedReviewMessage,
       };
 
-      // Debug request data
       console.log(
         "Submitting review request:",
         requestBody
@@ -385,10 +398,8 @@ const ProductDetails = () => {
         }
       );
 
-      // Read response as text first
       const responseText = await response.text();
 
-      // Debug response
       console.log(
         "Review API status:",
         response.status
@@ -456,11 +467,9 @@ const ProductDetails = () => {
           "Review submitted successfully!"
       );
 
-      // Clear form
       setReviewMessage("");
       setRating(0);
 
-      // Update average rating
       if (
         data.averageRating !== undefined
       ) {
@@ -469,7 +478,6 @@ const ProductDetails = () => {
         );
       }
 
-      // Update total reviews
       if (
         data.totalReviews !== undefined
       ) {
@@ -478,7 +486,6 @@ const ProductDetails = () => {
         );
       }
 
-      // Update product rating
       setProduct((previousProduct) => {
         if (!previousProduct) {
           return previousProduct;
@@ -497,7 +504,6 @@ const ProductDetails = () => {
         };
       });
 
-      // Fetch updated reviews
       await fetchReviews();
     } catch (submitError) {
       console.error(
@@ -1023,6 +1029,11 @@ const ProductDetails = () => {
                           review.review ||
                           "";
 
+                        const reviewerInitial =
+                          getUserInitial(
+                            reviewer
+                          );
+
                         return (
                           <div
                             className="card p-4 mb-3 reviewsCard"
@@ -1034,9 +1045,38 @@ const ProductDetails = () => {
 
                             <div className="d-flex align-items-center flex-wrap">
 
-                              <h5 className="text-g mb-0">
-                                {reviewer}
-                              </h5>
+                              {/* CUSTOMER AVATAR */}
+
+                              <Avatar
+                                sx={{
+                                  width: 42,
+                                  height: 42,
+                                  marginRight: "12px",
+                                  backgroundColor: "#2874f0",
+                                  color: "#ffffff",
+                                  fontWeight: "bold",
+                                }}
+                              >
+                                {reviewerInitial}
+                              </Avatar>
+
+                              {/* CUSTOMER NAME */}
+
+                              <div>
+                                <h5 className="text-g mb-0">
+                                  {reviewer}
+                                </h5>
+
+                                <small className="text-muted">
+                                  {review.createdAt
+                                    ? new Date(
+                                        review.createdAt
+                                      ).toLocaleDateString(
+                                        "en-IN"
+                                      )
+                                    : ""}
+                                </small>
+                              </div>
 
                               <div className="ml-auto">
 
@@ -1058,19 +1098,7 @@ const ProductDetails = () => {
                               </div>
                             </div>
 
-                            <small className="text-muted">
-
-                              {review.createdAt
-                                ? new Date(
-                                    review.createdAt
-                                  ).toLocaleDateString(
-                                    "en-IN"
-                                  )
-                                : ""}
-
-                            </small>
-
-                            <p className="mt-2 mb-0">
+                            <p className="mt-3 mb-0">
                               {reviewText}
                             </p>
 
