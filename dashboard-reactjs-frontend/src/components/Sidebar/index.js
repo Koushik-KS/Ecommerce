@@ -10,10 +10,12 @@ import { FaBell } from "react-icons/fa";
 import { IoSettings } from "react-icons/io5";
 import { AiOutlineLogout } from "react-icons/ai";
 
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { useState } from "react";
 
 const Sidebar = () => {
+  const location = useLocation();
+
   const [activeTab, setActiveTab] = useState(0);
   const [isToggleSubmenu, setIsToggleSubmenu] = useState(false);
 
@@ -26,17 +28,26 @@ const Sidebar = () => {
     }
   };
 
+  const isProductRoute =
+    location.pathname.startsWith("/products") ||
+    location.pathname.startsWith("/product/") ||
+    location.pathname.startsWith("/category/");
+
   return (
     <div className="sidebar">
       <ul>
         {/* =========================
             DASHBOARD
         ========================= */}
+
         <li>
-          <Link to="/">
+          <Link to="/dashboard">
             <Button
               className={`w-100 ${
-                activeTab === 0 ? "active" : ""
+                location.pathname === "/dashboard" ||
+                location.pathname === "/"
+                  ? "active"
+                  : ""
               }`}
               onClick={() => {
                 setActiveTab(0);
@@ -59,10 +70,13 @@ const Sidebar = () => {
         {/* =========================
             PRODUCTS
         ========================= */}
+
         <li>
           <Button
             className={`w-100 ${
               activeTab === 1 && isToggleSubmenu
+                ? "active"
+                : isProductRoute
                 ? "active"
                 : ""
             }`}
@@ -81,32 +95,67 @@ const Sidebar = () => {
 
           <div
             className={`submenuWrapper ${
-              activeTab === 1 && isToggleSubmenu
+              (activeTab === 1 && isToggleSubmenu) || isProductRoute
                 ? "colapse"
                 : "colapsed"
             }`}
           >
             <ul className="submenu">
+              {/* Product List */}
+
               <li>
-                <Link to="/products">
+                <Link
+                  to="/products"
+                  onClick={() => {
+                    setActiveTab(1);
+                    setIsToggleSubmenu(true);
+                  }}
+                >
                   Product List
                 </Link>
               </li>
 
+              {/* Product View
+                  A product ID is required.
+                  Open the list first, then click Eye.
+              */}
+
               <li>
-                <Link to="/product/details">
+                <Link
+                  to="/products"
+                  onClick={() => {
+                    setActiveTab(1);
+                    setIsToggleSubmenu(true);
+                  }}
+                >
                   Product View
                 </Link>
               </li>
 
+              {/* Product Upload */}
+
               <li>
-                <Link to="/product/upload">
+                <Link
+                  to="/product/upload"
+                  onClick={() => {
+                    setActiveTab(1);
+                    setIsToggleSubmenu(true);
+                  }}
+                >
                   Product Upload
                 </Link>
               </li>
 
+              {/* Category Create */}
+
               <li>
-                <Link to="/category/create">
+                <Link
+                  to="/category/create"
+                  onClick={() => {
+                    setActiveTab(1);
+                    setIsToggleSubmenu(true);
+                  }}
+                >
                   Category Create
                 </Link>
               </li>
@@ -117,11 +166,12 @@ const Sidebar = () => {
         {/* =========================
             ORDERS
         ========================= */}
+
         <li>
           <Link to="/orders">
             <Button
               className={`w-100 ${
-                activeTab === 2 ? "active" : ""
+                location.pathname.startsWith("/orders") ? "active" : ""
               }`}
               onClick={() => {
                 setActiveTab(2);
@@ -144,11 +194,12 @@ const Sidebar = () => {
         {/* =========================
             MESSAGES
         ========================= */}
+
         <li>
           <Link to="/messages">
             <Button
               className={`w-100 ${
-                activeTab === 3 ? "active" : ""
+                location.pathname.startsWith("/messages") ? "active" : ""
               }`}
               onClick={() => {
                 setActiveTab(3);
@@ -171,11 +222,14 @@ const Sidebar = () => {
         {/* =========================
             NOTIFICATIONS
         ========================= */}
+
         <li>
           <Link to="/notifications">
             <Button
               className={`w-100 ${
-                activeTab === 4 ? "active" : ""
+                location.pathname.startsWith("/notifications")
+                  ? "active"
+                  : ""
               }`}
               onClick={() => {
                 setActiveTab(4);
@@ -198,11 +252,12 @@ const Sidebar = () => {
         {/* =========================
             SETTINGS
         ========================= */}
+
         <li>
           <Link to="/settings">
             <Button
               className={`w-100 ${
-                activeTab === 5 ? "active" : ""
+                location.pathname.startsWith("/settings") ? "active" : ""
               }`}
               onClick={() => {
                 setActiveTab(5);
@@ -228,6 +283,7 @@ const Sidebar = () => {
       {/* =========================
           LOGOUT
       ========================= */}
+
       <div className="logoutWrapper">
         <div className="logoutBox">
           <Button variant="contained">

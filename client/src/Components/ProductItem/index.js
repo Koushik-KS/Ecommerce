@@ -23,6 +23,7 @@ const ProductItem = (props) => {
   // =========================
   // CHECK PRODUCT
   // =========================
+
   if (!product) {
     return null;
   }
@@ -30,6 +31,7 @@ const ProductItem = (props) => {
   // =========================
   // PRODUCT INFORMATION
   // =========================
+
   const productId = product._id || product.id;
 
   const productName = product.name || "Product";
@@ -39,15 +41,27 @@ const ProductItem = (props) => {
   const productDescription =
     product.description || "";
 
-  const productPrice = Number(product.price || 0);
+  // Selling price
+  const productPrice = Number(
+    product.price || 0
+  );
 
-  const productRating = Number(product.rating || 0);
+  // Original / regular price
+  const productRegularPrice = Number(
+    product.regularPrice || 0
+  );
+
+  const productRating = Number(
+    product.rating || 0
+  );
 
   const productStock = Number(
     product.countInStock ?? 0
   );
 
-  const productImages = Array.isArray(product.images)
+  const productImages = Array.isArray(
+    product.images
+  )
     ? product.images.filter((image) => image)
     : [];
 
@@ -62,19 +76,45 @@ const ProductItem = (props) => {
       : product.category;
 
   // =========================
+  // DISCOUNT CALCULATION
+  // =========================
+
+  const hasDiscount =
+    productRegularPrice > productPrice &&
+    productPrice > 0;
+
+  const discountPercentage = hasDiscount
+    ? Math.round(
+        ((productRegularPrice - productPrice) /
+          productRegularPrice) *
+          100
+      )
+    : 0;
+
+  // =========================
   // OPEN PRODUCT MODAL
   // =========================
+
   const viewProductDetails = () => {
     context.setSelectedProduct(product);
 
     context.setisOpenProductModal(true);
   };
 
+  // =========================
+  // RENDER
+  // =========================
+
   return (
-    <div className={`productItem ${props.itemView || ""}`}>
+    <div
+      className={`productItem ${
+        props.itemView || ""
+      }`}
+    >
       {/* =========================
           PRODUCT IMAGE
       ========================= */}
+
       <div className="imgWrapper">
         <Swiper
           slidesPerView={1}
@@ -89,7 +129,9 @@ const ProductItem = (props) => {
               >
                 <img
                   src={image}
-                  alt={`${productName} ${index + 1}`}
+                  alt={`${productName} ${
+                    index + 1
+                  }`}
                   className="w-100"
                 />
               </SwiperSlide>
@@ -106,6 +148,7 @@ const ProductItem = (props) => {
         </Swiper>
 
         {/* CATEGORY BADGE */}
+
         {categoryName && (
           <span className="badge badge-primary">
             {categoryName}
@@ -113,6 +156,7 @@ const ProductItem = (props) => {
         )}
 
         {/* ACTION BUTTONS */}
+
         <div className="actions">
           <Button
             onClick={viewProductDetails}
@@ -121,7 +165,9 @@ const ProductItem = (props) => {
             <TfiFullscreen />
           </Button>
 
-          <Button aria-label="Add to wishlist">
+          <Button
+            aria-label="Add to wishlist"
+          >
             <CiHeart />
           </Button>
         </div>
@@ -130,11 +176,13 @@ const ProductItem = (props) => {
       {/* =========================
           PRODUCT NAME
       ========================= */}
+
       <h4>{productName}</h4>
 
       {/* =========================
           BRAND
       ========================= */}
+
       <p className="mb-1 text-muted">
         {productBrand}
       </p>
@@ -142,6 +190,7 @@ const ProductItem = (props) => {
       {/* =========================
           DESCRIPTION
       ========================= */}
+
       {productDescription && (
         <p className="mb-1">
           {productDescription}
@@ -151,6 +200,7 @@ const ProductItem = (props) => {
       {/* =========================
           STOCK
       ========================= */}
+
       {productStock > 0 ? (
         <span className="text-success d-block">
           In Stock
@@ -164,6 +214,7 @@ const ProductItem = (props) => {
       {/* =========================
           RATING
       ========================= */}
+
       <Rating
         value={productRating}
         readOnly
@@ -174,10 +225,48 @@ const ProductItem = (props) => {
       {/* =========================
           PRICE
       ========================= */}
-      <div className="d-flex info">
+
+      <div className="d-flex info align-items-center flex-wrap">
+        {/* SELLING PRICE */}
+
         <span className="netPrice text-danger">
           ₹{productPrice.toLocaleString("en-IN")}
         </span>
+
+        {/* REGULAR PRICE */}
+
+        {hasDiscount && (
+          <span
+            className="oldPrice ml-2"
+            style={{
+              textDecoration: "line-through",
+              color: "#888",
+              fontSize: "14px",
+              marginLeft: "8px",
+            }}
+          >
+            ₹
+            {productRegularPrice.toLocaleString(
+              "en-IN"
+            )}
+          </span>
+        )}
+
+        {/* DISCOUNT PERCENTAGE */}
+
+        {hasDiscount && (
+          <span
+            className="discount-badge"
+            style={{
+              color: "#198754",
+              fontSize: "12px",
+              fontWeight: "600",
+              marginLeft: "8px",
+            }}
+          >
+            {discountPercentage}% OFF
+          </span>
+        )}
       </div>
     </div>
   );

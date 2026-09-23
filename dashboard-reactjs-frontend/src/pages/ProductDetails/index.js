@@ -1,27 +1,38 @@
-import { emphasize, styled } from '@mui/material/styles';
-import Breadcrumbs from '@mui/material/Breadcrumbs';
-import Chip from '@mui/material/Chip';
-import HomeIcon from '@mui/icons-material/Home';
 
-import React, { useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
+import { useParams, Link, useNavigate } from "react-router-dom";
+
+import { emphasize, styled } from "@mui/material/styles";
+import Breadcrumbs from "@mui/material/Breadcrumbs";
+import Chip from "@mui/material/Chip";
+import HomeIcon from "@mui/icons-material/Home";
+import Rating from "@mui/material/Rating";
+import Button from "@mui/material/Button";
 
 import Slider from "react-slick";
-
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 
-import 'bootstrap/dist/css/bootstrap.min.css';
-import { MdBrandingWatermark } from "react-icons/md";
-import { BiSolidCategory } from "react-icons/bi";
-import UserAvatarImgComponent from '../../components/userAvatarImg';
-import Rating from '@mui/material/Rating';
-import Button from '@mui/material/Button';
+import "bootstrap/dist/css/bootstrap.min.css";
 
-import { MdReplyAll } from "react-icons/md";
-// breadcrumb style
+import { MdBrandingWatermark, MdReplyAll } from "react-icons/md";
+import { BiSolidCategory } from "react-icons/bi";
+
+import UserAvatarImgComponent from "../../components/userAvatarImg";
+
+// =====================================================
+// API URL
+// =====================================================
+
+const API_URL = "http://localhost:4000/api/products";
+
+// =====================================================
+// BREADCRUMB STYLE
+// =====================================================
+
 const StyledBreadcrumb = styled(Chip)(({ theme }) => {
   const backgroundColor =
-    theme.palette.mode === 'light'
+    theme.palette.mode === "light"
       ? theme.palette.grey[100]
       : theme.palette.grey[800];
 
@@ -31,627 +42,622 @@ const StyledBreadcrumb = styled(Chip)(({ theme }) => {
     color: theme.palette.text.primary,
     fontWeight: theme.typography.fontWeightRegular,
 
-    '&:hover, &:focus': {
+    "&:hover, &:focus": {
       backgroundColor: emphasize(backgroundColor, 0.06),
     },
 
-    '&:active': {
+    "&:active": {
       boxShadow: theme.shadows[1],
       backgroundColor: emphasize(backgroundColor, 0.12),
     },
   };
 });
 
+// =====================================================
+// PRODUCT DETAILS COMPONENT
+// =====================================================
+
 const ProductDetails = () => {
+  const { id } = useParams();
+  const navigate = useNavigate();
 
-  const productSliderBig =useRef();
-  const productSliderSml =useRef();
+  const productSliderBig = useRef(null);
+  const productSliderSml = useRef(null);
 
+  const [product, setProduct] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
 
+  // =====================================================
+  // SLIDER OPTIONS
+  // =====================================================
 
-  var productSliderOptions = {
+  const productSliderOptions = {
     dots: false,
     infinite: false,
     speed: 500,
     slidesToShow: 1,
     slidesToScroll: 1,
-    arrows:false
+    arrows: false,
   };
 
-    var productSliderSmlOptions = {
+  const productSliderSmlOptions = {
     dots: false,
     infinite: false,
     speed: 500,
     slidesToShow: 4,
     slidesToScroll: 1,
-      arrows:false
+    arrows: false,
   };
 
+  // =====================================================
+  // FETCH SINGLE PRODUCT
+  // =====================================================
+
+  useEffect(() => {
+    const fetchProduct = async () => {
+      if (!id) {
+        setError(
+          "No product selected. Please go to Product List and click the Eye button."
+        );
+        setLoading(false);
+        return;
+      }
+
+      try {
+        setLoading(true);
+        setError("");
+
+        const response = await fetch(`${API_URL}/${id}`);
+
+        if (!response.ok) {
+          throw new Error("Failed to fetch product details");
+        }
+
+        const data = await response.json();
+
+        const productData = data.product || data.data || data;
+
+        if (!productData || !productData._id) {
+          throw new Error("Invalid product data received");
+        }
+
+        setProduct(productData);
+      } catch (fetchError) {
+        console.error("Fetch product details error:", fetchError);
+
+        setError(
+          "Unable to load product details. Please check the backend server and product ID."
+        );
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProduct();
+  }, [id]);
+
+  // =====================================================
+  // GO TO SLIDE
+  // =====================================================
+
   const goToSlide = (index) => {
-  productSliderBig.current.slickGoTo(index);
-    productSliderSml.current.slickGoTo(index);
+    if (productSliderBig.current) {
+      productSliderBig.current.slickGoTo(index);
+    }
+
+    if (productSliderSml.current) {
+      productSliderSml.current.slickGoTo(index);
+    }
+  };
+
+  // =====================================================
+  // LOADING
+  // =====================================================
+
+  if (loading) {
+    return (
+      <div className="card shadow border-0 p-4 mt-4">
+        <h4>Loading product details...</h4>
+      </div>
+    );
   }
 
+  // =====================================================
+  // ERROR
+  // =====================================================
+
+  if (error) {
+    return (
+      <div className="card shadow border-0 p-4 mt-4">
+        <div className="alert alert-warning mb-3">{error}</div>
+
+        <div>
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={() => navigate("/products")}
+          >
+            Go to Product List
+          </Button>
+        </div>
+      </div>
+    );
+  }
+
+  // =====================================================
+  // PRODUCT NOT FOUND
+  // =====================================================
+
+  if (!product) {
+    return (
+      <div className="card shadow border-0 p-4 mt-4">
+        <h4>Product not found</h4>
+
+        <Link to="/products">
+          <Button variant="contained" color="primary">
+            Go to Product List
+          </Button>
+        </Link>
+      </div>
+    );
+  }
+
+  // =====================================================
+  // PRODUCT DATA
+  // =====================================================
+
+  const productName = String(product.name || "Unnamed Product");
+
+  const productDescription = String(
+    product.description || "No description available."
+  );
+
+  const brandName =
+    typeof product.brand === "object"
+      ? String(product.brand?.name || "No Brand")
+      : String(product.brand || "No Brand");
+
+  const categoryName =
+    typeof product.category === "object"
+      ? String(product.category?.name || "No Category")
+      : String(product.category || "No Category");
+
+  const regularPrice = Number(product.regularPrice || 0);
+
+  const sellingPrice = Number(product.price || 0);
+
+  const stock = Number(product.countInStock || 0);
+
+  const rating = Number(product.rating || 0);
+
+  const numReviews = Number(product.numReviews || 0);
+
+  const discount =
+    regularPrice > 0 && sellingPrice < regularPrice
+      ? Math.round(
+          ((regularPrice - sellingPrice) / regularPrice) * 100
+        )
+      : 0;
+
+  // =====================================================
+  // NORMALIZE PRODUCT IMAGES
+  // =====================================================
+
+  const productImages = Array.isArray(product.images)
+    ? product.images
+        .map((image) => {
+          if (typeof image === "string") {
+            return image;
+          }
+
+          if (typeof image === "object" && image !== null) {
+            return (
+              image.url ||
+              image.secure_url ||
+              image.src ||
+              image.image ||
+              ""
+            );
+          }
+
+          return "";
+        })
+        .filter(Boolean)
+    : [];
+
+  const images =
+    productImages.length > 0
+      ? productImages
+      : [
+          "https://via.placeholder.com/600x600?text=No+Image",
+        ];
+
+  // =====================================================
+  // RENDER
+  // =====================================================
+
   return (
-    <>
     <div className="right-content">
-      
+      {/* =========================
+          HEADER
+      ========================= */}
 
       <div className="card header-row">
-        
-        {/* LEFT SIDE */}
         <h5 className="title">Product View</h5>
 
-        {/* RIGHT SIDE */}
         <div className="breadcrumb-wrapper">
           <Breadcrumbs aria-label="breadcrumb">
             <StyledBreadcrumb
-              component="a"
-              href="#"
+              component={Link}
+              to="/dashboard"
               label="Dashboard"
               icon={<HomeIcon fontSize="small" />}
             />
 
             <StyledBreadcrumb
+              component={Link}
+              to="/products"
               label="Products"
-              component="a"
-              href="#"
             />
 
             <StyledBreadcrumb label="Product View" />
           </Breadcrumbs>
         </div>
-
       </div>
-       <div className='card productDetailsSEction'>
-    
-       <div className='row'>
-        <div className='col-md-5 '>
-          <div className='SliderWrapper pt-3 pb-3 ps-4 pe-4'>
-            <h6 className='mb-4'>Product Gallery</h6>
-          <Slider {...productSliderOptions} ref={productSliderBig}
- className='sliderBig mb-2'>
 
-  <div className="item">
-    <img
-      src='https://www.zapdress.com/cdn/shop/files/O1CN01u1Rsh41psa8mdZ8Lq__2928235416-0-cib.jpg?v=1774589444&width=900'
-      className='w-100'
-    />
-  </div>
+      {/* =========================
+          PRODUCT DETAILS CARD
+      ========================= */}
 
-  <div className="item">
-    <img
-      src='https://www.zapdress.com/cdn/shop/files/960e37a66491045f142b56a32263a8a9.jpg?v=1774589444&width=900'
-      className='w-100'
-    />
-  </div>
+      <div className="card productDetailsSEction">
+        <div className="row">
+          {/* =========================
+              LEFT SIDE - GALLERY
+          ========================= */}
 
-  <div className="item">
-    <img
-      src='https://www.zapdress.com/cdn/shop/files/4dfae8ea5ff51f2c084baaea287505e6.jpg?v=1774589444&width=900'
-      className='w-100'
-    />
-  </div>
+          <div className="col-md-5">
+            <div className="SliderWrapper pt-3 pb-3 ps-4 pe-4">
+              <h6 className="mb-4">Product Gallery</h6>
 
-  <div className="item">
-    <img
-      src='https://www.zapdress.com/cdn/shop/files/960e37a66491045f142b56a32263a8a9.jpg?v=1774589444&width=900'
-      className='w-100'
-    />
-  </div>
+              {/* BIG SLIDER */}
 
-  <div className="item">
-    <img
-      src='https://www.zapdress.com/cdn/shop/files/12803434665_843810280.jpg?v=1774589445&width=900'
-      className='w-100'
-    />
-  </div>
+              <Slider
+                {...productSliderOptions}
+                ref={productSliderBig}
+                className="sliderBig mb-2"
+              >
+                {images.map((image, index) => (
+                  <div className="item" key={index}>
+                    <img
+                      src={image}
+                      alt={`${productName} ${index + 1}`}
+                      className="w-100"
+                      style={{
+                        height: "380px",
+                        objectFit: "contain",
+                        borderRadius: "8px",
+                      }}
+                      onError={(event) => {
+                        event.currentTarget.src =
+                          "https://via.placeholder.com/600x600?text=Image+Not+Found";
+                      }}
+                    />
+                  </div>
+                ))}
+              </Slider>
 
-  <div className="item">
-    <img
-      src='https://www.zapdress.com/cdn/shop/files/O1CN01u1Rsh41psa8mdZ8Lq__2928235416-0-cib.jpg?v=1774589444&width=900'
-      className='w-100'
-    />
-  </div>
+              {/* SMALL SLIDER */}
 
-</Slider>
+              <Slider
+                {...productSliderSmlOptions}
+                ref={productSliderSml}
+                className="sliderSml"
+              >
+                {images.map((image, index) => (
+                  <div
+                    className="item px-1"
+                    key={index}
+                    onClick={() => goToSlide(index)}
+                    style={{
+                      cursor: "pointer",
+                    }}
+                  >
+                    <img
+                      src={image}
+                      alt={`Thumbnail ${index + 1}`}
+                      className="w-100"
+                      style={{
+                        height: "85px",
+                        objectFit: "cover",
+                        borderRadius: "6px",
+                      }}
+                      onError={(event) => {
+                        event.currentTarget.src =
+                          "https://via.placeholder.com/100?text=Image";
+                      }}
+                    />
+                  </div>
+                ))}
+              </Slider>
+            </div>
+          </div>
 
+          {/* =========================
+              RIGHT SIDE - INFORMATION
+          ========================= */}
 
-<Slider {...productSliderSmlOptions} ref={productSliderSml} className='sliderSml'>
+          <div className="col-md-7">
+            <div className="pt-3 pb-3 ps-4 pe-4">
+              <h6 className="mb-4">Product Details</h6>
 
-  <div className="item" onClick={()=>goToSlide(0)}>
-    <img
-      src='https://www.zapdress.com/cdn/shop/files/O1CN01u1Rsh41psa8mdZ8Lq__2928235416-0-cib.jpg?v=1774589444&width=900'
-      className='w-100'
-    />
-  </div>
+              <h4>{productName}</h4>
 
-  <div className="item" onClick={()=>goToSlide(1)}>
-    <img
-      src='https://www.zapdress.com/cdn/shop/files/960e37a66491045f142b56a32263a8a9.jpg?v=1774589444&width=900'
-      className='w-100'
-    />
-  </div>
+              {/* PRICE */}
 
-  <div className="item" onClick={()=>goToSlide(2)}>
-    <img
-      src='https://www.zapdress.com/cdn/shop/files/4dfae8ea5ff51f2c084baaea287505e6.jpg?v=1774589444&width=900'
-      className='w-100'
-    />
-  </div>
+              <div className="mt-3 mb-3">
+                {regularPrice > sellingPrice && (
+                  <span
+                    style={{
+                      textDecoration: "line-through",
+                      color: "#777",
+                      fontSize: "18px",
+                      marginRight: "15px",
+                    }}
+                  >
+                    ₹{regularPrice.toLocaleString("en-IN")}
+                  </span>
+                )}
 
-  <div className="item" onClick={()=>goToSlide(3)}>
-    <img
-      src='https://www.zapdress.com/cdn/shop/files/960e37a66491045f142b56a32263a8a9.jpg?v=1774589444&width=900'
-      className='w-100'
-    />
-  </div>
+                <span
+                  className="text-danger"
+                  style={{
+                    fontWeight: "bold",
+                    fontSize: "24px",
+                  }}
+                >
+                  ₹{sellingPrice.toLocaleString("en-IN")}
+                </span>
 
-  <div className="item" onClick={()=>goToSlide(4)}>
-    <img
-      src='https://www.zapdress.com/cdn/shop/files/12803434665_843810280.jpg?v=1774589445&width=900'
-      className='w-100'
-    />
-  </div>
+                {discount > 0 && (
+                  <span
+                    className="badge bg-success ms-3"
+                    style={{
+                      fontSize: "14px",
+                    }}
+                  >
+                    {discount}% OFF
+                  </span>
+                )}
+              </div>
 
-  <div className="item" onClick={()=>goToSlide(5)}>
-    <img
-      src='https://www.zapdress.com/cdn/shop/files/O1CN01u1Rsh41psa8mdZ8Lq__2928235416-0-cib.jpg?v=1774589444&width=900'
-      className='w-100'
-    />
-  </div>
+              {/* RATING */}
 
-</Slider>
-          
- </div>
+              <div className="mb-3">
+                <Rating
+                  value={Math.min(Math.max(rating, 0), 5)}
+                  precision={0.5}
+                  readOnly
+                />
+
+                <span className="ms-2">
+                  ({numReviews} reviews)
+                </span>
+              </div>
+
+              <hr />
+
+              {/* PRODUCT INFORMATION */}
+
+              <div className="productInfo mt-3">
+                {/* BRAND */}
+
+                <div className="row mb-3">
+                  <div className="col-sm-4 d-flex align-items-center">
+                    <span className="icon me-2">
+                      <MdBrandingWatermark />
+                    </span>
+
+                    <span className="name">Brand</span>
+                  </div>
+
+                  <div className="col-sm-8">: {brandName}</div>
+                </div>
+
+                {/* CATEGORY */}
+
+                <div className="row mb-3">
+                  <div className="col-sm-4 d-flex align-items-center">
+                    <span className="icon me-2">
+                      <BiSolidCategory />
+                    </span>
+
+                    <span className="name">Category</span>
+                  </div>
+
+                  <div className="col-sm-8">: {categoryName}</div>
+                </div>
+
+                {/* STOCK */}
+
+                <div className="row mb-3">
+                  <div className="col-sm-4 d-flex align-items-center">
+                    <span className="icon me-2">
+                      <BiSolidCategory />
+                    </span>
+
+                    <span className="name">Stock</span>
+                  </div>
+
+                  <div className="col-sm-8">
+                    :
+                    <span
+                      className={`badge ms-2 ${
+                        stock > 0 ? "bg-success" : "bg-danger"
+                      }`}
+                    >
+                      {stock > 0
+                        ? `${stock} Available`
+                        : "Out of Stock"}
+                    </span>
+                  </div>
+                </div>
+
+                {/* PRODUCT ID */}
+
+                <div className="row mb-3">
+                  <div className="col-sm-4 d-flex align-items-center">
+                    <span className="icon me-2">
+                      <BiSolidCategory />
+                    </span>
+
+                    <span className="name">Product ID</span>
+                  </div>
+
+                  <div className="col-sm-8">
+                    : {String(product._id || "N/A")}
+                  </div>
+                </div>
+
+                {/* PUBLISHED DATE */}
+
+                <div className="row mb-3">
+                  <div className="col-sm-4 d-flex align-items-center">
+                    <span className="icon me-2">
+                      <BiSolidCategory />
+                    </span>
+
+                    <span className="name">Published</span>
+                  </div>
+
+                  <div className="col-sm-8">
+                    :
+                    {product.dateCreated
+                      ? new Date(
+                          product.dateCreated
+                        ).toLocaleDateString("en-IN")
+                      : "N/A"}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
 
-        <div className='col-md-7'>
-  <div className="pt-3 pb-3 ps-4 pe-4">
-    <h6 className='mb-4'>Product Details</h6>
-    <h4> Formal suits for men wedding slim fit 3 piece dress business party jacket</h4>
-    
-    <div className='productInfo mt-3'>
-      <div className='row mb-2'>
-        <div className='col-sm-3 d-flex align-items-center'>
-          <span className='icon'><MdBrandingWatermark /></span>
-          <span className='name'>Brand</span>
-        
-      </div>
+        {/* =========================
+            PRODUCT DESCRIPTION
+        ========================= */}
 
-      <div className='col-sm-9'>
-     :  <span>Zara</span>
-      </div>
-      </div>
+        <div className="p-4">
+          <h6 className="mt-4 mb-3">Product Description</h6>
 
-      <div className='row mb-2'>
-        <div className='col-sm-3 d-flex align-items-center'>
-          <span className='icon'><MdBrandingWatermark /></span>
-          <span className='name'>Category</span>
-        
-      </div>
+          <p
+            style={{
+              whiteSpace: "pre-line",
+            }}
+          >
+            {productDescription}
+          </p>
 
-      <div className='col-sm-9'>
-     :  <span>Men's</span>
-      </div>
-      </div>
+          {/* =========================
+              RATING ANALYTICS
+          ========================= */}
 
-       <div className='row mb-2'>
-        <div className='col-sm-3 d-flex align-items-center'>
-          <span className='icon'><BiSolidCategory /></span>
-          <span className='name'>Category</span>
-        
-      </div>
+          <h6 className="mt-4 mb-4">Rating Analytics</h6>
 
-      <div className='col-sm-9'>
-       : <span>
-        <ul className='list list-inline tags sml'>
-          <li className='list-inline-item'>
-            <span>SUIT</span>
-          </li>
+          <div className="ratingSection">
+            {[
+              { label: "5 star", required: 5, width: "100%" },
+              { label: "4 star", required: 4, width: "80%" },
+              { label: "3 star", required: 3, width: "60%" },
+              { label: "2 star", required: 2, width: "40%" },
+              { label: "1 star", required: 1, width: "20%" },
+            ].map((item) => (
+              <div
+                className="ratingrow d-flex align-items-center mb-2"
+                key={item.label}
+              >
+                <span className="col1">{item.label}</span>
 
-           <li className='list-inline-item'>
-            <span>PARTY</span>
-          </li>
+                <div className="col2 flex-grow-1 mx-3">
+                  <div className="progress">
+                    <div
+                      className="progress-bar"
+                      style={{
+                        width:
+                          rating >= item.required
+                            ? item.width
+                            : "0%",
+                      }}
+                    />
+                  </div>
+                </div>
 
-           <li className='list-inline-item'>
-            <span>PARTY</span>
-          </li>
+                <span className="col3">-</span>
+              </div>
+            ))}
+          </div>
 
-           <li className='list-inline-item'>
-            <span>DRESS</span>
-          </li>
+          {/* =========================
+              CUSTOMER REVIEWS
+          ========================= */}
 
-           <li className='list-inline-item'>
-            <span>SMARTT</span>
-          </li>
+          <h6 className="mt-4 mb-4">Customer Reviews</h6>
 
-           <li className='list-inline-item'>
-            <span>MAN</span>
-          </li>
-        </ul>
-       </span>
-      </div>
-      </div>
+          <div className="reviewSecrion">
+            <div className="reviewsrow">
+              <div className="row">
+                <div className="col-sm-7 d-flex">
+                  <div className="d-flex flex-column">
+                    <div className="userInfo d-flex align-items-center mb-3">
+                      <UserAvatarImgComponent
+                        img="https://via.placeholder.com/100?text=User"
+                        lg={true}
+                      />
 
-      <div className='row mb-2'>
-        <div className='col-sm-3 d-flex align-items-center'>
-          <span className='icon'><BiSolidCategory /></span>
-          <span className='name'>Tags</span>
-        
-      </div>
+                      <div className="info ms-2">
+                        <h6>No reviews yet</h6>
 
-      <div className='col-sm-9'>
-       : <span>
-         <ul className='list list-inline tags sml'>
-          <li className='list-inline-item'>
-            <span>RED</span>
-          </li>
+                        <span>
+                          Be the first to review this product.
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
 
-           <li className='list-inline-item'>
-            <span>BLUE</span>
-          </li>
+          <br />
 
-           <li className='list-inline-item'>
-            <span>WHITE</span>
-          </li>
+          {/* =========================
+              REVIEW REPLY FORM
+          ========================= */}
 
-          
-        </ul>
-       </span>
-      </div>
-      </div>
+          <h6 className="mt-4 mb-4">Review Reply Form</h6>
 
-      <div className='row mb-2'>
-        <div className='col-sm-3 d-flex align-items-center'>
-          <span className='icon'><BiSolidCategory /></span>
-          <span className='name'>Color</span>
-        
-      </div>
+          <form
+            className="reviewForm"
+            onSubmit={(event) => event.preventDefault()}
+          >
+            <textarea
+              className="form-control"
+              placeholder="Write here..."
+              rows="4"
+            />
 
-      <div className='col-sm-9'>
-       : <span>Men's</span>
-      </div>
-      </div>
-
-      <div className='row mb-2'>
-        <div className='col-sm-3 d-flex align-items-center'>
-          <span className='icon'><BiSolidCategory /></span>
-          <span className='name'>Size</span>
-        
-      </div>
-
-      <div className='col-sm-9'>
-       : <span>(68) Piece</span>
-      </div>
-      </div>
-
-      <div className='row mb-2'>
-        <div className='col-sm-3 d-flex align-items-center'>
-          <span className='icon'><BiSolidCategory /></span>
-          <span className='name'>Price</span>
-        
-      </div>
-
-      <div className='col-sm-9'>
-       : <span>Men's</span>
-      </div>
-      </div>
-
-      <div className='row mb-2'>
-        <div className='col-sm-3 d-flex align-items-center'>
-          <span className='icon'><BiSolidCategory /></span>
-          <span className='name'>Stock</span>
-        
-      </div>
-
-      <div className='col-sm-9'>
-       : <span>Men's</span>
-      </div>
-      </div>
-
-      <div className='row mb-2'>
-        <div className='col-sm-3 d-flex align-items-center'>
-          <span className='icon'><BiSolidCategory /></span>
-          <span className='name'>Review</span>
-        
-      </div>
-
-      <div className='col-sm-9'>
-       : <span>Men's</span>
-      </div>
-      </div>
-
-        <div className='row mb-2'>
-        <div className='col-sm-3 d-flex align-items-center'>
-          <span className='icon'><BiSolidCategory /></span>
-          <span className='name'>Published</span>
-        
-      </div>
-
-      <div className='col-sm-9'>
-       : <span>Men's</span>
-      </div>
-      </div>
-
-      
-
-      
-
-   
-
-    </div>
-  
-  
-  </div>
-</div>
-      </div>
-
-    <div className='p-4'>
-        <h6 className='mt-4 mb-3'>Product Description</h6>
-      <p>Upgrade your style with this premium formal suit designed for a modern and classy look. 
-Made with high-quality fabric, this suit offers excellent comfort, durability, and a perfect fit 
-for weddings, parties, office meetings, and special occasions. 
-The stylish design, smooth texture, and elegant finish make it an ideal choice for men who want 
-confidence and sophistication in every step.
-
-This suit is carefully tailored to provide a sharp and attractive appearance while ensuring maximum comfort throughout the day. 
-Its breathable material helps you stay relaxed even during long hours of wear. 
-The modern fit enhances your personality and gives a professional as well as fashionable touch. 
-Perfectly matching with formal shoes, watches, and accessories, this suit adds elegance to your complete outfit. 
-The premium stitching and detailed finishing increase durability and maintain the rich look for a long time. 
-Whether you are attending a business event, engagement, reception, or festive celebration, this suit helps you stand out with confidence and style. 
-Easy to maintain and suitable for all seasons, it is a must-have addition to every gentleman’s wardrobe.
-</p>
-<br/>
-
-<h6 className='mt-4 mb-3'>Rating Analytics</h6>
-<div className='ratingSection'>
-  <div className='ratingrow d-flex align-items-center '>
-    <span className='col1'>5 star</span>
-
-    <div className='col2'>
-       <div className="progress">
-  <div className="progress-bar" style={{ width: '70%' }}></div>
-</div>
-    </div>
-
-     <span className='col3'>(22)</span>
-  </div>
-
-    <div className='ratingrow d-flex align-items-center '>
-    <span className='col1'>4 star</span>
-
-    <div className='col2'>
-       <div className="progress">
-  <div className="progress-bar" style={{ width: '50%' }}></div>
-</div>
-    </div>
-
-     <span className='col3'>(22)</span>
-  </div>
-
-  <div className='ratingrow d-flex align-items-center '>
-    <span className='col1'>3 star</span>
-
-    <div className='col2'>
-       <div className="progress">
-  <div className="progress-bar" style={{ width: '50%' }}></div>
-</div>
-    </div>
-
-     <span className='col3'>(2)</span>
-  </div>
-
-    <div className='ratingrow d-flex align-items-center '>
-    <span className='col1'>2 star</span>
-
-    <div className='col2'>
-       <div className="progress">
-  <div className="progress-bar" style={{ width: '20%' }}></div>
-</div>
-    </div>
-
-     <span className='col3'>(2)</span>
-  </div>
-
-
-    <div className='ratingrow d-flex align-items-center '>
-    <span className='col1'>1 star</span>
-
-    <div className='col2'>
-       <div className="progress">
-  <div className="progress-bar" style={{ width: '50%' }}></div>
-</div>
-    </div>
-
-     <span className='col3'>(2)</span>
-  </div>
-
-
-
-
-
-
-
-</div>
-
-<br/>
-
-<h6 className='mt-4 mb-4'>Customer Reviews</h6>
-<div className='reviewSecrion'>
-  <div className='reviewsrow '>
-    <div className='row'>
-      <div className='col-sm-7 d-flex'>
-        <div className='d-flex  flex-column'>
-          <div className='userInfo d-flex align-items-center mb-3'>
-    <UserAvatarImgComponent
-      img="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSTx3SRpQ8G8mKf3SUHnnn5mzgz7jx2WnePnA&s"
-      lg={true}
-    />
-
-    <div className='info'>
-        <h6>Koushik Shetty</h6>
-        <span>25 minutes ago!</span>
-    </div>
-</div>
- <Rating name="read-only" value={4.5}  precision={0.5}  readOnly />
+            <Button
+              type="submit"
+              className="btn-blue btn-big btn-lg w-100 mt-4"
+            >
+              <MdReplyAll />
+              &nbsp; Drop your replies
+            </Button>
+          </form>
         </div>
       </div>
-     <div className='col-md-5 d-flex align-items-center'>
-   <div className='ms-auto'>
-      <Button className='btn-blue btn-big btn-lg'>
-         <MdReplyAll /> &nbsp; Reply
-      </Button>
-   </div>
-</div>
-
-
-
-       <p className='mt-3'>Excellent quality and stylish design. 
-          The product arrived on time, looks exactly as shown, and 
-          feels premium. Totally worth the price and highly recommended!</p>
-
     </div>
-
-  </div>
-
-  <div className='reviewsrow reply '>
-    <div className='row'>
-      <div className='col-sm-7 d-flex'>
-        <div className='d-flex  flex-column'>
-          <div className='userInfo d-flex align-items-center mb-3'>
-    <UserAvatarImgComponent
-      img="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSTx3SRpQ8G8mKf3SUHnnn5mzgz7jx2WnePnA&s"
-      lg={true}
-    />
-
-    <div className='info'>
-        <h6>Koushik Shetty</h6>
-        <span>25 minutes ago!</span>
-    </div>
-</div>
- <Rating name="read-only" value={4.5}  precision={0.5}  readOnly />
-        </div>
-      </div>
-     <div className='col-md-5 d-flex align-items-center'>
-   <div className='ms-auto'>
-      <Button className='btn-blue btn-big btn-lg'>
-         <MdReplyAll /> &nbsp; Reply
-      </Button>
-   </div>
-</div>
-
-
-
-       <p className='mt-3'>Excellent quality and stylish design. 
-          The product arrived on time, looks exactly as shown, and 
-          feels premium. Totally worth the price and highly recommended!</p>
-
-    </div>
-
-  </div>
-
-   <div className='reviewsrow reply '>
-    <div className='row'>
-      <div className='col-sm-7 d-flex'>
-        <div className='d-flex  flex-column'>
-          <div className='userInfo d-flex align-items-center mb-3'>
-    <UserAvatarImgComponent
-      img="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSTx3SRpQ8G8mKf3SUHnnn5mzgz7jx2WnePnA&s"
-      lg={true}
-    />
-
-    <div className='info'>
-        <h6>Koushik Shetty</h6>
-        <span>25 minutes ago!</span>
-    </div>
-</div>
- <Rating name="read-only" value={4.5}  precision={0.5}  readOnly />
-        </div>
-      </div>
-     <div className='col-md-5 d-flex align-items-center'>
-   <div className='ms-auto'>
-      <Button className='btn-blue btn-big btn-lg'>
-         <MdReplyAll /> &nbsp; Reply
-      </Button>
-   </div>
-</div>
-
-
-
-       <p className='mt-3'>Excellent quality and stylish design. 
-          The product arrived on time, looks exactly as shown, and 
-          feels premium. Totally worth the price and highly recommended!</p>
-
-    </div>
-
-  </div>
-
-    <div className='reviewsrow '>
-    <div className='row'>
-      <div className='col-sm-7 d-flex'>
-        <div className='d-flex  flex-column'>
-          <div className='userInfo d-flex align-items-center mb-3'>
-    <UserAvatarImgComponent
-      img="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSTx3SRpQ8G8mKf3SUHnnn5mzgz7jx2WnePnA&s"
-      lg={true}
-    />
-
-    <div className='info'>
-        <h6>Koushik Shetty</h6>
-        <span>25 minutes ago!</span>
-    </div>
-</div>
- <Rating name="read-only" value={4.5}  precision={0.5}  readOnly />
-        </div>
-      </div>
-     <div className='col-md-5 d-flex align-items-center'>
-   <div className='ms-auto'>
-      <Button className='btn-blue btn-big btn-lg'>
-         <MdReplyAll /> &nbsp; Reply
-      </Button>
-   </div>
-</div>
-
-
-
-       <p className='mt-3'>Excellent quality and stylish design. 
-          The product arrived on time, looks exactly as shown, and 
-          feels premium. Totally worth the price and highly recommended!</p>
-
-    </div>
-
-  </div>
-
- 
-
-
-</div>
-
-<br/>
-
- <h6 className='mt-4 mb-4'>Review Reply Form</h6>
-
- <form className='reviewForm'>
-  <textarea placeholder='write here.... '></textarea>
-
-  <Button className='btn-blue btn-big btn-lg w-100 mt-4'>Drop your replies</Button>
- </form>
-    </div>
-     
-    </div>
-
-
-
-    </div>
-
-   
-
-    
-    </>
-
-    
   );
 };
 
