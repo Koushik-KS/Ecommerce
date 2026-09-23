@@ -7,23 +7,25 @@ import { FaShoppingCart, FaRegHeart } from "react-icons/fa";
 import { MdOutlineCompareArrows } from "react-icons/md";
 import Tooltip from "@mui/material/Tooltip";
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import RelatedProducts from "./RelatedProducts";
 
 const PRODUCT_API_URL = "http://localhost:4000/api/products";
-const MESSAGE_API_URL = "http://localhost:4000/api/messages";
+const REVIEW_API_URL = "http://localhost:4000/api/reviews";
 
 const ProductDetails = () => {
   const { id } = useParams();
+  const navigate = useNavigate();
 
   const [product, setProduct] = useState(null);
   const [reviews, setReviews] = useState([]);
 
+  const [totalReviews, setTotalReviews] = useState(0);
+  const [averageRating, setAverageRating] = useState(0);
+
   const [activeSize, setActiveSize] = useState(null);
   const [activeTabs, setActiveTabs] = useState(0);
 
-  const [customerName, setCustomerName] = useState("");
-  const [customerEmail, setCustomerEmail] = useState("");
   const [reviewMessage, setReviewMessage] = useState("");
   const [rating, setRating] = useState(0);
 
@@ -32,6 +34,8 @@ const ProductDetails = () => {
   const [submittingReview, setSubmittingReview] = useState(false);
 
   const [error, setError] = useState("");
+  const [reviewError, setReviewError] = useState("");
+  const [reviewSuccess, setReviewSuccess] = useState("");
 
   // =====================================================
   // FETCH PRODUCT
@@ -43,7 +47,6 @@ const ProductDetails = () => {
       setError("");
 
       const response = await fetch(`${PRODUCT_API_URL}/${id}`);
-
       const data = await response.json();
 
       if (!response.ok) {
@@ -66,9 +69,10 @@ const ProductDetails = () => {
   const fetchReviews = async () => {
     try {
       setLoadingReviews(true);
+      setReviewError("");
 
       const response = await fetch(
-        `${MESSAGE_API_URL}/product/${id}`
+        `${REVIEW_API_URL}/product/${id}`
       );
 
       const data = await response.json();
@@ -77,9 +81,12 @@ const ProductDetails = () => {
         throw new Error(data.message || "Failed to fetch reviews.");
       }
 
-      setReviews(data.data || []);
+      setReviews(data.reviews || []);
+      setTotalReviews(data.totalReviews || 0);
+      setAverageRating(data.averageRating || 0);
     } catch (error) {
       console.error("Fetch reviews error:", error);
+      setReviewError("Failed to load reviews.");
     } finally {
       setLoadingReviews(false);
     }
@@ -103,40 +110,43 @@ const ProductDetails = () => {
   const handleSubmitReview = async (event) => {
     event.preventDefault();
 
-    if (!customerName.trim()) {
-      alert("Please enter your name.");
+    setReviewError("");
+    setReviewSuccess("");
+
+    const token = localStorage.getItem("token");
+
+    // Check whether the user is logged in
+    if (!token) {
+      alert("Please log in to submit a review.");
+      navigate("/signIn");
       return;
     }
 
-    if (!customerEmail.trim()) {
-      alert("Please enter your email.");
-      return;
-    }
-
+    // Validate review text
     if (!reviewMessage.trim()) {
-      alert("Please write a review.");
+      setReviewError("Please write a review.");
       return;
     }
 
+    // Validate rating
     if (rating < 1 || rating > 5) {
-      alert("Please select a rating.");
+      setReviewError("Please select a rating between 1 and 5.");
       return;
     }
 
     try {
       setSubmittingReview(true);
 
-      const response = await fetch(`${MESSAGE_API_URL}/review`, {
+      const response = await fetch(REVIEW_API_URL, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({
           productId: id,
-          customerName: customerName.trim(),
-          customerEmail: customerEmail.trim(),
-          message: reviewMessage.trim(),
-          rating,
+          rating: Number(rating),
+          reviewText: reviewMessage.trim(),
         }),
       });
 
@@ -146,17 +156,47 @@ const ProductDetails = () => {
         throw new Error(data.message || "Failed to submit review.");
       }
 
-      alert("Review submitted successfully!");
+      setReviewSuccess(
+        data.message || "Review submitted successfully!"
+      );
 
-      setCustomerName("");
-      setCustomerEmail("");
+      // Clear form
       setReviewMessage("");
       setRating(0);
 
+      // Update rating information immediately
+      setAverageRating(data.averageRating || 0);
+      setTotalReviews(data.totalReviews || 0);
+
+      // Refresh reviews
       await fetchReviews();
+
+      // Update product rating locally
+      setProduct((previousProduct) => {
+        if (!previousProduct) {
+          return previousProduct;
+        }
+
+        return {
+          ...previousProduct,
+          rating: data.averageRating || previousProduct.rating,
+          numReviews: data.totalReviews || previousProduct.numReviews,
+        };
+      });
     } catch (error) {
       console.error("Submit review error:", error);
-      alert(error.message || "Failed to submit review.");
+
+      if (error.message === "Invalid or expired token.") {
+        localStorage.removeItem("token");
+        localStorage.removeItem("user");
+
+        setReviewError("Your session has expired. Please log in again.");
+        return;
+      }
+
+      setReviewError(
+        error.message || "Failed to submit review."
+      );
     } finally {
       setSubmittingReview(false);
     }
@@ -195,37 +235,38 @@ const ProductDetails = () => {
   // =====================================================
 
   const productName = product.name || "Product";
+
   const productDescription =
     product.description || "No description available.";
 
   const productBrand = product.brand || "Not specified";
 
   const productPrice = product.price ?? 0;
-  const productRegularPrice = product.regularPrice ?? productPrice;
+
+  const productRegularPrice =
+    product.regularPrice ?? productPrice;
 
   const productRating = Number(product.rating || 0);
+
   const productStock = Number(product.countInStock || 0);
 
   const isInStock = productStock > 0;
 
-  const averageReviewRating =
-    reviews.length > 0
-      ? reviews.reduce(
-          (total, review) => total + Number(review.rating || 0),
-          0
-        ) / reviews.length
-      : productRating;
+  const displayRating =
+    totalReviews > 0 ? averageRating : productRating;
 
   return (
     <section className="productDetails section">
       <div className="container">
         <div className="row">
           {/* PRODUCT IMAGES */}
+
           <div className="col-md-4 pl-5">
             <ProductZoom product={product} />
           </div>
 
           {/* PRODUCT INFORMATION */}
+
           <div className="col-md-7 pl-5 pr-5">
             <h2 className="hd text-capitalize">
               {productName}
@@ -246,14 +287,14 @@ const ProductDetails = () => {
                 <div className="d-flex align-items-center">
                   <Rating
                     name="product-rating"
-                    value={averageReviewRating}
+                    value={displayRating}
                     precision={0.5}
                     readOnly
                     size="small"
                   />
 
                   <span className="text-light cursor ml-2">
-                    {reviews.length} Reviews
+                    {totalReviews} Reviews
                   </span>
                 </div>
               </li>
@@ -284,6 +325,7 @@ const ProductDetails = () => {
             </p>
 
             {/* SIZE */}
+
             <div className="productSize d-flex align-items-center">
               <span>Size/Weight:</span>
 
@@ -310,6 +352,7 @@ const ProductDetails = () => {
             </div>
 
             {/* CART */}
+
             <div className="d-flex align-items-center mt-3">
               <QuantityBox />
 
@@ -336,6 +379,7 @@ const ProductDetails = () => {
         </div>
 
         {/* TABS */}
+
         <div className="card mt-5 p-5 detailsPageTabs">
           <div className="customTabs">
             <ul className="list list-inline">
@@ -370,6 +414,7 @@ const ProductDetails = () => {
             <br />
 
             {/* DESCRIPTION TAB */}
+
             {activeTabs === 0 && (
               <div className="tabContent">
                 <p>{productDescription}</p>
@@ -377,6 +422,7 @@ const ProductDetails = () => {
             )}
 
             {/* ADDITIONAL INFORMATION TAB */}
+
             {activeTabs === 1 && (
               <div className="tabContent">
                 <div className="table-responsive">
@@ -407,18 +453,49 @@ const ProductDetails = () => {
             )}
 
             {/* REVIEWS TAB */}
+
             {activeTabs === 2 && (
               <div className="tabContent">
                 <div className="row">
                   <div className="col-md-8">
                     <h3>Customer Reviews</h3>
 
+                    <div className="d-flex align-items-center mb-3">
+                      <Rating
+                        value={displayRating}
+                        precision={0.5}
+                        readOnly
+                      />
+
+                      <span className="ml-2">
+                        {displayRating.toFixed(1)} / 5
+                      </span>
+
+                      <span className="ml-3 text-muted">
+                        ({totalReviews} reviews)
+                      </span>
+                    </div>
+
                     <br />
+
+                    {reviewError && (
+                      <div className="alert alert-danger">
+                        {reviewError}
+                      </div>
+                    )}
+
+                    {reviewSuccess && (
+                      <div className="alert alert-success">
+                        {reviewSuccess}
+                      </div>
+                    )}
 
                     {loadingReviews ? (
                       <p>Loading reviews...</p>
                     ) : reviews.length === 0 ? (
-                      <p>No reviews yet. Be the first to review!</p>
+                      <p>
+                        No reviews yet. Be the first to review!
+                      </p>
                     ) : (
                       reviews.map((review) => (
                         <div
@@ -427,7 +504,7 @@ const ProductDetails = () => {
                         >
                           <div className="d-flex align-items-center">
                             <h5 className="text-g">
-                              {review.customerName}
+                              {review.user?.name || "Customer"}
                             </h5>
 
                             <div className="ml-auto">
@@ -448,16 +525,27 @@ const ProductDetails = () => {
                           </small>
 
                           <p className="mt-2">
-                            {review.message}
+                            {review.reviewText}
                           </p>
 
-                          {review.reply && (
+                          {review.adminReply && (
                             <div className="alert alert-info mt-3">
-                              <strong>Admin Reply:</strong>
+                              <strong>
+                                Admin Reply:
+                              </strong>
 
                               <p className="mb-0 mt-1">
-                                {review.reply}
+                                {review.adminReply}
                               </p>
+
+                              {review.repliedAt && (
+                                <small className="text-muted">
+                                  Replied on:{" "}
+                                  {new Date(
+                                    review.repliedAt
+                                  ).toLocaleDateString()}
+                                </small>
+                              )}
                             </div>
                           )}
                         </div>
@@ -465,6 +553,7 @@ const ProductDetails = () => {
                     )}
 
                     {/* REVIEW FORM */}
+
                     <form
                       className="reviewForm"
                       onSubmit={handleSubmitReview}
@@ -472,6 +561,10 @@ const ProductDetails = () => {
                       <h4>Add a Review</h4>
 
                       <br />
+
+                      <p className="text-muted">
+                        You must be logged in to submit a review.
+                      </p>
 
                       <div className="form-group">
                         <textarea
@@ -482,34 +575,13 @@ const ProductDetails = () => {
                             setReviewMessage(event.target.value)
                           }
                           rows={4}
+                          maxLength={1000}
                           required
                         />
-                      </div>
 
-                      <div className="form-group">
-                        <input
-                          type="text"
-                          className="form-control"
-                          placeholder="Name"
-                          value={customerName}
-                          onChange={(event) =>
-                            setCustomerName(event.target.value)
-                          }
-                          required
-                        />
-                      </div>
-
-                      <div className="form-group">
-                        <input
-                          type="email"
-                          className="form-control"
-                          placeholder="Email"
-                          value={customerEmail}
-                          onChange={(event) =>
-                            setCustomerEmail(event.target.value)
-                          }
-                          required
-                        />
+                        <small className="text-muted">
+                          {reviewMessage.length}/1000 characters
+                        </small>
                       </div>
 
                       <div className="form-group">
@@ -520,7 +592,7 @@ const ProductDetails = () => {
                         <Rating
                           name="review-rating"
                           value={rating}
-                          precision={0.5}
+                          precision={1}
                           onChange={(event, newValue) =>
                             setRating(newValue || 0)
                           }

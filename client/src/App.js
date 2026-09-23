@@ -1,4 +1,3 @@
-
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./App.css";
 
@@ -82,7 +81,26 @@ function App() {
   // LOGIN STATE
   // =========================
 
-  const [isLogin, setIsLogin] = useState(false);
+  const [isLogin, setIsLogin] = useState(() => {
+    return Boolean(localStorage.getItem("token"));
+  });
+
+  const [user, setUser] = useState(() => {
+    const savedUser = localStorage.getItem("user");
+
+    try {
+      return savedUser
+        ? JSON.parse(savedUser)
+        : null;
+    } catch (error) {
+      console.error(
+        "Error loading user from localStorage:",
+        error
+      );
+
+      return null;
+    }
+  });
 
   // =========================
   // CART STATE
@@ -145,6 +163,18 @@ function App() {
   };
 
   // =========================
+  // LOGOUT FUNCTION
+  // =========================
+
+  const logout = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+
+    setUser(null);
+    setIsLogin(false);
+  };
+
+  // =========================
   // CONTEXT VALUES
   // =========================
 
@@ -164,6 +194,11 @@ function App() {
 
     isLogin,
     setIsLogin,
+
+    user,
+    setUser,
+
+    logout,
 
     cartItems,
     setCartItems,

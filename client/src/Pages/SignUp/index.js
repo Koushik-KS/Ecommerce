@@ -1,119 +1,242 @@
-import { useEffect, useContext } from "react";
+import React, {
+  useContext,
+  useEffect,
+  useState,
+} from "react";
+
+import {
+  Box,
+  Button,
+  TextField,
+  Typography,
+  Alert,
+} from "@mui/material";
+
+import {
+  Link,
+  useNavigate,
+} from "react-router-dom";
+
+import axios from "axios";
+
 import { MyContext } from "../../App";
-import Logo from "../../assets/images/eshop.png";
-import TextField from "@mui/material/TextField";
-import Button from '@mui/material/Button';
-import { Link } from "react-router-dom";
 
-import googleimg from "../../assets/images/google.jpg";
-const SignUp = () => {
+const API_URL = "http://localhost:4000";
 
-    const context = useContext(MyContext);
+function SignUp() {
+  const {
+    setisHeaderFooterShow,
+  } = useContext(MyContext);
 
-    useEffect(() => {
-        context.setisHeaderFooterShow(false);
-    }, []);
+  const navigate = useNavigate();
 
-    return (
-        <section className="section signInPage signUpPage">
-  <div className="shape-bottom">
-  <svg
-    fill="#fff"
-    id="Layer_1"
-    x="0px"
-    y="0px"
-    viewBox="0 0 1921 819.8"
-    style={{ enableBackground: "new 0 0 1921 819.8" }}
-    xmlSpace="preserve"
-  >
-    <path
-      className="st0"
-      d="M1921,413.1v406.7h0v0.5h0.41228.1,598.3c30.74,4.80.8,130.6,152.5,168.6c107.6,57,212.1,40.7,245.7,34.4
-      c22.4-4.2,54.9-13.1,97.5-26.6L1921,400.5V413.1z"
-    ></path>
-  </svg>
-</div>
-            <div className="container">
-                <div className="box card p-3 shadow border-0">
-                    <div className="text-center">
-                        <img src={Logo}/>
-                    </div>
-                   
+  const [formData, setFormData] = useState({
+    name: "",
+    phone: "",
+    email: "",
+    password: "",
+  });
 
-                    <form className="mt-2">
-                         <h2 className="mb-3">Sign Up</h2>
+  const [loading, setLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
+  const [successMessage, setSuccessMessage] = useState("");
 
-                         <div className="row">
-                          <div className="col-md-6">
-                             <div className="form-group">
-                           <TextField  label="Name"type="text" required variant="standard" className="w-100" />
-                        </div>
-                          </div>
+  useEffect(() => {
+    setisHeaderFooterShow(false);
 
-                           <div className="col-md-6">
-                             <div className="form-group">
-                           <TextField  label="Phone No."type="text" required variant="standard" className="w-100" />
-                        </div>
-                           </div>
-                         </div>
+    return () => {
+      setisHeaderFooterShow(true);
+    };
+  }, [setisHeaderFooterShow]);
 
+  // =========================
+  // HANDLE INPUT
+  // =========================
 
+  const handleChange = (event) => {
+    const { name, value } = event.target;
 
-                        <div className="form-group">
-                           <TextField id="standard-basic" label="Email"type="email" required variant="standard" className="w-100" />
-                        </div>
+    setFormData((previousData) => ({
+      ...previousData,
+      [name]: value,
+    }));
+  };
 
-                         <div className="form-group">
-                           <TextField id="standard-basic" label="Password"type="password" required variant="standard" className="w-100" />
-                        </div>
+  // =========================
+  // HANDLE REGISTER
+  // =========================
 
+  const handleSubmit = async (event) => {
+    event.preventDefault();
 
-                        <a className="border-effect cursor txt" >Forget Password?</a>
+    setErrorMessage("");
+    setSuccessMessage("");
 
-                        <div className="d-flex align-items-center mt-3 mb-3">
-                          <div className="row w-100">
-                            <div className="col-md-6">
-                               <Button className="btn-blue w-100 btn-lg btn-big ">Sign In</Button>
-                               </div>
-                            <div className="col-md-6 pr-0">
-                                <Link to="/" className="d-block w-100">   <Button className=" btn-lg btn-big w-100  "
-                          variant="outlined"onClick={()=> context.setisHeaderFooterShow(true)}>Cancel
-                            </Button> </Link>
-                          
+    const {
+      name,
+      phone,
+      email,
+      password,
+    } = formData;
 
-                            </div>
-                          </div>
-                           
+    if (!name || !phone || !email || !password) {
+      setErrorMessage("Please fill in all fields.");
+      return;
+    }
 
-                        
+    if (password.length < 6) {
+      setErrorMessage(
+        "Password must contain at least 6 characters."
+      );
+      return;
+    }
 
+    try {
+      setLoading(true);
 
+      const response = await axios.post(
+        `${API_URL}/api/auth/register`,
+        {
+          name: name.trim(),
+          phone: phone.trim(),
+          email: email.trim(),
+          password,
+        }
+      );
 
+      if (response.data.success) {
+        setSuccessMessage(
+          "Registration successful. Redirecting to login..."
+        );
 
-                        </div>
-                        <p className="txt">Not Registered? <Link to="/signIn"
-                         className="border-effect">Sign IN </Link></p>
-                   
-                        <h6 className="mt-4 text-center font-weight-bold">Or continue with social account</h6>
+        setFormData({
+          name: "",
+          phone: "",
+          email: "",
+          password: "",
+        });
 
-                       
+        setTimeout(() => {
+          navigate("/signIn");
+        }, 1500);
+      }
+    } catch (error) {
+      const message =
+        error.response?.data?.message ||
+        "Registration failed. Please try again.";
 
-                        <Button className="loginwithgoogle mt-2 " variant="outlined" ><img src={googleimg} className="w-100"/>Sign In with Google</Button>
+      setErrorMessage(message);
+    } finally {
+      setLoading(false);
+    }
+  };
 
+  return (
+    <Box
+      sx={{
+        minHeight: "100vh",
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        padding: 3,
+        backgroundColor: "#f5f5f5",
+      }}
+    >
+      <Box
+        component="form"
+        onSubmit={handleSubmit}
+        sx={{
+          width: "100%",
+          maxWidth: 450,
+          backgroundColor: "#ffffff",
+          padding: 4,
+          borderRadius: 3,
+          boxShadow: 3,
+        }}
+      >
+        <Typography
+          variant="h4"
+          fontWeight="bold"
+          textAlign="center"
+          mb={3}
+        >
+          Create Account
+        </Typography>
 
-                         
-                                        
-                        
-                   
-                   </form>
+        {errorMessage && (
+          <Alert severity="error" sx={{ mb: 2 }}>
+            {errorMessage}
+          </Alert>
+        )}
 
+        {successMessage && (
+          <Alert severity="success" sx={{ mb: 2 }}>
+            {successMessage}
+          </Alert>
+        )}
 
+        <TextField
+          fullWidth
+          label="Full Name"
+          name="name"
+          value={formData.name}
+          onChange={handleChange}
+          margin="normal"
+          required
+        />
 
+        <TextField
+          fullWidth
+          label="Phone Number"
+          name="phone"
+          value={formData.phone}
+          onChange={handleChange}
+          margin="normal"
+          required
+        />
 
-                </div>
-            </div>
-        </section>
-    );
-};
+        <TextField
+          fullWidth
+          label="Email Address"
+          name="email"
+          type="email"
+          value={formData.email}
+          onChange={handleChange}
+          margin="normal"
+          required
+        />
+
+        <TextField
+          fullWidth
+          label="Password"
+          name="password"
+          type="password"
+          value={formData.password}
+          onChange={handleChange}
+          margin="normal"
+          required
+        />
+
+        <Button
+          fullWidth
+          type="submit"
+          variant="contained"
+          size="large"
+          disabled={loading}
+          sx={{ mt: 3, mb: 2 }}
+        >
+          {loading ? "Creating Account..." : "Sign Up"}
+        </Button>
+
+        <Typography textAlign="center">
+          Already have an account?{" "}
+          <Link to="/signIn">
+            Sign In
+          </Link>
+        </Typography>
+      </Box>
+    </Box>
+  );
+}
 
 export default SignUp;

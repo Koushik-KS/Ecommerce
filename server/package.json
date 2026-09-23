@@ -11,11 +11,13 @@
     "dev": "nodemon app.js"
   },
   "dependencies": {
+    "bcryptjs": "^3.0.3",
     "body-parser": "^2.2.2",
     "cloudinary": "^2.2.0",
     "cors": "^2.8.6",
     "dotenv": "^17.3.1",
     "express": "^4.22.1",
+    "jsonwebtoken": "^9.0.3",
     "mongoose": "^9.3.2",
     "nodemailer": "^10.0.10",
     "p-limit": "^3.1.0"

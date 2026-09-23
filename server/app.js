@@ -1,4 +1,3 @@
-
 const express = require("express");
 const app = express();
 const mongoose = require("mongoose");
@@ -6,16 +5,35 @@ const cors = require("cors");
 
 require("dotenv").config();
 
-// Email service
+// =====================================================
+// EMAIL SERVICE
+// =====================================================
+
 const {
   verifyEmailConnection,
 } = require("./services/emailService");
 
 // =====================================================
+// ROUTES
+// =====================================================
+
+const categoryRoutes = require("./routes/categories");
+const productRoutes = require("./routes/product");
+const orderRoutes = require("./routes/order");
+const messagesRoutes = require("./routes/messages");
+const authRoutes = require("./routes/auth");
+const reviewRoutes = require("./routes/reviews");
+
+// =====================================================
 // MIDDLEWARE
 // =====================================================
 
-app.use(cors());
+app.use(
+  cors({
+    origin: "http://localhost:3000",
+    credentials: true,
+  })
+);
 
 // Increase JSON request size for Base64 images
 app.use(
@@ -30,15 +48,6 @@ app.use(
     extended: true,
   })
 );
-
-// =====================================================
-// ROUTES
-// =====================================================
-
-const categoryRoutes = require("./routes/categories");
-const productRoutes = require("./routes/product");
-const orderRoutes = require("./routes/order");
-const messagesRoutes = require("./routes/messages");
 
 // =====================================================
 // CATEGORY ROUTES
@@ -74,6 +83,24 @@ app.use(
 app.use(
   "/api/messages",
   messagesRoutes
+);
+
+// =====================================================
+// AUTHENTICATION ROUTES
+// =====================================================
+
+app.use(
+  "/api/auth",
+  authRoutes
+);
+
+// =====================================================
+// REVIEW ROUTES
+// =====================================================
+
+app.use(
+  "/api/reviews",
+  reviewRoutes
 );
 
 // =====================================================
