@@ -6,13 +6,16 @@ const cors = require("cors");
 
 require("dotenv").config();
 
+// Email service
+const {
+  verifyEmailConnection,
+} = require("./services/emailService");
+
 // =====================================================
 // MIDDLEWARE
 // =====================================================
 
 app.use(cors());
-
-app.options("*", cors());
 
 // Increase JSON request size for Base64 images
 app.use(
@@ -90,10 +93,13 @@ app.get("/", (req, res) => {
 
 mongoose
   .connect(process.env.CONNECTION_STRING)
-  .then(() => {
+  .then(async () => {
     console.log(
       "Database connection ready..."
     );
+
+    // Verify Gmail SMTP connection
+    await verifyEmailConnection();
 
     const PORT = process.env.PORT || 4000;
 
@@ -104,8 +110,10 @@ mongoose
     });
   })
   .catch((err) => {
-    console.log(
+    console.error(
       "Database connection error:",
-      err
+      err.message
     );
+
+    process.exit(1);
   });

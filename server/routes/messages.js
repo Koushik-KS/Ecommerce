@@ -4,6 +4,10 @@ const mongoose = require("mongoose");
 
 const Message = require("../models/message");
 
+const {
+  sendAdminReplyEmail,
+} = require("../services/emailService");
+
 const router = express.Router();
 
 // =====================================================
@@ -34,7 +38,8 @@ router.post("/", async (req, res) => {
     }
 
     const trimmedName = customerName.trim();
-    const trimmedEmail = customerEmail.trim().toLowerCase();
+    const trimmedEmail =
+      customerEmail.trim().toLowerCase();
     const trimmedMessage = message.trim();
     const trimmedOrderId = orderId
       ? orderId.trim()
@@ -64,9 +69,10 @@ router.post("/", async (req, res) => {
       customerEmail: trimmedEmail,
       message: trimmedMessage,
       messageType,
+      status: "unread",
     });
 
-    res.status(201).json({
+    return res.status(201).json({
       success: true,
       message: "Message sent successfully.",
       data: newMessage,
@@ -74,7 +80,7 @@ router.post("/", async (req, res) => {
   } catch (error) {
     console.error("Create message error:", error);
 
-    res.status(500).json({
+    return res.status(500).json({
       success: false,
       message: "Failed to send message.",
     });
@@ -96,6 +102,7 @@ router.post("/review", async (req, res) => {
       rating,
     } = req.body;
 
+    // Validate required fields
     if (
       !productId ||
       !customerName ||
@@ -111,6 +118,7 @@ router.post("/review", async (req, res) => {
       });
     }
 
+    // Validate MongoDB ObjectId
     if (!mongoose.Types.ObjectId.isValid(productId)) {
       return res.status(400).json({
         success: false,
@@ -118,8 +126,26 @@ router.post("/review", async (req, res) => {
       });
     }
 
+    const trimmedName = customerName.trim();
+    const trimmedEmail =
+      customerEmail.trim().toLowerCase();
+    const trimmedMessage = message.trim();
+
+    if (
+      !trimmedName ||
+      !trimmedEmail ||
+      !trimmedMessage
+    ) {
+      return res.status(400).json({
+        success: false,
+        message:
+          "Customer name, email and review cannot be empty.",
+      });
+    }
+
     const numericRating = Number(rating);
 
+    // Validate rating
     if (
       !Number.isFinite(numericRating) ||
       numericRating < 1 ||
@@ -133,15 +159,15 @@ router.post("/review", async (req, res) => {
 
     const newReview = await Message.create({
       productId,
-      customerName: customerName.trim(),
-      customerEmail: customerEmail.trim().toLowerCase(),
-      message: message.trim(),
+      customerName: trimmedName,
+      customerEmail: trimmedEmail,
+      message: trimmedMessage,
       rating: numericRating,
       messageType: "review",
       status: "unread",
     });
 
-    res.status(201).json({
+    return res.status(201).json({
       success: true,
       message: "Review submitted successfully.",
       data: newReview,
@@ -149,7 +175,7 @@ router.post("/review", async (req, res) => {
   } catch (error) {
     console.error("Create review error:", error);
 
-    res.status(500).json({
+    return res.status(500).json({
       success: false,
       message: "Failed to submit review.",
     });
@@ -167,6 +193,7 @@ router.get(
     try {
       const { productId } = req.params;
 
+      // Validate MongoDB ObjectId
       if (!mongoose.Types.ObjectId.isValid(productId)) {
         return res.status(400).json({
           success: false,
@@ -181,7 +208,7 @@ router.get(
         createdAt: -1,
       });
 
-      res.status(200).json({
+      return res.status(200).json({
         success: true,
         data: reviews,
       });
@@ -191,7 +218,7 @@ router.get(
         error
       );
 
-      res.status(500).json({
+      return res.status(500).json({
         success: false,
         message: "Failed to fetch product reviews.",
       });
@@ -210,14 +237,14 @@ router.get("/", async (req, res) => {
       createdAt: -1,
     });
 
-    res.status(200).json({
+    return res.status(200).json({
       success: true,
       data: messages,
     });
   } catch (error) {
     console.error("Get messages error:", error);
 
-    res.status(500).json({
+    return res.status(500).json({
       success: false,
       message: "Failed to fetch messages.",
     });
@@ -231,9 +258,17 @@ router.get("/", async (req, res) => {
 
 router.get("/:id", async (req, res) => {
   try {
-    const message = await Message.findById(
-      req.params.id
-    );
+    const { id } = req.params;
+
+    // Validate MongoDB ObjectId
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid message ID.",
+      });
+    }
+
+    const message = await Message.findById(id);
 
     if (!message) {
       return res.status(404).json({
@@ -242,7 +277,7 @@ router.get("/:id", async (req, res) => {
       });
     }
 
-    res.status(200).json({
+    return res.status(200).json({
       success: true,
       data: message,
     });
@@ -252,7 +287,7 @@ router.get("/:id", async (req, res) => {
       error
     );
 
-    res.status(500).json({
+    return res.status(500).json({
       success: false,
       message: "Failed to fetch message.",
     });
@@ -266,9 +301,19 @@ router.get("/:id", async (req, res) => {
 
 router.patch("/:id/read", async (req, res) => {
   try {
+    const { id } = req.params;
+
+    // Validate MongoDB ObjectId
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid message ID.",
+      });
+    }
+
     const updatedMessage =
       await Message.findByIdAndUpdate(
-        req.params.id,
+        id,
         {
           status: "read",
         },
@@ -285,7 +330,7 @@ router.patch("/:id/read", async (req, res) => {
       });
     }
 
-    res.status(200).json({
+    return res.status(200).json({
       success: true,
       message: "Message marked as read.",
       data: updatedMessage,
@@ -296,7 +341,7 @@ router.patch("/:id/read", async (req, res) => {
       error
     );
 
-    res.status(500).json({
+    return res.status(500).json({
       success: false,
       message: "Failed to update message.",
     });
@@ -304,45 +349,107 @@ router.patch("/:id/read", async (req, res) => {
 });
 
 // =====================================================
-// ADMIN: REPLY TO MESSAGE
+// ADMIN: REPLY TO MESSAGE + SEND EMAIL
 // PATCH /api/messages/:id/reply
 // =====================================================
 
 router.patch("/:id/reply", async (req, res) => {
   try {
+    const { id } = req.params;
     const { reply } = req.body;
 
-    if (!reply || !reply.trim()) {
+    // Validate MongoDB ObjectId
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid message ID.",
+      });
+    }
+
+    // Validate reply
+    if (!reply || typeof reply !== "string") {
       return res.status(400).json({
         success: false,
         message: "Reply is required.",
       });
     }
 
-    const updatedMessage =
-      await Message.findByIdAndUpdate(
-        req.params.id,
-        {
-          reply: reply.trim(),
-          status: "replied",
-        },
-        {
-          new: true,
-          runValidators: true,
-        }
-      );
+    const trimmedReply = reply.trim();
 
-    if (!updatedMessage) {
+    if (!trimmedReply) {
+      return res.status(400).json({
+        success: false,
+        message: "Reply cannot be empty.",
+      });
+    }
+
+    // Find original customer message
+    const existingMessage = await Message.findById(id);
+
+    if (!existingMessage) {
       return res.status(404).json({
         success: false,
         message: "Message not found.",
       });
     }
 
-    res.status(200).json({
+    // Save admin reply in MongoDB
+    existingMessage.reply = trimmedReply;
+    existingMessage.status = "replied";
+    existingMessage.repliedAt = new Date();
+
+    await existingMessage.save();
+
+    // Email result variables
+    let emailSent = false;
+    let emailError = null;
+
+    // Send reply email to customer
+    try {
+      await sendAdminReplyEmail({
+        customerName: existingMessage.customerName,
+        customerEmail: existingMessage.customerEmail,
+        originalMessage: existingMessage.message,
+        adminReply: trimmedReply,
+        orderId: existingMessage.orderId || "",
+      });
+
+      emailSent = true;
+
+      // Update email notification status
+      existingMessage.emailNotificationSent = true;
+      existingMessage.emailNotificationError = "";
+
+      await existingMessage.save();
+
+      console.log(
+        "Reply email sent successfully to:",
+        existingMessage.customerEmail
+      );
+    } catch (emailErr) {
+      emailError = emailErr.message;
+
+      // Save email failure information
+      existingMessage.emailNotificationSent = false;
+      existingMessage.emailNotificationError =
+        emailError;
+
+      await existingMessage.save();
+
+      console.error(
+        "Reply saved, but email failed:",
+        emailErr
+      );
+    }
+
+    return res.status(200).json({
       success: true,
-      message: "Reply saved successfully.",
-      data: updatedMessage,
+      message: emailSent
+        ? "Reply saved and email sent successfully."
+        : "Reply saved, but email could not be sent.",
+      emailSent,
+      emailError,
+      data: existingMessage,
     });
   } catch (error) {
     console.error(
@@ -350,7 +457,7 @@ router.patch("/:id/reply", async (req, res) => {
       error
     );
 
-    res.status(500).json({
+    return res.status(500).json({
       success: false,
       message: "Failed to save reply.",
     });
@@ -364,10 +471,18 @@ router.patch("/:id/reply", async (req, res) => {
 
 router.delete("/:id", async (req, res) => {
   try {
+    const { id } = req.params;
+
+    // Validate MongoDB ObjectId
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid message ID.",
+      });
+    }
+
     const deletedMessage =
-      await Message.findByIdAndDelete(
-        req.params.id
-      );
+      await Message.findByIdAndDelete(id);
 
     if (!deletedMessage) {
       return res.status(404).json({
@@ -376,7 +491,7 @@ router.delete("/:id", async (req, res) => {
       });
     }
 
-    res.status(200).json({
+    return res.status(200).json({
       success: true,
       message: "Message deleted successfully.",
     });
@@ -386,11 +501,15 @@ router.delete("/:id", async (req, res) => {
       error
     );
 
-    res.status(500).json({
+    return res.status(500).json({
       success: false,
       message: "Failed to delete message.",
     });
   }
 });
+
+// =====================================================
+// EXPORT ROUTER
+// =====================================================
 
 module.exports = router;
