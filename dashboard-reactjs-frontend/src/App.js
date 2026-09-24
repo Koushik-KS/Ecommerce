@@ -1,4 +1,3 @@
-
 import {
   BrowserRouter,
   Navigate,
@@ -37,6 +36,7 @@ import OrderDetails from "./pages/Orders/OrderDetails";
 import Category from "./pages/Category";
 import Messages from "./pages/Messages";
 import Notifications from "./pages/Notifications";
+import Settings from "./pages/Settings";
 
 // =====================================================
 // CONTEXT
@@ -289,6 +289,15 @@ function App() {
               <Route
                 path="/notifications"
                 element={<Notifications />}
+              />
+
+              {/* =================================================
+                  SETTINGS
+              ================================================= */}
+
+              <Route
+                path="/settings"
+                element={<Settings />}
               />
 
               {/* =================================================

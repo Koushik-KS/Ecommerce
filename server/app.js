@@ -1,4 +1,3 @@
-
 const express = require("express");
 const app = express();
 const mongoose = require("mongoose");
@@ -25,6 +24,7 @@ const messagesRoutes = require("./routes/messages");
 const authRoutes = require("./routes/auth");
 const reviewRoutes = require("./routes/reviews");
 const notificationRoutes = require("./routes/notifications");
+const settingsRoutes = require("./routes/settings");
 
 // =====================================================
 // CORS CONFIGURATION
@@ -139,6 +139,15 @@ app.use(
 app.use(
   "/api/notifications",
   notificationRoutes
+);
+
+// =====================================================
+// SETTINGS ROUTES
+// =====================================================
+
+app.use(
+  "/api/settings",
+  settingsRoutes
 );
 
 // =====================================================
