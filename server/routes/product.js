@@ -1,3 +1,4 @@
+
 const express = require("express");
 const router = express.Router();
 
@@ -6,6 +7,43 @@ const cloudinary = require("cloudinary").v2;
 
 const { Category } = require("../models/category");
 const { Product } = require("../models/products");
+const Notification = require("../models/Notification");
+
+// =====================================================
+// LOW STOCK CONFIGURATION
+// =====================================================
+
+const LOW_STOCK_THRESHOLD = 5;
+
+// =====================================================
+// CREATE LOW STOCK NOTIFICATION
+// =====================================================
+
+const createLowStockNotification = async (product) => {
+  try {
+    if (product.countInStock > LOW_STOCK_THRESHOLD) {
+      return;
+    }
+
+    await Notification.create({
+      type: "LOW_STOCK",
+      title: "Low stock alert",
+      message: `${product.name} has only ${product.countInStock} item(s) remaining in stock.`,
+      referenceId: product._id.toString(),
+      link: `/products/${product._id}`,
+      isRead: false,
+    });
+
+    console.log(
+      `Low stock notification created for ${product.name}`
+    );
+  } catch (error) {
+    console.error(
+      "Low stock notification error:",
+      error.message
+    );
+  }
+};
 
 // =====================================================
 // GET ALL PRODUCTS
@@ -48,6 +86,7 @@ router.post("/create", async (req, res) => {
     } = req.body;
 
     // Validate required fields
+
     if (
       !name ||
       !description ||
@@ -63,6 +102,7 @@ router.post("/create", async (req, res) => {
     }
 
     // Check whether the category exists
+
     const categoryExists = await Category.findById(category);
 
     if (!categoryExists) {
@@ -73,6 +113,7 @@ router.post("/create", async (req, res) => {
     }
 
     // Upload images to Cloudinary
+
     const limit = pLimit(2);
 
     const imagesToUpload = images.map((image) => {
@@ -93,6 +134,7 @@ router.post("/create", async (req, res) => {
     }
 
     // Create product
+
     const product = new Product({
       name: name.trim(),
       description: description.trim(),
@@ -113,6 +155,10 @@ router.post("/create", async (req, res) => {
     });
 
     const savedProduct = await product.save();
+
+    // Create low stock notification
+
+    await createLowStockNotification(savedProduct);
 
     return res.status(201).json({
       success: true,
@@ -198,6 +244,7 @@ router.delete("/:id", async (req, res) => {
 router.put("/:id", async (req, res) => {
   try {
     // Find existing product
+
     const existingProduct = await Product.findById(req.params.id);
 
     if (!existingProduct) {
@@ -206,6 +253,10 @@ router.put("/:id", async (req, res) => {
         message: "Product not found",
       });
     }
+
+    // Store previous stock value
+
+    const previousStock = existingProduct.countInStock;
 
     const {
       name,
@@ -222,9 +273,11 @@ router.put("/:id", async (req, res) => {
     } = req.body;
 
     // Keep old images by default
+
     let imageUrls = existingProduct.images;
 
     // Upload new images if provided
+
     if (Array.isArray(images) && images.length > 0) {
       const limit = pLimit(2);
 
@@ -240,6 +293,7 @@ router.put("/:id", async (req, res) => {
     }
 
     // Update basic product details
+
     if (name !== undefined) {
       existingProduct.name = name.trim();
     }
@@ -255,16 +309,19 @@ router.put("/:id", async (req, res) => {
     }
 
     // Update regular price
+
     if (regularPrice !== undefined) {
       existingProduct.regularPrice = Number(regularPrice);
     }
 
     // Update selling price
+
     if (price !== undefined) {
       existingProduct.price = Number(price);
     }
 
     // Update category
+
     if (category !== undefined) {
       const categoryExists = await Category.findById(category);
 
@@ -279,27 +336,43 @@ router.put("/:id", async (req, res) => {
     }
 
     // Update stock
+
     if (countInStock !== undefined) {
       existingProduct.countInStock = Number(countInStock);
     }
 
     // Update rating
+
     if (rating !== undefined) {
       existingProduct.rating = Number(rating);
     }
 
     // Update number of reviews
+
     if (numReviews !== undefined) {
       existingProduct.numReviews = Number(numReviews);
     }
 
     // Update featured status
+
     if (isFeatured !== undefined) {
       existingProduct.isFeatured = Boolean(isFeatured);
     }
 
     // Save updated product
+
     const updatedProduct = await existingProduct.save();
+
+    // Create notification only when stock enters low-stock level
+
+    const currentStock = updatedProduct.countInStock;
+
+    if (
+      previousStock > LOW_STOCK_THRESHOLD &&
+      currentStock <= LOW_STOCK_THRESHOLD
+    ) {
+      await createLowStockNotification(updatedProduct);
+    }
 
     return res.status(200).json({
       success: true,

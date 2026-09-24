@@ -7,6 +7,8 @@ const Review = require("../models/Review");
 // IMPORTANT: Product is exported using exports.Product
 const { Product } = require("../models/products");
 
+const Notification = require("../models/Notification");
+
 const authMiddleware = require("../middleware/auth");
 
 const router = express.Router();
@@ -387,6 +389,34 @@ router.post(
           "user",
           "name email"
         );
+
+      // =================================================
+      // CREATE NEW REVIEW NOTIFICATION
+      // =================================================
+
+      try {
+        const reviewerName =
+          populatedReview?.user?.name ||
+          "A customer";
+
+        await Notification.create({
+          type: "REVIEW",
+          title: "New customer review",
+          message: `${reviewerName} submitted a ${numericRating}-star review for ${product.name}.`,
+          referenceId: review._id.toString(),
+          link: `/reviews/${review._id}`,
+          isRead: false,
+        });
+
+        console.log(
+          "Review notification created successfully."
+        );
+      } catch (notificationError) {
+        console.error(
+          "Review notification error:",
+          notificationError.message
+        );
+      }
 
       // =================================================
       // SUCCESS RESPONSE

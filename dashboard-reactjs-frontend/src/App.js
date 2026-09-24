@@ -36,6 +36,7 @@ import Orders from "./pages/Orders";
 import OrderDetails from "./pages/Orders/OrderDetails";
 import Category from "./pages/Category";
 import Messages from "./pages/Messages";
+import Notifications from "./pages/Notifications";
 
 // =====================================================
 // CONTEXT
@@ -74,7 +75,7 @@ function App() {
 
   // =====================================================
   // THEME STATE
-  // true  = light mode
+  // true = light mode
   // false = dark mode
   // =====================================================
 
@@ -129,6 +130,7 @@ function App() {
   return (
     <BrowserRouter>
       <MyContext.Provider value={values}>
+
         {/* =====================================================
             HEADER
         ===================================================== */}
@@ -142,6 +144,7 @@ function App() {
         ===================================================== */}
 
         <div className="main d-flex">
+
           {/* =====================================================
               SIDEBAR
           ===================================================== */}
@@ -174,6 +177,7 @@ function App() {
             }`}
           >
             <Routes>
+
               {/* =================================================
                   DEFAULT ROUTE
               ================================================= */}
@@ -215,8 +219,6 @@ function App() {
                   PRODUCTS
               ================================================= */}
 
-              {/* Product List */}
-
               <Route
                 path="/products"
                 element={<Products />}
@@ -226,24 +228,10 @@ function App() {
                   PRODUCT DETAILS
               ================================================= */}
 
-              {/* 
-                The Eye button navigates to:
-
-                /product/details/:id
-              */}
-
               <Route
                 path="/product/details/:id"
                 element={<ProductDetails />}
               />
-
-              {/* 
-                If Product View is clicked without
-                a product ID, redirect to Product List.
-
-                The Sidebar component uses the last
-                selected product ID from localStorage.
-              */}
 
               <Route
                 path="/product/details"
@@ -266,14 +254,10 @@ function App() {
                   ORDERS
               ================================================= */}
 
-              {/* Orders List */}
-
               <Route
                 path="/orders"
                 element={<Orders />}
               />
-
-              {/* Order Details */}
 
               <Route
                 path="/orders/:orderId"
@@ -290,6 +274,24 @@ function App() {
               />
 
               {/* =================================================
+                  MESSAGES
+              ================================================= */}
+
+              <Route
+                path="/messages"
+                element={<Messages />}
+              />
+
+              {/* =================================================
+                  NOTIFICATIONS
+              ================================================= */}
+
+              <Route
+                path="/notifications"
+                element={<Notifications />}
+              />
+
+              {/* =================================================
                   UNKNOWN ROUTES
               ================================================= */}
 
@@ -302,10 +304,7 @@ function App() {
                   />
                 }
               />
-              <Route
-  path="/messages"
-  element={<Messages />}
-/>
+
             </Routes>
           </div>
         </div>

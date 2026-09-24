@@ -3,6 +3,7 @@ const express = require("express");
 const router = express.Router();
 
 const Order = require("../models/Order");
+const Notification = require("../models/Notification");
 
 // ===============================
 // ALLOWED ORDER STATUSES
@@ -10,7 +11,6 @@ const Order = require("../models/Order");
 
 const allowedStatuses = [
   "PENDING",
-  "PENDING_CONFIRMATION",
   "CONFIRMED",
   "PROCESSING",
   "SHIPPED",
@@ -26,7 +26,10 @@ const generateOrderId = () => {
   const date = new Date();
 
   const year = date.getFullYear();
-  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const month = String(date.getMonth() + 1).padStart(
+    2,
+    "0"
+  );
   const day = String(date.getDate()).padStart(2, "0");
 
   const randomNumber = Math.floor(
@@ -49,6 +52,28 @@ const isValidAmount = (amount) => {
 };
 
 // ===============================
+// NORMALIZE ORDER ITEMS
+// ===============================
+
+const normalizeOrderItems = (items) => {
+  return items.map((item) => {
+    const productId =
+      item.productId ||
+      item._id ||
+      item.id ||
+      item.product?._id ||
+      item.product?.id;
+
+    return {
+      ...item,
+      productId: productId
+        ? String(productId)
+        : undefined,
+    };
+  });
+};
+
+// ===============================
 // CREATE NEW ORDER
 // POST /api/orders
 // ===============================
@@ -63,16 +88,24 @@ router.post("/", async (req, res) => {
       total,
     } = req.body;
 
-    // Validate customer object
+    // ==========================================
+    // VALIDATE CUSTOMER OBJECT
+    // ==========================================
 
-    if (!customer || typeof customer !== "object") {
+    if (
+      !customer ||
+      typeof customer !== "object" ||
+      Array.isArray(customer)
+    ) {
       return res.status(400).json({
         success: false,
         message: "Customer details are required",
       });
     }
 
-    // Validate customer fields
+    // ==========================================
+    // VALIDATE CUSTOMER FIELDS
+    // ==========================================
 
     const requiredCustomerFields = [
       "fullName",
@@ -98,7 +131,9 @@ router.post("/", async (req, res) => {
       });
     }
 
-    // Validate items
+    // ==========================================
+    // VALIDATE ITEMS
+    // ==========================================
 
     if (!Array.isArray(items) || items.length === 0) {
       return res.status(400).json({
@@ -107,7 +142,61 @@ router.post("/", async (req, res) => {
       });
     }
 
-    // Validate amounts
+    // ==========================================
+    // NORMALIZE PRODUCT IDs
+    // ==========================================
+
+    const normalizedItems = normalizeOrderItems(items);
+
+    // ==========================================
+    // VALIDATE PRODUCT IDs
+    // ==========================================
+
+    const invalidItemIndex = normalizedItems.findIndex(
+      (item) =>
+        !item.productId ||
+        item.productId.trim() === ""
+    );
+
+    if (invalidItemIndex !== -1) {
+      return res.status(400).json({
+        success: false,
+        message: `Product ID is missing for item ${
+          invalidItemIndex + 1
+        }`,
+      });
+    }
+
+    // ==========================================
+    // VALIDATE ITEM OBJECTS
+    // ==========================================
+
+    const invalidItemObject = normalizedItems.some(
+      (item) =>
+        !item ||
+        typeof item !== "object" ||
+        Array.isArray(item)
+    );
+
+    if (invalidItemObject) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid order item details",
+      });
+    }
+
+    // ==========================================
+    // LOG NORMALIZED ITEMS
+    // ==========================================
+
+    console.log(
+      "Normalized order items:",
+      JSON.stringify(normalizedItems, null, 2)
+    );
+
+    // ==========================================
+    // VALIDATE AMOUNTS
+    // ==========================================
 
     if (
       !isValidAmount(subtotal) ||
@@ -121,7 +210,9 @@ router.post("/", async (req, res) => {
       });
     }
 
-    // Validate total calculation
+    // ==========================================
+    // VALIDATE TOTAL CALCULATION
+    // ==========================================
 
     const calculatedTotal = subtotal + deliveryCharge;
 
@@ -133,12 +224,14 @@ router.post("/", async (req, res) => {
       });
     }
 
-    // Create order
+    // ==========================================
+    // CREATE ORDER
+    // ==========================================
 
     const order = new Order({
       orderId: generateOrderId(),
       customer,
-      items,
+      items: normalizedItems,
       subtotal,
       deliveryCharge,
       total,
@@ -146,6 +239,34 @@ router.post("/", async (req, res) => {
     });
 
     const savedOrder = await order.save();
+
+    // ==========================================
+    // CREATE NEW ORDER NOTIFICATION
+    // ==========================================
+
+    try {
+      await Notification.create({
+        type: "ORDER",
+        title: "New order received",
+        message: `New order ${
+          savedOrder.orderId
+        } was placed by ${
+          savedOrder.customer.fullName
+        }.`,
+        referenceId: savedOrder.orderId,
+        link: `/orders/${savedOrder.orderId}`,
+        isRead: false,
+      });
+    } catch (notificationError) {
+      console.error(
+        "New order notification error:",
+        notificationError.message
+      );
+    }
+
+    // ==========================================
+    // SUCCESS RESPONSE
+    // ==========================================
 
     return res.status(201).json({
       success: true,
@@ -235,6 +356,10 @@ router.patch("/:orderId/status", async (req, res) => {
     const { orderId } = req.params;
     const { status } = req.body;
 
+    // ==========================================
+    // VALIDATE STATUS
+    // ==========================================
+
     if (!status) {
       return res.status(400).json({
         success: false,
@@ -252,22 +377,56 @@ router.patch("/:orderId/status", async (req, res) => {
       });
     }
 
-    const updatedOrder =
-      await Order.findOneAndUpdate(
-        { orderId },
-        { status: normalizedStatus },
-        {
-          new: true,
-          runValidators: true,
-        }
-      ).lean();
+    // ==========================================
+    // FIND EXISTING ORDER
+    // ==========================================
 
-    if (!updatedOrder) {
+    const existingOrder = await Order.findOne({
+      orderId,
+    });
+
+    if (!existingOrder) {
       return res.status(404).json({
         success: false,
         message: "Order not found",
       });
     }
+
+    const previousStatus = existingOrder.status;
+
+    // ==========================================
+    // UPDATE ORDER STATUS
+    // ==========================================
+
+    existingOrder.status = normalizedStatus;
+
+    const updatedOrder = await existingOrder.save();
+
+    // ==========================================
+    // CREATE ORDER STATUS NOTIFICATION
+    // ==========================================
+
+    if (previousStatus !== normalizedStatus) {
+      try {
+        await Notification.create({
+          type: "ORDER_STATUS",
+          title: "Order status updated",
+          message: `Order ${orderId} status changed from ${previousStatus} to ${normalizedStatus}.`,
+          referenceId: orderId,
+          link: `/orders/${orderId}`,
+          isRead: false,
+        });
+      } catch (notificationError) {
+        console.error(
+          "Order status notification error:",
+          notificationError.message
+        );
+      }
+    }
+
+    // ==========================================
+    // SUCCESS RESPONSE
+    // ==========================================
 
     return res.status(200).json({
       success: true,

@@ -24,6 +24,7 @@ const orderRoutes = require("./routes/order");
 const messagesRoutes = require("./routes/messages");
 const authRoutes = require("./routes/auth");
 const reviewRoutes = require("./routes/reviews");
+const notificationRoutes = require("./routes/notifications");
 
 // =====================================================
 // CORS CONFIGURATION
@@ -129,6 +130,15 @@ app.use(
 app.use(
   "/api/reviews",
   reviewRoutes
+);
+
+// =====================================================
+// NOTIFICATION ROUTES
+// =====================================================
+
+app.use(
+  "/api/notifications",
+  notificationRoutes
 );
 
 // =====================================================
