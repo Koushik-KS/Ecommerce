@@ -18,7 +18,7 @@ const Checkout = () => {
     address: "",
     city: "",
     state: "",
-    pincode: ""
+    pincode: "",
   });
 
   const [errors, setErrors] = useState({});
@@ -26,7 +26,8 @@ const Checkout = () => {
 
   // Calculate subtotal
   const subtotal = cartItems.reduce(
-    (total, item) => total + Number(item.price) * Number(item.quantity),
+    (total, item) =>
+      total + Number(item.price || 0) * Number(item.quantity || 0),
     0
   );
 
@@ -42,13 +43,13 @@ const Checkout = () => {
 
     setFormData((previousData) => ({
       ...previousData,
-      [name]: value
+      [name]: value,
     }));
 
     // Remove error while typing
     setErrors((previousErrors) => ({
       ...previousErrors,
-      [name]: ""
+      [name]: "",
     }));
   };
 
@@ -89,6 +90,18 @@ const Checkout = () => {
     return Object.keys(newErrors).length === 0;
   };
 
+  // Get product ID from cart item
+  const getProductId = (item) => {
+    return (
+      item.productId ||
+      item._id ||
+      item.id ||
+      item.product?._id ||
+      item.product?.id ||
+      null
+    );
+  };
+
   // Place order
   const placeOrder = async (event) => {
     event.preventDefault();
@@ -107,23 +120,36 @@ const Checkout = () => {
 
     try {
       // Convert cart items into backend order items
-      const orderItems = cartItems.map((item) => ({
-        productId: item.id,
-        name: item.name,
-        brand: item.brand || "",
-        image: item.image || "",
-        price: Number(item.price),
-        quantity: Number(item.quantity)
-      }));
+      const orderItems = cartItems.map((item, index) => {
+        const productId = getProductId(item);
+
+        // Validate product ID before sending the request
+        if (!productId) {
+          throw new Error(
+            `Product ID is missing for item ${index + 1}. Please remove this product and add it again.`
+          );
+        }
+
+        return {
+          productId: productId,
+          name: item.name || item.product?.name || "Product",
+          brand: item.brand || item.product?.brand || "",
+          image: item.image || item.product?.image || "",
+          price: Number(item.price || item.salePrice || 0),
+          quantity: Number(item.quantity || 1),
+        };
+      });
 
       // Prepare order data
       const orderDetails = {
         customer: formData,
         items: orderItems,
-        subtotal,
-        deliveryCharge,
-        total
+        subtotal: subtotal,
+        deliveryCharge: deliveryCharge,
+        total: total,
       };
+
+      console.log("Order details being sent:", orderDetails);
 
       // Send order to backend
       const response = await axios.post(
@@ -140,8 +166,8 @@ const Checkout = () => {
         // Navigate to order success page
         navigate("/order-success", {
           state: {
-            order: savedOrder
-          }
+            order: savedOrder,
+          },
         });
       } else {
         alert(response.data.message || "Failed to place order");
@@ -151,6 +177,7 @@ const Checkout = () => {
 
       const errorMessage =
         error.response?.data?.message ||
+        error.message ||
         "Unable to place order. Please try again.";
 
       alert(errorMessage);
@@ -352,14 +379,19 @@ const Checkout = () => {
                 Order Summary
               </h4>
 
-              {cartItems.map((item) => (
+              {cartItems.map((item, index) => (
                 <div
-                  key={item.id}
+                  key={
+                    item.productId ||
+                    item._id ||
+                    item.id ||
+                    index
+                  }
                   className="d-flex justify-content-between mb-3"
                 >
                   <div>
                     <p className="mb-1">
-                      {item.name}
+                      {item.name || item.product?.name || "Product"}
                     </p>
 
                     <small className="text-muted">
@@ -368,7 +400,9 @@ const Checkout = () => {
                   </div>
 
                   <strong>
-                    ₹{Number(item.price) * Number(item.quantity)}
+                    ₹
+                    {Number(item.price || 0) *
+                      Number(item.quantity || 0)}
                   </strong>
                 </div>
               ))}
