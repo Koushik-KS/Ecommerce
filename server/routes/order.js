@@ -6,6 +6,10 @@ const Order = require("../models/Order");
 const Notification = require("../models/Notification");
 const Settings = require("../models/Settings");
 
+const {
+  sendOrderConfirmationEmail,
+} = require("../services/emailService");
+
 // ===============================
 // ALLOWED ORDER STATUSES
 // ===============================
@@ -445,6 +449,37 @@ router.post("/", async (req, res) => {
     });
 
     const savedOrder = await order.save();
+
+    // ==========================================
+    // SEND ORDER CONFIRMATION EMAIL
+    // ==========================================
+
+    try {
+      await sendOrderConfirmationEmail({
+        customerName: savedOrder.customer.fullName,
+
+        customerEmail: savedOrder.customer.email,
+
+        orderId: savedOrder.orderId,
+
+        items: savedOrder.items,
+
+        subtotal: savedOrder.subtotal,
+
+        deliveryCharge: savedOrder.deliveryCharge,
+
+        total: savedOrder.total,
+      });
+
+      console.log(
+        "Order confirmation email sent successfully."
+      );
+    } catch (emailError) {
+      console.error(
+        "Order confirmation email error:",
+        emailError.message
+      );
+    }
 
     // ==========================================
     // CREATE NEW ORDER NOTIFICATION

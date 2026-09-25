@@ -31,30 +31,21 @@ const sendAdminReplyEmail = async ({
   adminReply,
   orderId,
 }) => {
-  // Validate customer email
   if (!customerEmail) {
     throw new Error("Customer email is missing.");
   }
 
-  // Validate Gmail credentials
   if (!process.env.EMAIL_USER) {
     throw new Error("EMAIL_USER is missing in .env");
   }
 
   if (!process.env.EMAIL_PASSWORD) {
-    throw new Error(
-      "EMAIL_PASSWORD is missing in .env"
-    );
+    throw new Error("EMAIL_PASSWORD is missing in .env");
   }
 
-  // Email subject
   const subject = orderId
     ? `Reply from Ecommerce - Order ${orderId}`
     : "Reply from Ecommerce";
-
-  // =====================================================
-  // EMAIL OPTIONS
-  // =====================================================
 
   const mailOptions = {
     from:
@@ -65,20 +56,12 @@ const sendAdminReplyEmail = async ({
 
     subject,
 
-    // ===================================================
-    // PLAIN TEXT EMAIL
-    // ===================================================
-
     text: `
 Hello ${customerName || "Customer"},
 
 Thank you for contacting Ecommerce.
 
-${
-  orderId
-    ? `Order ID: ${orderId}\n`
-    : ""
-}
+${orderId ? `Order ID: ${orderId}\n` : ""}
 
 Your original message:
 ${originalMessage || "N/A"}
@@ -91,10 +74,6 @@ If you have any further questions, please contact us.
 Thank you,
 Ecommerce Team
 `,
-
-    // ===================================================
-    // HTML EMAIL
-    // ===================================================
 
     html: `
       <div style="
@@ -113,6 +92,7 @@ Ecommerce Team
           border-radius: 10px 10px 0 0;
           text-align: center;
         ">
+
           <h2 style="margin: 0;">
             Ecommerce
           </h2>
@@ -120,6 +100,7 @@ Ecommerce Team
           <p style="margin: 5px 0 0;">
             Customer Support
           </p>
+
         </div>
 
         <div style="
@@ -200,14 +181,216 @@ Ecommerce Team
     `,
   };
 
-  // =====================================================
-  // SEND EMAIL
-  // =====================================================
-
   const info = await transporter.sendMail(mailOptions);
 
   console.log(
     "Email sent successfully:",
+    info.messageId
+  );
+
+  return info;
+};
+
+// =====================================================
+// SEND ORDER CONFIRMATION EMAIL
+// =====================================================
+
+const sendOrderConfirmationEmail = async ({
+  customerName,
+  customerEmail,
+  orderId,
+  items,
+  subtotal,
+  deliveryCharge,
+  total,
+}) => {
+  if (!customerEmail) {
+    throw new Error("Customer email is missing.");
+  }
+
+  if (!process.env.EMAIL_USER) {
+    throw new Error("EMAIL_USER is missing in .env");
+  }
+
+  if (!process.env.EMAIL_PASSWORD) {
+    throw new Error("EMAIL_PASSWORD is missing in .env");
+  }
+
+  const safeItems = Array.isArray(items) ? items : [];
+
+  const itemText = safeItems
+    .map((item) => {
+      const quantity = Number(item.quantity) || 0;
+      const price = Number(item.price) || 0;
+
+      return `${item.name || "Product"} x ${quantity} = ₹${(
+        price * quantity
+      ).toFixed(2)}`;
+    })
+    .join("\n");
+
+  const itemHtml = safeItems
+    .map((item) => {
+      const quantity = Number(item.quantity) || 0;
+      const price = Number(item.price) || 0;
+
+      return `
+        <tr>
+          <td style="padding: 10px; border-bottom: 1px solid #ddd;">
+            ${item.name || "Product"}
+          </td>
+
+          <td style="padding: 10px; border-bottom: 1px solid #ddd;">
+            ${quantity}
+          </td>
+
+          <td style="padding: 10px; border-bottom: 1px solid #ddd;">
+            ₹${(price * quantity).toFixed(2)}
+          </td>
+        </tr>
+      `;
+    })
+    .join("");
+
+  const mailOptions = {
+    from:
+      process.env.EMAIL_FROM ||
+      `"Ecommerce" <${process.env.EMAIL_USER}>`,
+
+    to: customerEmail,
+
+    subject: `Order Confirmation - ${orderId}`,
+
+    text: `
+Hello ${customerName || "Customer"},
+
+Thank you for placing your order with Ecommerce.
+
+Your order has been received successfully.
+
+Order ID: ${orderId}
+
+Items:
+${itemText}
+
+Subtotal: ₹${Number(subtotal || 0).toFixed(2)}
+Delivery Charge: ₹${Number(deliveryCharge || 0).toFixed(2)}
+Total: ₹${Number(total || 0).toFixed(2)}
+
+Please keep your Order ID for tracking.
+
+Thank you,
+Ecommerce Team
+`,
+
+    html: `
+      <div style="
+        font-family: Arial, sans-serif;
+        max-width: 650px;
+        margin: auto;
+        padding: 20px;
+        color: #333;
+      ">
+
+        <div style="
+          background: #2563eb;
+          color: white;
+          padding: 20px;
+          text-align: center;
+          border-radius: 10px 10px 0 0;
+        ">
+
+          <h2>Order Confirmation</h2>
+
+          <p>
+            Thank you for shopping with Ecommerce
+          </p>
+
+        </div>
+
+        <div style="
+          border: 1px solid #ddd;
+          padding: 20px;
+          border-radius: 0 0 10px 10px;
+        ">
+
+          <p>
+            Hello ${customerName || "Customer"},
+          </p>
+
+          <p>
+            Your order has been received successfully.
+          </p>
+
+          <h3>Order Details</h3>
+
+          <p>
+            <strong>Order ID:</strong> ${orderId}
+          </p>
+
+          <table style="
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+          ">
+
+            <thead>
+              <tr style="background: #f3f4f6;">
+
+                <th style="padding: 10px; text-align: left;">
+                  Product
+                </th>
+
+                <th style="padding: 10px; text-align: left;">
+                  Quantity
+                </th>
+
+                <th style="padding: 10px; text-align: left;">
+                  Price
+                </th>
+
+              </tr>
+            </thead>
+
+            <tbody>
+              ${itemHtml}
+            </tbody>
+
+          </table>
+
+          <p>
+            <strong>Subtotal:</strong>
+            ₹${Number(subtotal || 0).toFixed(2)}
+          </p>
+
+          <p>
+            <strong>Delivery Charge:</strong>
+            ₹${Number(deliveryCharge || 0).toFixed(2)}
+          </p>
+
+          <h3 style="color: #16a34a;">
+            Total: ₹${Number(total || 0).toFixed(2)}
+          </h3>
+
+          <p>
+            Please keep your Order ID for tracking your order.
+          </p>
+
+          <p>
+            Thank you,<br />
+            <strong>Ecommerce Team</strong>
+          </p>
+
+        </div>
+
+      </div>
+    `,
+  };
+
+  const info = await transporter.sendMail(mailOptions);
+
+  console.log(
+    "Order confirmation email sent:",
     info.messageId
   );
 
@@ -243,5 +426,6 @@ const verifyEmailConnection = async () => {
 
 module.exports = {
   sendAdminReplyEmail,
+  sendOrderConfirmationEmail,
   verifyEmailConnection,
 };
