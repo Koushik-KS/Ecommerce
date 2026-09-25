@@ -1,7 +1,10 @@
 
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 import HomeBanner from "../../Components/HomeBanner";
+import HomeCat from "../../Components/HomeCat";
+import ProductItem from "../../Components/ProductItem";
 
 import banner1 from "../../assets/images/banner1.jpg";
 import banner2 from "../../assets/images/banner2.jpg";
@@ -14,40 +17,36 @@ import Button from "@mui/material/Button";
 import { IoIosArrowRoundForward } from "react-icons/io";
 import { MdOutlineMail } from "react-icons/md";
 
-import ProductItem from "../../Components/ProductItem";
-import HomeCat from "../../Components/HomeCat";
-
-
 import { Swiper, SwiperSlide } from "swiper/react";
+import { Navigation } from "swiper/modules";
+
 import "swiper/css";
 import "swiper/css/navigation";
-
-import { Navigation } from "swiper/modules";
 
 const API_URL = "http://localhost:4000/api";
 
 const Home = () => {
+  const navigate = useNavigate();
+
   // =========================
   // STATES
   // =========================
+
   const [products, setProducts] = useState([]);
-
   const [loading, setLoading] = useState(true);
-
   const [error, setError] = useState("");
 
   // =========================
   // FETCH PRODUCTS
   // =========================
+
   useEffect(() => {
     const fetchProducts = async () => {
       try {
         setLoading(true);
         setError("");
 
-        const response = await fetch(
-          `${API_URL}/products`
-        );
+        const response = await fetch(`${API_URL}/products`);
 
         if (!response.ok) {
           throw new Error("Failed to fetch products.");
@@ -71,8 +70,17 @@ const Home = () => {
   }, []);
 
   // =========================
-  // PRODUCT SLIDE COMPONENT
+  // VIEW ALL HANDLER
   // =========================
+
+  const handleViewAll = () => {
+    navigate("/search");
+  };
+
+  // =========================
+  // PRODUCT SLIDER
+  // =========================
+
   const renderProductSlides = (items) => {
     if (loading) {
       return (
@@ -104,7 +112,7 @@ const Home = () => {
         spaceBetween={10}
         navigation={true}
         modules={[Navigation]}
-        className="mySwiper"
+        className="productSwiper"
         breakpoints={{
           0: {
             slidesPerView: 1,
@@ -121,7 +129,7 @@ const Home = () => {
         }}
       >
         {items.map((product) => (
-          <SwiperSlide key={product._id}>
+          <SwiperSlide key={product._id || product.id}>
             <ProductItem product={product} />
           </SwiperSlide>
         ))}
@@ -134,16 +142,19 @@ const Home = () => {
       {/* =========================
           HOME BANNER
       ========================= */}
+
       <HomeBanner />
 
       {/* =========================
           HOME CATEGORIES
       ========================= */}
+
       <HomeCat />
 
       {/* =========================
           HOME PRODUCTS
       ========================= */}
+
       <section className="homeProducts">
         <div className="container">
           <div className="row">
@@ -151,12 +162,12 @@ const Home = () => {
             {/* =========================
                 LEFT BANNERS
             ========================= */}
-            <div className="col-md-3">
 
+            <div className="col-md-3">
               <div className="banner">
                 <img
                   src={banner1}
-                  alt="Banner"
+                  alt="Special offer banner"
                   className="cursor w-100"
                 />
               </div>
@@ -164,23 +175,23 @@ const Home = () => {
               <div className="banner mt-4">
                 <img
                   src={banner2}
-                  alt="Banner"
+                  alt="Fashion sale banner"
                   className="cursor w-100"
                 />
               </div>
-
             </div>
 
             {/* =========================
                 PRODUCT SECTION
             ========================= */}
+
             <div className="col-md-9 productRow">
 
               {/* =========================
                   BEST PRODUCTS
               ========================= */}
-              <div className="d-flex align-items-center">
 
+              <div className="d-flex align-items-center">
                 <div className="info w-75">
                   <h3 className="mb-0 hd">
                     BEST PRODUCT
@@ -191,14 +202,17 @@ const Home = () => {
                   </p>
                 </div>
 
-                <Button className="viewAllBtn">
+                <Button
+                  className="viewAllBtn"
+                  onClick={handleViewAll}
+                >
                   View All
                   <IoIosArrowRoundForward />
                 </Button>
-
               </div>
 
               {/* BEST PRODUCT SLIDER */}
+
               <div className="product_row w-100 mt-2">
                 {renderProductSlides(products)}
               </div>
@@ -206,8 +220,8 @@ const Home = () => {
               {/* =========================
                   NEW PRODUCTS
               ========================= */}
-              <div className="d-flex align-items-center mt-4">
 
+              <div className="d-flex align-items-center mt-4">
                 <div className="info w-75">
                   <h3 className="mb-0 hd">
                     NEW PRODUCTS
@@ -218,14 +232,17 @@ const Home = () => {
                   </p>
                 </div>
 
-                <Button className="viewAllBtn">
+                <Button
+                  className="viewAllBtn"
+                  onClick={handleViewAll}
+                >
                   View All
                   <IoIosArrowRoundForward />
                 </Button>
-
               </div>
 
               {/* NEW PRODUCT SLIDER */}
+
               <div className="product_row w-100 mt-3">
                 {renderProductSlides(products)}
               </div>
@@ -233,12 +250,12 @@ const Home = () => {
               {/* =========================
                   BANNERS
               ========================= */}
-              <div className="d-flex mt-4 mb-5 bannerSec">
 
+              <div className="d-flex mt-4 mb-5 bannerSec">
                 <div className="banner mr-3">
                   <img
                     src={banner3}
-                    alt="Banner"
+                    alt="Fashion collection banner"
                     className="cursor w-100"
                   />
                 </div>
@@ -246,15 +263,12 @@ const Home = () => {
                 <div className="banner">
                   <img
                     src={banner4}
-                    alt="Banner"
+                    alt="Fashion sale banner"
                     className="cursor w-100"
                   />
                 </div>
-
               </div>
-
             </div>
-
           </div>
         </div>
       </section>
@@ -262,13 +276,12 @@ const Home = () => {
       {/* =========================
           NEWSLETTER
       ========================= */}
-      <section className="newsLetterSection mt-0 mb-1 d-flex align-items-center">
 
+      <section className="newsLetterSection mt-0 mb-1 d-flex align-items-center">
         <div className="container">
           <div className="row">
 
             <div className="col-md-6">
-
               <p className="text-white mb-1">
                 20% discount for your first order
               </p>
@@ -287,24 +300,21 @@ const Home = () => {
                 className="newsletterForm"
                 onSubmit={(event) => event.preventDefault()}
               >
-
                 <MdOutlineMail />
 
                 <input
                   type="email"
                   placeholder="Your Email Address"
+                  required
                 />
 
                 <Button type="submit">
                   Subscribe
                 </Button>
-
               </form>
-
             </div>
 
             <div className="col-md-6 d-flex justify-content-end align-items-end">
-
               <img
                 src={newsLetterImg}
                 alt="Newsletter"
@@ -314,16 +324,11 @@ const Home = () => {
                   height: "180px",
                 }}
               />
-
             </div>
 
           </div>
         </div>
-
       </section>
-
-    
-
     </>
   );
 };

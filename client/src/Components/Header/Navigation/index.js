@@ -181,14 +181,7 @@ const Navigation = () => {
                   </li>
                 ))}
 
-              {/* BLOG */}
-              <li className="list-inline-item">
-                <Link to="/">
-                  <Button>
-                    BLOG
-                  </Button>
-                </Link>
-              </li>
+             
 
               {/* CONTACT */}
               <li className="list-inline-item">
