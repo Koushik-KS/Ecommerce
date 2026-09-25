@@ -1,24 +1,77 @@
-
 import Button from "@mui/material/Button";
 import { IoMdMenu } from "react-icons/io";
-import { FaAngleDown } from "react-icons/fa6";
+import { FaAngleDown, FaAngleRight } from "react-icons/fa6";
 import { Link } from "react-router-dom";
-import React, { useState } from "react";
-import { FaAngleRight } from "react-icons/fa6";
+import React, { useEffect, useState } from "react";
+import axios from "axios";
 
 const Navigation = () => {
-  const [
-    isopenSidebarVal,
-    setisopenSidebarVal,
-  ] = useState(false);
+  const [isopenSidebarVal, setisopenSidebarVal] = useState(false);
+
+  // Categories from Admin Dashboard
+  const [categories, setCategories] = useState([]);
+
+  const [loadingCategories, setLoadingCategories] = useState(true);
+
+  // =========================
+  // GET CATEGORIES
+  // =========================
+
+  useEffect(() => {
+    const getCategories = async () => {
+      try {
+        setLoadingCategories(true);
+
+        const response = await axios.get(
+          "http://localhost:4000/api/category"
+        );
+
+        if (Array.isArray(response.data)) {
+          setCategories(response.data);
+        } else {
+          setCategories([]);
+        }
+      } catch (error) {
+        console.error(
+          "Error fetching categories:",
+          error
+        );
+
+        setCategories([]);
+      } finally {
+        setLoadingCategories(false);
+      }
+    };
+
+    getCategories();
+  }, []);
+
+  // =========================
+  // FORMAT CATEGORY NAME
+  // =========================
+
+  const formatCategoryName = (name) => {
+    if (!name) {
+      return "";
+    }
+
+    return String(name)
+      .charAt(0)
+      .toUpperCase() + String(name).slice(1);
+  };
 
   return (
     <nav>
       <div className="container">
         <div className="row">
-          {/* ALL CATEGORIES */}
+
+          {/* =========================
+              ALL CATEGORIES
+          ========================= */}
+
           <div className="col-sm-2 navPart1">
             <div className="catWapper">
+
               <Button
                 className="allcatTab align-items-center"
                 onClick={() =>
@@ -42,6 +95,7 @@ const Navigation = () => {
                 <span className="ml-auto"></span>
               </Button>
 
+              {/* SIDEBAR CATEGORY MENU */}
               <div
                 className={`sidebarNav ${
                   isopenSidebarVal
@@ -50,345 +104,104 @@ const Navigation = () => {
                 }`}
               >
                 <ul>
-                  <li>
-                    <Link to="/">
+
+                  {loadingCategories ? (
+                    <li>
                       <Button>
-                        men
-                        <FaAngleRight className="ml-auto" />
+                        Loading categories...
                       </Button>
-                    </Link>
-
-                    <div className="submenu">
-                      <Link to="/">
-                        <Button>clothing</Button>
-                      </Link>
-
-                      <Link to="/">
-                        <Button>footwear</Button>
-                      </Link>
-
-                      <Link to="/">
-                        <Button>clothing</Button>
-                      </Link>
-
-                      <Link to="/">
-                        <Button>clothing</Button>
-                      </Link>
-
-                      <Link to="/">
-                        <Button>clothing</Button>
-                      </Link>
-                    </div>
-                  </li>
-
-                  <li>
-                    <Link to="/">
+                    </li>
+                  ) : categories.length === 0 ? (
+                    <li>
                       <Button>
-                        women
-                        <FaAngleRight className="ml-auto" />
+                        No categories available
                       </Button>
-                    </Link>
+                    </li>
+                  ) : (
+                    categories.map((category) => (
+                      <li key={category._id}>
 
-                    <div className="submenu">
-                      <Link to="/">
-                        <Button>clothing</Button>
-                      </Link>
+                        <Link
+                          to={`/cat/${category._id}`}
+                          onClick={() =>
+                            setisopenSidebarVal(false)
+                          }
+                        >
+                          <Button>
+                            {formatCategoryName(
+                              category.name
+                            )}
 
-                      <Link to="/">
-                        <Button>footwear</Button>
-                      </Link>
+                            <FaAngleRight className="ml-auto" />
+                          </Button>
+                        </Link>
 
-                      <Link to="/">
-                        <Button>clothing</Button>
-                      </Link>
+                      </li>
+                    ))
+                  )}
 
-                      <Link to="/">
-                        <Button>clothing</Button>
-                      </Link>
-
-                      <Link to="/">
-                        <Button>clothing</Button>
-                      </Link>
-                    </div>
-                  </li>
-
-                  <li>
-                    <Link to="/">
-                      <Button>beauty</Button>
-                    </Link>
-                  </li>
-
-                  <li>
-                    <Link to="/">
-                      <Button>watches</Button>
-                    </Link>
-                  </li>
-
-                  <li>
-                    <Link to="/">
-                      <Button>kids</Button>
-                    </Link>
-                  </li>
-
-                  <li>
-                    <Link to="/">
-                      <Button>gifts</Button>
-                    </Link>
-                  </li>
-
-                  <li>
-                    <Link to="/">
-                      <Button>men</Button>
-                    </Link>
-                  </li>
-
-                  <li>
-                    <Link to="/">
-                      <Button>women</Button>
-                    </Link>
-                  </li>
-
-                  <li>
-                    <Link to="/">
-                      <Button>beauty</Button>
-                    </Link>
-                  </li>
-
-                  <li>
-                    <Link to="/">
-                      <Button>watches</Button>
-                    </Link>
-                  </li>
-
-                  <li>
-                    <Link to="/">
-                      <Button>kids</Button>
-                    </Link>
-                  </li>
-
-                  <li>
-                    <Link to="/">
-                      <Button>gifts</Button>
-                    </Link>
-                  </li>
                 </ul>
               </div>
             </div>
           </div>
 
-          {/* NAVIGATION LINKS */}
+          {/* =========================
+              MAIN NAVIGATION
+          ========================= */}
+
           <div className="col-sm-10 navPart2 d-flex align-items-center-center">
+
             <ul className="list list-inline m-auto">
+
+              {/* HOME */}
               <li className="list-inline-item">
                 <Link to="/">
-                  <Button>HOME</Button>
+                  <Button>
+                    HOME
+                  </Button>
                 </Link>
               </li>
 
+              {/* DYNAMIC CATEGORIES */}
+              {!loadingCategories &&
+                categories.map((category) => (
+                  <li
+                    className="list-inline-item"
+                    key={category._id}
+                  >
+                    <Link
+                      to={`/cat/${category._id}`}
+                    >
+                      <Button>
+                        {formatCategoryName(
+                          category.name
+                        )}
+                      </Button>
+                    </Link>
+                  </li>
+                ))}
+
+              {/* BLOG */}
               <li className="list-inline-item">
                 <Link to="/">
-                  <Button>MEN</Button>
+                  <Button>
+                    BLOG
+                  </Button>
                 </Link>
-
-                <div className="submenu shadow">
-                  <Link to="/">
-                    <Button>clothing</Button>
-                  </Link>
-
-                  <Link to="/">
-                    <Button>footwear</Button>
-                  </Link>
-
-                  <Link to="/">
-                    <Button>clothing</Button>
-                  </Link>
-
-                  <Link to="/">
-                    <Button>clothing</Button>
-                  </Link>
-
-                  <Link to="/">
-                    <Button>clothing</Button>
-                  </Link>
-                </div>
-              </li>
-
-              <li className="list-inline-item">
-                <Link to="/">
-                  <Button>WOMEN</Button>
-                </Link>
-
-                <div className="submenu shadow">
-                  <Link to="/">
-                    <Button>clothing</Button>
-                  </Link>
-
-                  <Link to="/">
-                    <Button>footwear</Button>
-                  </Link>
-
-                  <Link to="/">
-                    <Button>clothing</Button>
-                  </Link>
-
-                  <Link to="/">
-                    <Button>clothing</Button>
-                  </Link>
-
-                  <Link to="/">
-                    <Button>clothing</Button>
-                  </Link>
-                </div>
-              </li>
-
-              <li className="list-inline-item">
-                <Link to="/">
-                  <Button>BEAUTY</Button>
-                </Link>
-
-                <div className="submenu shadow">
-                  <Link to="/">
-                    <Button>clothing</Button>
-                  </Link>
-
-                  <Link to="/">
-                    <Button>footwear</Button>
-                  </Link>
-
-                  <Link to="/">
-                    <Button>clothing</Button>
-                  </Link>
-
-                  <Link to="/">
-                    <Button>clothing</Button>
-                  </Link>
-
-                  <Link to="/">
-                    <Button>clothing</Button>
-                  </Link>
-                </div>
-              </li>
-
-              <li className="list-inline-item">
-                <Link to="/">
-                  <Button>WATCHES</Button>
-                </Link>
-
-                <div className="submenu shadow">
-                  <Link to="/">
-                    <Button>clothing</Button>
-                  </Link>
-
-                  <Link to="/">
-                    <Button>footwear</Button>
-                  </Link>
-
-                  <Link to="/">
-                    <Button>clothing</Button>
-                  </Link>
-
-                  <Link to="/">
-                    <Button>clothing</Button>
-                  </Link>
-
-                  <Link to="/">
-                    <Button>clothing</Button>
-                  </Link>
-                </div>
-              </li>
-
-              <li className="list-inline-item">
-                <Link to="/">
-                  <Button>KIDS</Button>
-                </Link>
-
-                <div className="submenu shadow">
-                  <Link to="/">
-                    <Button>clothing</Button>
-                  </Link>
-
-                  <Link to="/">
-                    <Button>footwear</Button>
-                  </Link>
-
-                  <Link to="/">
-                    <Button>clothing</Button>
-                  </Link>
-
-                  <Link to="/">
-                    <Button>clothing</Button>
-                  </Link>
-
-                  <Link to="/">
-                    <Button>clothing</Button>
-                  </Link>
-                </div>
-              </li>
-
-              <li className="list-inline-item">
-                <Link to="/">
-                  <Button>GIFT</Button>
-                </Link>
-
-                <div className="submenu shadow">
-                  <Link to="/">
-                    <Button>clothing</Button>
-                  </Link>
-
-                  <Link to="/">
-                    <Button>footwear</Button>
-                  </Link>
-
-                  <Link to="/">
-                    <Button>clothing</Button>
-                  </Link>
-
-                  <Link to="/">
-                    <Button>clothing</Button>
-                  </Link>
-
-                  <Link to="/">
-                    <Button>clothing</Button>
-                  </Link>
-                </div>
-              </li>
-
-              <li className="list-inline-item">
-                <Link to="/">
-                  <Button>BLOG</Button>
-                </Link>
-
-                <div className="submenu shadow">
-                  <Link to="/">
-                    <Button>clothing</Button>
-                  </Link>
-
-                  <Link to="/">
-                    <Button>footwear</Button>
-                  </Link>
-
-                  <Link to="/">
-                    <Button>clothing</Button>
-                  </Link>
-
-                  <Link to="/">
-                    <Button>clothing</Button>
-                  </Link>
-
-                  <Link to="/">
-                    <Button>clothing</Button>
-                  </Link>
-                </div>
               </li>
 
               {/* CONTACT */}
               <li className="list-inline-item">
                 <Link to="/contact">
-                  <Button>CONTACT</Button>
+                  <Button>
+                    CONTACT
+                  </Button>
                 </Link>
               </li>
+
             </ul>
           </div>
+
         </div>
       </div>
     </nav>

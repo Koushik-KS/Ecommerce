@@ -39,6 +39,7 @@ import Track from "./Pages/Track";
 import Contact from "./Pages/Contact";
 import SignIn from "./Pages/SignIn";
 import SignUp from "./Pages/SignUp";
+import SearchResults from "./Pages/SearchResults";
 
 // =========================
 // CREATE CONTEXT
@@ -402,22 +403,16 @@ function App() {
       return;
     }
 
-    console.log("Wishlist button clicked:", productId);
-
     setWishlistItems((previousItems) => {
       const productExists = previousItems.some(
         (item) => getProductId(item) === productId
       );
 
       if (productExists) {
-        console.log("Removing from wishlist:", productId);
-
         return previousItems.filter(
           (item) => getProductId(item) !== productId
         );
       }
-
-      console.log("Adding to wishlist:", productId);
 
       return [
         ...previousItems,
@@ -515,11 +510,9 @@ function App() {
       <MyContext.Provider value={values}>
 
         {/* HEADER */}
-
         {isHeaderFooterShow && <Header />}
 
         {/* ROUTES */}
-
         <Routes>
           <Route
             path="/"
@@ -575,14 +568,18 @@ function App() {
             path="/signUp"
             element={<SignUp />}
           />
+
+          {/* SEARCH RESULTS ROUTE */}
+          <Route
+            path="/search"
+            element={<SearchResults />}
+          />
         </Routes>
 
         {/* FOOTER */}
-
         {isHeaderFooterShow && <Footer />}
 
         {/* PRODUCT MODAL */}
-
         {isOpenProductModal && <ProductModal />}
 
       </MyContext.Provider>
