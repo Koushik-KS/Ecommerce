@@ -854,6 +854,149 @@ position: relative;z-index: 100;border-radius: 10px !important;}
 
 
 
+/* =========================================
+   PRODUCT DETAILS WISHLIST BUTTON
+========================================= */
+
+.wishlist-detail-button {
+  transition: all 0.3s ease !important;
+}
+
+/* Normal and active heart icon */
+
+.wishlist-detail-button .wishlist-heart-icon {
+  font-size: 20px;
+  transition: all 0.3s ease;
+}
+
+/* Active wishlist button */
+
+.wishlist-detail-button.active {
+  background-color: #fff0f0 !important;
+  border: 1px solid #e53935 !important;
+}
+
+/* Active red heart */
+
+.wishlist-detail-button.active
+  .wishlist-heart-icon {
+  color: #e53935 !important;
+}
+
+/* Hover effect */
+
+.wishlist-detail-button:hover {
+  background-color: #ffe2e2 !important;
+  border-color: #e53935 !important;
+}
+
+.wishlist-detail-button:hover
+  .wishlist-heart-icon {
+  color: #e53935 !important;
+}
 
 
+/* =====================================
+   PRODUCT CARD WISHLIST BUTTON
+===================================== */
 
+.productItem .actions .wishlist-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 40px;
+  height: 40px;
+
+  padding: 0;
+  border: none;
+  border-radius: 50%;
+
+  background-color: #ffffff;
+
+  transition: all 0.3s ease;
+}
+
+/* NORMAL HEART */
+
+.productItem .actions .wishlist-heart {
+  font-size: 25px;
+  color: #555555;
+
+  transition: all 0.3s ease;
+}
+
+/* ACTIVE RED HEART */
+
+.productItem .actions .active-heart {
+  font-size: 20px;
+  color: #e53935;
+}
+
+/* HOVER EFFECT */
+
+.productItem .actions .wishlist-button:hover {
+  background-color: #fff0f0;
+  transform: scale(1.08);
+}
+
+/* ACTIVE WISHLIST BUTTON */
+
+.productItem
+  .actions
+  .wishlist-button.wishlist-active {
+  background-color: #fff0f0;
+}
+
+/* BUTTON FOCUS */
+
+.productItem .actions .wishlist-button:focus {
+  outline: none;
+  box-shadow: none;
+}
+
+
+/* ============================= */
+/* Header Wishlist Icon */
+/* ============================= */
+
+.headerWishlist {
+  width: 44px;
+  height: 44px;
+  margin-right: 12px;
+}
+
+.wishlistHeaderButton {
+  width: 44px !important;
+  height: 44px !important;
+  min-width: 44px !important;
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #dddddd !important;
+  border-radius: 50% !important;
+  background-color: #ffffff !important;
+  color: #e53935 !important;
+  font-size: 19px !important;
+  transition: all 0.3s ease;
+}
+
+.wishlistHeaderButton:hover {
+  background-color: #fff0f0 !important;
+  transform: scale(1.08);
+}
+
+.wishlistCount {
+  position: absolute;
+  top: -7px;
+  right: -7px;
+  min-width: 19px;
+  height: 19px;
+  padding: 2px 5px;
+  border-radius: 50%;
+  background-color: #e53935;
+  color: #ffffff;
+  font-size: 11px;
+  font-weight: 600;
+  z-index: 5;
+}

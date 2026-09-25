@@ -32,6 +32,7 @@ import Home from "./Pages/Home";
 import Listing from "./Pages/Home/Listing";
 import ProductDetails from "./Pages/ProductDetails";
 import Cart from "./Pages/Cart";
+import Wishlist from "./Pages/Wishlist";
 import Checkout from "./Pages/Checkout";
 import OrderSuccess from "./Pages/OrderSuccess";
 import Track from "./Pages/Track";
@@ -51,7 +52,6 @@ function App() {
   // =========================
 
   const [countryList, setCountryList] = useState([]);
-
   const [selectCountry, setSelectCountry] = useState("");
 
   // =========================
@@ -120,6 +120,25 @@ function App() {
   });
 
   // =========================
+  // WISHLIST STATE
+  // =========================
+
+  const [wishlistItems, setWishlistItems] = useState(() => {
+    const savedWishlist = localStorage.getItem("wishlistItems");
+
+    try {
+      return savedWishlist ? JSON.parse(savedWishlist) : [];
+    } catch (error) {
+      console.error(
+        "Error loading wishlist from localStorage:",
+        error
+      );
+
+      return [];
+    }
+  });
+
+  // =========================
   // GET COUNTRIES
   // =========================
 
@@ -139,6 +158,17 @@ function App() {
       JSON.stringify(cartItems)
     );
   }, [cartItems]);
+
+  // =========================
+  // SAVE WISHLIST TO LOCAL STORAGE
+  // =========================
+
+  useEffect(() => {
+    localStorage.setItem(
+      "wishlistItems",
+      JSON.stringify(wishlistItems)
+    );
+  }, [wishlistItems]);
 
   // =========================
   // COUNTRY API
@@ -170,27 +200,51 @@ function App() {
   };
 
   // =========================
+  // NORMALIZE PRODUCT ID
+  // =========================
+
+  const getProductId = (product) => {
+    if (!product) {
+      return "";
+    }
+
+    return String(product._id || product.id || "");
+  };
+
+  // =========================
   // ADD PRODUCT TO CART
   // =========================
 
   const addToCart = (product, quantity = 1) => {
-    if (!product || !product._id) {
-      console.error("Invalid product data");
+    const productId = getProductId(product);
 
+    if (!product || !productId) {
+      console.error("Invalid product data for cart");
+      return;
+    }
+
+    const validQuantity = Number(quantity);
+
+    if (
+      !Number.isFinite(validQuantity) ||
+      validQuantity < 1
+    ) {
       return;
     }
 
     setCartItems((previousItems) => {
       const existingProduct = previousItems.find(
-        (item) => item._id === product._id
+        (item) => getProductId(item) === productId
       );
 
       if (existingProduct) {
         return previousItems.map((item) =>
-          item._id === product._id
+          getProductId(item) === productId
             ? {
                 ...item,
-                quantity: (item.quantity || 1) + quantity,
+                quantity:
+                  Number(item.quantity || 1) +
+                  Math.floor(validQuantity),
               }
             : item
         );
@@ -200,7 +254,8 @@ function App() {
         ...previousItems,
         {
           ...product,
-          quantity,
+          _id: productId,
+          quantity: Math.floor(validQuantity),
         },
       ];
     });
@@ -211,9 +266,11 @@ function App() {
   // =========================
 
   const removeFromCart = (productId) => {
+    const normalizedId = String(productId || "");
+
     setCartItems((previousItems) =>
       previousItems.filter(
-        (item) => item._id !== productId
+        (item) => getProductId(item) !== normalizedId
       )
     );
   };
@@ -223,15 +280,19 @@ function App() {
   // =========================
 
   const updateQuantity = (productId, quantity) => {
+    const normalizedId = String(productId || "");
     const newQuantity = Number(quantity);
 
-    if (!Number.isFinite(newQuantity) || newQuantity < 1) {
+    if (
+      !Number.isFinite(newQuantity) ||
+      newQuantity < 1
+    ) {
       return;
     }
 
     setCartItems((previousItems) =>
       previousItems.map((item) =>
-        item._id === productId
+        getProductId(item) === normalizedId
           ? {
               ...item,
               quantity: Math.floor(newQuantity),
@@ -254,7 +315,8 @@ function App() {
   // =========================
 
   const cartCount = cartItems.reduce(
-    (total, item) => total + (item.quantity || 0),
+    (total, item) =>
+      total + Number(item.quantity || 0),
     0
   );
 
@@ -274,6 +336,128 @@ function App() {
     },
     0
   );
+
+  // =========================
+  // ADD PRODUCT TO WISHLIST
+  // =========================
+
+  const addToWishlist = (product) => {
+    const productId = getProductId(product);
+
+    if (!product || !productId) {
+      console.error(
+        "Invalid product data for wishlist:",
+        product
+      );
+
+      return;
+    }
+
+    setWishlistItems((previousItems) => {
+      const productAlreadyExists = previousItems.some(
+        (item) => getProductId(item) === productId
+      );
+
+      if (productAlreadyExists) {
+        return previousItems;
+      }
+
+      return [
+        ...previousItems,
+        {
+          ...product,
+          _id: productId,
+        },
+      ];
+    });
+  };
+
+  // =========================
+  // REMOVE PRODUCT FROM WISHLIST
+  // =========================
+
+  const removeFromWishlist = (productId) => {
+    const normalizedId = String(productId || "");
+
+    setWishlistItems((previousItems) =>
+      previousItems.filter(
+        (item) => getProductId(item) !== normalizedId
+      )
+    );
+  };
+
+  // =========================
+  // TOGGLE WISHLIST PRODUCT
+  // =========================
+
+  const toggleWishlist = (product) => {
+    const productId = getProductId(product);
+
+    if (!product || !productId) {
+      console.error(
+        "Invalid product data for wishlist:",
+        product
+      );
+
+      return;
+    }
+
+    console.log("Wishlist button clicked:", productId);
+
+    setWishlistItems((previousItems) => {
+      const productExists = previousItems.some(
+        (item) => getProductId(item) === productId
+      );
+
+      if (productExists) {
+        console.log("Removing from wishlist:", productId);
+
+        return previousItems.filter(
+          (item) => getProductId(item) !== productId
+        );
+      }
+
+      console.log("Adding to wishlist:", productId);
+
+      return [
+        ...previousItems,
+        {
+          ...product,
+          _id: productId,
+        },
+      ];
+    });
+  };
+
+  // =========================
+  // CHECK WISHLIST PRODUCT
+  // =========================
+
+  const isInWishlist = (productId) => {
+    const normalizedId = String(productId || "");
+
+    if (!normalizedId) {
+      return false;
+    }
+
+    return wishlistItems.some(
+      (item) => getProductId(item) === normalizedId
+    );
+  };
+
+  // =========================
+  // CLEAR WISHLIST
+  // =========================
+
+  const clearWishlist = () => {
+    setWishlistItems([]);
+  };
+
+  // =========================
+  // WISHLIST COUNT
+  // =========================
+
+  const wishlistCount = wishlistItems.length;
 
   // =========================
   // CONTEXT VALUES
@@ -314,15 +498,28 @@ function App() {
     clearCart,
     cartCount,
     cartTotal,
+
+    // Wishlist
+    wishlistItems,
+    setWishlistItems,
+    addToWishlist,
+    removeFromWishlist,
+    toggleWishlist,
+    isInWishlist,
+    clearWishlist,
+    wishlistCount,
   };
 
   return (
     <BrowserRouter>
       <MyContext.Provider value={values}>
+
         {/* HEADER */}
+
         {isHeaderFooterShow && <Header />}
 
         {/* ROUTES */}
+
         <Routes>
           <Route
             path="/"
@@ -342,6 +539,11 @@ function App() {
           <Route
             path="/cart"
             element={<Cart />}
+          />
+
+          <Route
+            path="/wishlist"
+            element={<Wishlist />}
           />
 
           <Route
@@ -376,10 +578,13 @@ function App() {
         </Routes>
 
         {/* FOOTER */}
+
         {isHeaderFooterShow && <Footer />}
 
         {/* PRODUCT MODAL */}
+
         {isOpenProductModal && <ProductModal />}
+
       </MyContext.Provider>
     </BrowserRouter>
   );

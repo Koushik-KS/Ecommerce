@@ -4,6 +4,7 @@ import Logo from "../../assets/images/eshop.png";
 import Button from "@mui/material/Button";
 import CountryDropdown from "../CountryDropdown";
 import { IoBagOutline } from "react-icons/io5";
+import { FaHeart } from "react-icons/fa";
 import SearchBox from "./SearcBox";
 import Navigation from "./Navigation";
 import { useContext } from "react";
@@ -23,6 +24,9 @@ const Header = () => {
     (total, item) => total + item.price * item.quantity,
     0
   );
+
+  // Get wishlist count
+  const wishlistCount = context.wishlistCount || 0;
 
   // Generate the logged-in user's initial
   const getUserInitial = () => {
@@ -67,7 +71,7 @@ const Header = () => {
               {/* Search Box */}
               <SearchBox />
 
-              {/* Sign In and Cart */}
+              {/* Sign In and Wishlist and Cart */}
               <div className="part3 d-flex align-items-center ml-auto">
                 {/* User Profile / Sign In */}
                 {context.isLogin !== true ? (
@@ -103,6 +107,23 @@ const Header = () => {
                     {getUserInitial()}
                   </Button>
                 )}
+
+                {/* Wishlist Icon */}
+                <div className="headerWishlist position-relative mr-3">
+                  <Link to="/wishlist">
+                    <Button
+                      className="circle wishlistHeaderButton"
+                      title="Wishlist"
+                    >
+                      <FaHeart />
+                    </Button>
+                  </Link>
+
+                  {/* Dynamic Wishlist Count */}
+                  <span className="wishlistCount d-flex align-items-center justify-content-center">
+                    {wishlistCount}
+                  </span>
+                </div>
 
                 {/* Cart */}
                 <div className="ml-auto cartTab d-flex align-items-center">

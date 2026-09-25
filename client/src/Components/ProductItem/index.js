@@ -1,5 +1,5 @@
 
-import React from "react";
+import React, { useContext } from "react";
 
 import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
@@ -10,15 +10,25 @@ import Button from "@mui/material/Button";
 
 import { TfiFullscreen } from "react-icons/tfi";
 import { CiHeart } from "react-icons/ci";
+import { FaHeart } from "react-icons/fa";
 
 import { Navigation } from "swiper/modules";
 
 import { useNavigate } from "react-router-dom";
 
+import { MyContext } from "../../App";
+
 const ProductItem = (props) => {
   const navigate = useNavigate();
 
   const product = props.product;
+
+  // =========================
+  // CONTEXT
+  // =========================
+
+  const { toggleWishlist, isInWishlist } =
+    useContext(MyContext);
 
   // =========================
   // CHECK PRODUCT
@@ -32,29 +42,39 @@ const ProductItem = (props) => {
   // PRODUCT INFORMATION
   // =========================
 
-  const productId = product._id || product.id;
+  const productId = String(
+    product._id || product.id || ""
+  );
 
   const productName = product.name || "Product";
 
-  const productBrand = product.brand || "No brand";
+  const productBrand =
+    typeof product.brand === "object"
+      ? product.brand?.name || "No brand"
+      : product.brand || "No brand";
 
-  const productDescription = product.description || "";
+  const productDescription =
+    product.description || "";
 
-  // Selling price
-  const productPrice = Number(product.price || 0);
+  const productPrice = Number(
+    product.price || 0
+  );
 
-  // Original / regular price
   const productRegularPrice = Number(
     product.regularPrice || 0
   );
 
-  const productRating = Number(product.rating || 0);
+  const productRating = Number(
+    product.rating || 0
+  );
 
   const productStock = Number(
     product.countInStock ?? 0
   );
 
-  const productImages = Array.isArray(product.images)
+  const productImages = Array.isArray(
+    product.images
+  )
     ? product.images.filter((image) => image)
     : [];
 
@@ -85,7 +105,15 @@ const ProductItem = (props) => {
     : 0;
 
   // =========================
-  // OPEN PRODUCT DETAILS PAGE
+  // WISHLIST STATUS
+  // =========================
+
+  const productInWishlist = isInWishlist(
+    productId
+  );
+
+  // =========================
+  // VIEW PRODUCT DETAILS
   // =========================
 
   const viewProductDetails = () => {
@@ -95,6 +123,26 @@ const ProductItem = (props) => {
     }
 
     navigate(`/product/${productId}`);
+  };
+
+  // =========================
+  // WISHLIST HANDLER
+  // =========================
+
+  const handleWishlistClick = (event) => {
+    event.preventDefault();
+    event.stopPropagation();
+
+    if (!productId) {
+      console.error(
+        "Product ID is missing:",
+        product
+      );
+
+      return;
+    }
+
+    toggleWishlist(product);
   };
 
   // =========================
@@ -149,7 +197,9 @@ const ProductItem = (props) => {
           )}
         </Swiper>
 
-        {/* CATEGORY BADGE */}
+        {/* =========================
+            CATEGORY BADGE
+        ========================= */}
 
         {categoryName && (
           <span className="badge badge-primary">
@@ -157,18 +207,47 @@ const ProductItem = (props) => {
           </span>
         )}
 
-        {/* ACTION BUTTONS */}
+        {/* =========================
+            ACTION BUTTONS
+        ========================= */}
 
         <div className="actions">
+          {/* FULLSCREEN BUTTON */}
+
           <Button
+            type="button"
             onClick={viewProductDetails}
             aria-label="View product details"
           >
             <TfiFullscreen />
           </Button>
 
-          <Button aria-label="Add to wishlist">
-            <CiHeart />
+          {/* WISHLIST BUTTON */}
+
+          <Button
+            type="button"
+            onClick={handleWishlistClick}
+            aria-label={
+              productInWishlist
+                ? "Remove from wishlist"
+                : "Add to wishlist"
+            }
+            title={
+              productInWishlist
+                ? "Remove from Wishlist"
+                : "Add to Wishlist"
+            }
+            className={`wishlist-button ${
+              productInWishlist
+                ? "wishlist-active"
+                : ""
+            }`}
+          >
+            {productInWishlist ? (
+              <FaHeart className="wishlist-heart active-heart" />
+            ) : (
+              <CiHeart className="wishlist-heart" />
+            )}
           </Button>
         </div>
       </div>
@@ -223,7 +302,10 @@ const ProductItem = (props) => {
       ========================= */}
 
       <Rating
-        value={productRating}
+        value={Math.min(
+          Math.max(productRating, 0),
+          5
+        )}
         readOnly
         size="small"
         precision={0.5}
@@ -253,7 +335,9 @@ const ProductItem = (props) => {
             }}
           >
             ₹
-            {productRegularPrice.toLocaleString("en-IN")}
+            {productRegularPrice.toLocaleString(
+              "en-IN"
+            )}
           </span>
         )}
 

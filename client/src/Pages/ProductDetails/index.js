@@ -9,6 +9,7 @@ import Avatar from "@mui/material/Avatar";
 import {
   FaShoppingCart,
   FaRegHeart,
+  FaHeart,
 } from "react-icons/fa";
 
 import { MdOutlineCompareArrows } from "react-icons/md";
@@ -47,7 +48,9 @@ const getUserInitial = (name) => {
     return "C";
   }
 
-  return name.trim().charAt(0).toUpperCase() || "C";
+  return (
+    name.trim().charAt(0).toUpperCase() || "C"
+  );
 };
 
 // =====================================================
@@ -62,7 +65,11 @@ const ProductDetails = () => {
   // CONTEXT
   // =====================================================
 
-  const { addToCart } = useContext(MyContext);
+  const {
+    addToCart,
+    toggleWishlist,
+    isInWishlist,
+  } = useContext(MyContext);
 
   // =====================================================
   // PRODUCT AND REVIEW STATES
@@ -162,7 +169,7 @@ const ProductDetails = () => {
 
       if (
         !productData ||
-        !productData._id
+        (!productData._id && !productData.id)
       ) {
         throw new Error(
           "Invalid product data received."
@@ -287,6 +294,215 @@ const ProductDetails = () => {
   }, [fetchProduct, fetchReviews]);
 
   // =====================================================
+  // LOADING STATE
+  // =====================================================
+
+  if (loadingProduct) {
+    return (
+      <section className="section">
+        <div className="container">
+          <h3>Loading product...</h3>
+        </div>
+      </section>
+    );
+  }
+
+  // =====================================================
+  // ERROR STATE
+  // =====================================================
+
+  if (error || !product) {
+    return (
+      <section className="section">
+        <div className="container">
+          <h3>
+            {error || "Product not found."}
+          </h3>
+
+          <Button
+            variant="contained"
+            onClick={() => navigate("/")}
+            className="mt-3"
+          >
+            Go to Home
+          </Button>
+        </div>
+      </section>
+    );
+  }
+
+  // =====================================================
+  // PRODUCT DATA
+  // =====================================================
+
+  const productName =
+    product.name || "Product";
+
+  const productDescription =
+    product.description ||
+    "No description available.";
+
+  const productBrand =
+    typeof product.brand === "object"
+      ? product.brand?.name ||
+        "Not specified"
+      : product.brand ||
+        "Not specified";
+
+  const productPrice = Number(
+    product.price ?? 0
+  );
+
+  const productRegularPrice = Number(
+    product.regularPrice ?? productPrice
+  );
+
+  const productRating = Number(
+    product.rating || 0
+  );
+
+  const productStock = Number(
+    product.countInStock || 0
+  );
+
+  const isInStock = productStock > 0;
+
+  const displayRating =
+    totalReviews > 0
+      ? averageRating
+      : productRating;
+
+  const categoryName =
+    typeof product.category === "object"
+      ? product.category?.name ||
+        "Not specified"
+      : product.category ||
+        "Not specified";
+
+  // =====================================================
+  // WISHLIST STATUS
+  // =====================================================
+
+  const productId = String(
+    product._id || product.id || ""
+  );
+
+  const productInWishlist = isInWishlist(
+    productId
+  );
+
+  // =====================================================
+  // ADD TO CART
+  // =====================================================
+
+  const handleAddToCart = () => {
+    if (!product) {
+      alert(
+        "Product information is unavailable."
+      );
+
+      return;
+    }
+
+    if (!isInStock) {
+      alert(
+        "This product is currently out of stock."
+      );
+
+      return;
+    }
+
+    if (
+      selectedQuantity < 1 ||
+      selectedQuantity > productStock
+    ) {
+      alert("Please select a valid quantity.");
+      return;
+    }
+
+    addToCart(
+      product,
+      selectedQuantity
+    );
+
+    alert(
+      `${productName} added to cart successfully!`
+    );
+  };
+
+  // =====================================================
+  // BUY NOW
+  // =====================================================
+
+  const handleBuyNow = () => {
+    if (!product) {
+      alert(
+        "Product information is unavailable."
+      );
+
+      return;
+    }
+
+    if (!isInStock) {
+      alert(
+        "This product is currently out of stock."
+      );
+
+      return;
+    }
+
+    if (
+      selectedQuantity < 1 ||
+      selectedQuantity > productStock
+    ) {
+      alert("Please select a valid quantity.");
+      return;
+    }
+
+    addToCart(
+      product,
+      selectedQuantity
+    );
+
+    navigate("/checkout");
+  };
+
+  // =====================================================
+  // WISHLIST TOGGLE
+  // =====================================================
+
+  const handleWishlistToggle = (event) => {
+    event?.stopPropagation();
+
+    if (!product) {
+      console.error(
+        "Product is not available."
+      );
+
+      return;
+    }
+
+    const currentProductId =
+      product._id || product.id;
+
+    if (!currentProductId) {
+      console.error(
+        "Product ID is missing:",
+        product
+      );
+
+      return;
+    }
+
+    console.log(
+      "Heart button clicked. Product ID:",
+      currentProductId
+    );
+
+    toggleWishlist(product);
+  };
+
+  // =====================================================
   // SUBMIT REVIEW
   // =====================================================
 
@@ -298,15 +514,6 @@ const ProductDetails = () => {
 
     const token = localStorage.getItem("token");
 
-    console.log(
-      "Token available:",
-      Boolean(token)
-    );
-
-    // =================================================
-    // CHECK LOGIN
-    // =================================================
-
     if (!token) {
       setReviewError(
         "Please log in to submit a review."
@@ -316,10 +523,6 @@ const ProductDetails = () => {
       return;
     }
 
-    // =================================================
-    // CHECK REVIEW TEXT
-    // =================================================
-
     const trimmedReviewMessage =
       reviewMessage.trim();
 
@@ -327,6 +530,7 @@ const ProductDetails = () => {
       setReviewError(
         "Please write a review."
       );
+
       return;
     }
 
@@ -334,6 +538,7 @@ const ProductDetails = () => {
       setReviewError(
         "Review must contain at least 3 characters."
       );
+
       return;
     }
 
@@ -341,12 +546,9 @@ const ProductDetails = () => {
       setReviewError(
         "Review cannot exceed 1000 characters."
       );
+
       return;
     }
-
-    // =================================================
-    // CHECK RATING
-    // =================================================
 
     if (
       !Number.isInteger(Number(rating)) ||
@@ -356,17 +558,15 @@ const ProductDetails = () => {
       setReviewError(
         "Please select a rating between 1 and 5."
       );
+
       return;
     }
-
-    // =================================================
-    // CHECK PRODUCT ID
-    // =================================================
 
     if (!id) {
       setReviewError(
         "Product ID is missing."
       );
+
       return;
     }
 
@@ -378,11 +578,6 @@ const ProductDetails = () => {
         rating: Number(rating),
         reviewText: trimmedReviewMessage,
       };
-
-      console.log(
-        "Submitting review request:",
-        requestBody
-      );
 
       const response = await fetch(
         REVIEW_API_URL,
@@ -400,16 +595,6 @@ const ProductDetails = () => {
 
       const responseText = await response.text();
 
-      console.log(
-        "Review API status:",
-        response.status
-      );
-
-      console.log(
-        "Review API response:",
-        responseText
-      );
-
       let data = {};
 
       try {
@@ -417,19 +602,10 @@ const ProductDetails = () => {
           ? JSON.parse(responseText)
           : {};
       } catch (parseError) {
-        console.error(
-          "JSON parsing error:",
-          parseError
-        );
-
         throw new Error(
           "Server returned an invalid response."
         );
       }
-
-      // =================================================
-      // HANDLE API ERROR
-      // =================================================
 
       if (
         !response.ok ||
@@ -452,15 +628,6 @@ const ProductDetails = () => {
             `Review submission failed. Status: ${response.status}`
         );
       }
-
-      // =================================================
-      // SUCCESS
-      // =================================================
-
-      console.log(
-        "Review submitted successfully:",
-        data
-      );
 
       setReviewSuccess(
         data.message ||
@@ -521,125 +688,6 @@ const ProductDetails = () => {
   };
 
   // =====================================================
-  // LOADING STATE
-  // =====================================================
-
-  if (loadingProduct) {
-    return (
-      <section className="section">
-        <div className="container">
-          <h3>
-            Loading product...
-          </h3>
-        </div>
-      </section>
-    );
-  }
-
-  // =====================================================
-  // ERROR STATE
-  // =====================================================
-
-  if (error || !product) {
-    return (
-      <section className="section">
-        <div className="container">
-          <h3>
-            {error || "Product not found."}
-          </h3>
-
-          <Button
-            variant="contained"
-            onClick={() => navigate("/")}
-            className="mt-3"
-          >
-            Go to Home
-          </Button>
-        </div>
-      </section>
-    );
-  }
-
-  // =====================================================
-  // PRODUCT DATA
-  // =====================================================
-
-  const productName =
-    product.name || "Product";
-
-  const productDescription =
-    product.description ||
-    "No description available.";
-
-  const productBrand =
-    typeof product.brand === "object"
-      ? product.brand?.name ||
-        "Not specified"
-      : product.brand ||
-        "Not specified";
-
-  const productPrice = Number(
-    product.price ?? 0
-  );
-
-  const productRegularPrice = Number(
-    product.regularPrice ??
-      productPrice
-  );
-
-  const productRating = Number(
-    product.rating || 0
-  );
-
-  const productStock = Number(
-    product.countInStock || 0
-  );
-
-  const isInStock =
-    productStock > 0;
-
-  const displayRating =
-    totalReviews > 0
-      ? averageRating
-      : productRating;
-
-  const categoryName =
-    typeof product.category === "object"
-      ? product.category?.name ||
-        "Not specified"
-      : product.category ||
-        "Not specified";
-
-  // =====================================================
-  // ADD TO CART
-  // =====================================================
-
-  const handleAddToCart = () => {
-    if (!product) {
-      alert(
-        "Product information is unavailable."
-      );
-      return;
-    }
-
-    if (!isInStock) {
-      alert(
-        "This product is currently out of stock."
-      );
-      return;
-    }
-
-    addToCart(
-      product,
-      selectedQuantity
-    );
-
-    alert(
-      `${productName} added to cart successfully!`
-    );
-  };
-
-  // =====================================================
   // RENDER
   // =====================================================
 
@@ -687,10 +735,7 @@ const ProductDetails = () => {
                   <Rating
                     name="product-rating"
                     value={Math.min(
-                      Math.max(
-                        displayRating,
-                        0
-                      ),
+                      Math.max(displayRating, 0),
                       5
                     )}
                     precision={0.5}
@@ -711,8 +756,7 @@ const ProductDetails = () => {
 
             <div className="d-flex info mb-3">
 
-              {productRegularPrice >
-                productPrice && (
+              {productRegularPrice > productPrice && (
                 <span className="oldPrice">
                   ₹
                   {productRegularPrice.toLocaleString(
@@ -754,9 +798,7 @@ const ProductDetails = () => {
 
             <div className="productSize d-flex align-items-center">
 
-              <span>
-                Size/Weight:
-              </span>
+              <span>Size/Weight:</span>
 
               <ul className="list list-inline mb-0 pl-4">
 
@@ -788,20 +830,25 @@ const ProductDetails = () => {
                 ))}
 
               </ul>
+
             </div>
 
             {/* CART CONTROLS */}
 
-            <div className="d-flex align-items-center mt-3">
+            <div className="d-flex align-items-center mt-3 flex-wrap">
+
+              {/* QUANTITY */}
 
               <QuantityBox
                 onChange={setSelectedQuantity}
                 maxQuantity={productStock}
               />
 
+              {/* ADD TO CART */}
+
               <Button
                 type="button"
-                className="btn-blue btn-lg btn-big btn-round"
+                className="btn-blue btn-lg btn-big btn-round ml-3"
                 disabled={!isInStock}
                 onClick={handleAddToCart}
               >
@@ -809,14 +856,56 @@ const ProductDetails = () => {
                 &nbsp; Add to Cart
               </Button>
 
-              <Tooltip title="Add to Wishlist">
-                <Button className="btn-blue btn-lg btn-circle ml-4">
-                  <FaRegHeart />
+              {/* BUY NOW */}
+
+              <Button
+                type="button"
+                className="btn-success btn-lg btn-big btn-round ml-3"
+                disabled={!isInStock}
+                onClick={handleBuyNow}
+              >
+                Buy Now
+              </Button>
+
+              {/* WISHLIST */}
+
+              <Tooltip
+                title={
+                  productInWishlist
+                    ? "Remove from Wishlist"
+                    : "Add to Wishlist"
+                }
+              >
+                <Button
+                  type="button"
+                  className={`btn-blue btn-lg btn-circle ml-3 wishlist-detail-button ${
+                    productInWishlist
+                      ? "active"
+                      : ""
+                  }`}
+                  onClick={handleWishlistToggle}
+                >
+                  {productInWishlist ? (
+                    <FaHeart
+                      size={20}
+                      className="wishlist-heart-icon"
+                    />
+                  ) : (
+                    <FaRegHeart
+                      size={20}
+                      className="wishlist-heart-icon"
+                    />
+                  )}
                 </Button>
               </Tooltip>
 
+              {/* COMPARE */}
+
               <Tooltip title="Add to Compare">
-                <Button className="btn-blue btn-lg btn-circle ml-2">
+                <Button
+                  type="button"
+                  className="btn-blue btn-lg btn-circle ml-2"
+                >
                   <MdOutlineCompareArrows />
                 </Button>
               </Tooltip>
@@ -956,18 +1045,13 @@ const ProductDetails = () => {
 
                     {/* REVIEW SUMMARY */}
 
-                    <h3>
-                      Customer Reviews
-                    </h3>
+                    <h3>Customer Reviews</h3>
 
                     <div className="d-flex align-items-center mb-3">
 
                       <Rating
                         value={Math.min(
-                          Math.max(
-                            displayRating,
-                            0
-                          ),
+                          Math.max(displayRating, 0),
                           5
                         )}
                         precision={0.5}
@@ -1010,8 +1094,7 @@ const ProductDetails = () => {
                       </div>
                     ) : reviews.length === 0 ? (
                       <div className="alert alert-light">
-                        No reviews yet.
-                        Be the first to review!
+                        No reviews yet. Be the first to review!
                       </div>
                     ) : (
                       reviews.map((review) => {
@@ -1030,9 +1113,7 @@ const ProductDetails = () => {
                           "";
 
                         const reviewerInitial =
-                          getUserInitial(
-                            reviewer
-                          );
+                          getUserInitial(reviewer);
 
                         return (
                           <div
@@ -1084,8 +1165,7 @@ const ProductDetails = () => {
                                   value={Math.min(
                                     Math.max(
                                       Number(
-                                        review.rating ||
-                                          0
+                                        review.rating || 0
                                       ),
                                       0
                                     ),
@@ -1096,6 +1176,7 @@ const ProductDetails = () => {
                                 />
 
                               </div>
+
                             </div>
 
                             <p className="mt-3 mb-0">
@@ -1117,15 +1198,12 @@ const ProductDetails = () => {
 
                                 {review.repliedAt && (
                                   <small className="text-muted">
-
                                     Replied on:{" "}
-
                                     {new Date(
                                       review.repliedAt
                                     ).toLocaleDateString(
                                       "en-IN"
                                     )}
-
                                   </small>
                                 )}
 
@@ -1144,9 +1222,7 @@ const ProductDetails = () => {
                       onSubmit={handleSubmitReview}
                     >
 
-                      <h4>
-                        Add a Review
-                      </h4>
+                      <h4>Add a Review</h4>
 
                       <p className="text-muted">
                         You must be logged in to submit a review.
@@ -1194,13 +1270,8 @@ const ProductDetails = () => {
                           name="review-rating"
                           value={rating}
                           precision={1}
-                          onChange={(
-                            event,
-                            newValue
-                          ) =>
-                            setRating(
-                              newValue || 0
-                            )
+                          onChange={(event, newValue) =>
+                            setRating(newValue || 0)
                           }
                         />
 
@@ -1213,9 +1284,7 @@ const ProductDetails = () => {
                         <Button
                           type="submit"
                           className="btn-blue btn-lg btn-big btn-round"
-                          disabled={
-                            submittingReview
-                          }
+                          disabled={submittingReview}
                         >
                           {submittingReview
                             ? "Submitting..."
