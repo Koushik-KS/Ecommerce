@@ -1,9 +1,28 @@
 
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import Button from "@mui/material/Button";
 import axios from "axios";
 import { MyContext } from "../../App";
+
+const API_URL = "http://localhost:4000";
+
+const defaultSettings = {
+  delivery: {
+    deliveryCharge: 0,
+    freeDeliveryAbove: 500,
+    minimumOrderAmount: 100,
+    estimatedDeliveryTime: "30-45 minutes",
+    deliveryEnabled: true,
+    freeDeliveryEnabled: true,
+  },
+  order: {
+    acceptOrders: true,
+    defaultStatus: "PENDING",
+    cashOnDelivery: true,
+    autoCancelEnabled: false,
+  },
+};
 
 const Checkout = () => {
   const context = useContext(MyContext);
@@ -21,23 +40,123 @@ const Checkout = () => {
     pincode: "",
   });
 
+  const [settings, setSettings] = useState(defaultSettings);
+  const [isLoadingSettings, setIsLoadingSettings] = useState(true);
+  const [settingsError, setSettingsError] = useState("");
+
   const [errors, setErrors] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // Calculate subtotal
-  const subtotal = cartItems.reduce(
-    (total, item) =>
-      total + Number(item.price || 0) * Number(item.quantity || 0),
-    0
+  // ==========================================
+  // LOAD ADMIN SETTINGS
+  // ==========================================
+
+  useEffect(() => {
+    const fetchSettings = async () => {
+      try {
+        setIsLoadingSettings(true);
+        setSettingsError("");
+
+        const response = await axios.get(`${API_URL}/api/settings`);
+
+        if (response.data.success && response.data.settings) {
+          const backendSettings = response.data.settings;
+
+          setSettings({
+            delivery: {
+              ...defaultSettings.delivery,
+              ...(backendSettings.delivery || {}),
+            },
+            order: {
+              ...defaultSettings.order,
+              ...(backendSettings.order || {}),
+            },
+          });
+        }
+      } catch (error) {
+        console.error("Fetch settings error:", error);
+
+        setSettingsError(
+          "Unable to load store settings. Please try again."
+        );
+      } finally {
+        setIsLoadingSettings(false);
+      }
+    };
+
+    fetchSettings();
+  }, []);
+
+  // ==========================================
+  // CALCULATE SUBTOTAL
+  // ==========================================
+
+  const subtotal = cartItems.reduce((total, item) => {
+    const price = Number(
+      item.price || item.salePrice || item.product?.price || 0
+    );
+
+    const quantity = Number(item.quantity || 1);
+
+    return total + price * quantity;
+  }, 0);
+
+  // ==========================================
+  // DELIVERY SETTINGS
+  // ==========================================
+
+  const deliverySettings = settings.delivery || defaultSettings.delivery;
+
+  const orderSettings = settings.order || defaultSettings.order;
+
+  const deliveryEnabled = deliverySettings.deliveryEnabled !== false;
+
+  const freeDeliveryEnabled =
+    deliverySettings.freeDeliveryEnabled !== false;
+
+  const deliveryChargeAmount = Number(
+    deliverySettings.deliveryCharge || 0
   );
 
-  // Delivery charge
-  const deliveryCharge = 0;
+  const freeDeliveryAbove = Number(
+    deliverySettings.freeDeliveryAbove || 0
+  );
 
-  // Total amount
+  const minimumOrderAmount = Number(
+    deliverySettings.minimumOrderAmount || 0
+  );
+
+  const estimatedDeliveryTime =
+    deliverySettings.estimatedDeliveryTime || "30-45 minutes";
+
+  const acceptOrders = orderSettings.acceptOrders !== false;
+
+  const cashOnDelivery = orderSettings.cashOnDelivery !== false;
+
+  // ==========================================
+  // CALCULATE DELIVERY CHARGE
+  // ==========================================
+
+  const isEligibleForFreeDelivery =
+    freeDeliveryEnabled &&
+    freeDeliveryAbove > 0 &&
+    subtotal >= freeDeliveryAbove;
+
+  const deliveryCharge =
+    !deliveryEnabled || isEligibleForFreeDelivery
+      ? 0
+      : deliveryChargeAmount;
+
+  // ==========================================
+  // CALCULATE TOTAL
+  // ==========================================
+
   const total = subtotal + deliveryCharge;
 
-  // Handle input changes
+  // ==========================================
+  // HANDLE INPUT CHANGES
+  // ==========================================
+
   const handleChange = (event) => {
     const { name, value } = event.target;
 
@@ -46,14 +165,16 @@ const Checkout = () => {
       [name]: value,
     }));
 
-    // Remove error while typing
     setErrors((previousErrors) => ({
       ...previousErrors,
       [name]: "",
     }));
   };
 
-  // Validate form
+  // ==========================================
+  // VALIDATE CUSTOMER FORM
+  // ==========================================
+
   const validateForm = () => {
     const newErrors = {};
 
@@ -90,7 +211,10 @@ const Checkout = () => {
     return Object.keys(newErrors).length === 0;
   };
 
-  // Get product ID from cart item
+  // ==========================================
+  // GET PRODUCT ID
+  // ==========================================
+
   const getProductId = (item) => {
     return (
       item.productId ||
@@ -102,13 +226,54 @@ const Checkout = () => {
     );
   };
 
-  // Place order
+  // ==========================================
+  // PLACE ORDER
+  // ==========================================
+
   const placeOrder = async (event) => {
     event.preventDefault();
 
     if (cartItems.length === 0) {
       alert("Your cart is empty!");
       navigate("/cart");
+      return;
+    }
+
+    if (isLoadingSettings) {
+      alert("Please wait while store settings are loading.");
+      return;
+    }
+
+    if (settingsError) {
+      alert("Store settings could not be loaded. Please try again.");
+      return;
+    }
+
+    if (!acceptOrders) {
+      alert(
+        "Sorry, orders are currently unavailable. Please try again later."
+      );
+      return;
+    }
+
+    if (!deliveryEnabled) {
+      alert(
+        "Delivery is currently unavailable. Please try again later."
+      );
+      return;
+    }
+
+    if (subtotal < minimumOrderAmount) {
+      alert(
+        `Minimum order amount is ₹${minimumOrderAmount}. Your current subtotal is ₹${subtotal}.`
+      );
+      return;
+    }
+
+    if (!cashOnDelivery) {
+      alert(
+        "Cash on Delivery is currently unavailable. Please try again later."
+      );
       return;
     }
 
@@ -119,41 +284,74 @@ const Checkout = () => {
     setIsSubmitting(true);
 
     try {
-      // Convert cart items into backend order items
+      // ==========================================
+      // CONVERT CART ITEMS INTO ORDER ITEMS
+      // ==========================================
+
       const orderItems = cartItems.map((item, index) => {
         const productId = getProductId(item);
 
-        // Validate product ID before sending the request
         if (!productId) {
           throw new Error(
-            `Product ID is missing for item ${index + 1}. Please remove this product and add it again.`
+            `Product ID is missing for item ${
+              index + 1
+            }. Please remove this product and add it again.`
           );
         }
 
         return {
-          productId: productId,
-          name: item.name || item.product?.name || "Product",
-          brand: item.brand || item.product?.brand || "",
-          image: item.image || item.product?.image || "",
-          price: Number(item.price || item.salePrice || 0),
+          productId: String(productId),
+
+          name:
+            item.name ||
+            item.product?.name ||
+            "Product",
+
+          brand:
+            item.brand ||
+            item.product?.brand ||
+            "",
+
+          image:
+            item.image ||
+            item.product?.image ||
+            "",
+
+          price: Number(
+            item.price ||
+              item.salePrice ||
+              item.product?.price ||
+              0
+          ),
+
           quantity: Number(item.quantity || 1),
         };
       });
 
-      // Prepare order data
+      // ==========================================
+      // PREPARE ORDER DATA
+      // ==========================================
+
       const orderDetails = {
         customer: formData,
+
         items: orderItems,
-        subtotal: subtotal,
-        deliveryCharge: deliveryCharge,
-        total: total,
+
+        subtotal: Number(subtotal.toFixed(2)),
+
+        deliveryCharge: Number(deliveryCharge.toFixed(2)),
+
+        total: Number(total.toFixed(2)),
       };
 
       console.log("Order details being sent:", orderDetails);
 
-      // Send order to backend
+      // ==========================================
+      // SEND ORDER TO BACKEND
+      // ==========================================
+
       const response = await axios.post(
-        "http://localhost:4000/api/orders",
+        `${API_URL}/api/orders`,
         orderDetails
       );
 
@@ -170,7 +368,10 @@ const Checkout = () => {
           },
         });
       } else {
-        alert(response.data.message || "Failed to place order");
+        alert(
+          response.data.message ||
+            "Failed to place order"
+        );
       }
     } catch (error) {
       console.error("Place order error:", error);
@@ -186,7 +387,10 @@ const Checkout = () => {
     }
   };
 
-  // Empty cart page
+  // ==========================================
+  // EMPTY CART PAGE
+  // ==========================================
+
   if (cartItems.length === 0) {
     return (
       <div className="container text-center py-5">
@@ -208,15 +412,79 @@ const Checkout = () => {
     );
   }
 
+  // ==========================================
+  // LOADING SETTINGS
+  // ==========================================
+
+  if (isLoadingSettings) {
+    return (
+      <div className="container text-center py-5">
+        <h4>Loading checkout settings...</h4>
+        <p className="text-muted">
+          Please wait.
+        </p>
+      </div>
+    );
+  }
+
+  // ==========================================
+  // SETTINGS ERROR
+  // ==========================================
+
+  if (settingsError) {
+    return (
+      <div className="container text-center py-5">
+        <div className="alert alert-danger">
+          {settingsError}
+        </div>
+
+        <Button
+          variant="contained"
+          className="btn-blue"
+          onClick={() => window.location.reload()}
+        >
+          Try Again
+        </Button>
+      </div>
+    );
+  }
+
+  // ==========================================
+  // CHECKOUT PAGE
+  // ==========================================
+
   return (
     <div className="container py-4">
       <h2 className="font-weight-bold mb-4">
         Checkout
       </h2>
 
+      {!acceptOrders && (
+        <div className="alert alert-warning">
+          Orders are currently unavailable.
+          Please try again later.
+        </div>
+      )}
+
+      {!deliveryEnabled && (
+        <div className="alert alert-warning">
+          Delivery is currently unavailable.
+          Please try again later.
+        </div>
+      )}
+
+      {subtotal < minimumOrderAmount && (
+        <div className="alert alert-info">
+          Minimum order amount is ₹{minimumOrderAmount}.
+          Add ₹{minimumOrderAmount - subtotal} more
+          to place your order.
+        </div>
+      )}
+
       <form onSubmit={placeOrder}>
         <div className="row">
           {/* Delivery Details */}
+
           <div className="col-md-7">
             <div className="card p-4 mb-4">
               <h4 className="font-weight-bold mb-4">
@@ -224,6 +492,7 @@ const Checkout = () => {
               </h4>
 
               {/* Full Name */}
+
               <div className="form-group mb-3">
                 <label>Full Name</label>
 
@@ -244,6 +513,7 @@ const Checkout = () => {
               </div>
 
               {/* Mobile Number */}
+
               <div className="form-group mb-3">
                 <label>Mobile Number</label>
 
@@ -265,6 +535,7 @@ const Checkout = () => {
               </div>
 
               {/* Email */}
+
               <div className="form-group mb-3">
                 <label>Email Address</label>
 
@@ -285,6 +556,7 @@ const Checkout = () => {
               </div>
 
               {/* Address */}
+
               <div className="form-group mb-3">
                 <label>Complete Address</label>
 
@@ -305,6 +577,7 @@ const Checkout = () => {
               </div>
 
               {/* City and State */}
+
               <div className="row">
                 <div className="col-md-6">
                   <div className="form-group mb-3">
@@ -350,6 +623,7 @@ const Checkout = () => {
               </div>
 
               {/* Pincode */}
+
               <div className="form-group mb-3">
                 <label>Pincode</label>
 
@@ -373,53 +647,92 @@ const Checkout = () => {
           </div>
 
           {/* Order Summary */}
+
           <div className="col-md-5">
             <div className="card p-4">
               <h4 className="font-weight-bold mb-4">
                 Order Summary
               </h4>
 
-              {cartItems.map((item, index) => (
-                <div
-                  key={
-                    item.productId ||
-                    item._id ||
-                    item.id ||
-                    index
-                  }
-                  className="d-flex justify-content-between mb-3"
-                >
-                  <div>
-                    <p className="mb-1">
-                      {item.name || item.product?.name || "Product"}
-                    </p>
+              {cartItems.map((item, index) => {
+                const itemPrice = Number(
+                  item.price ||
+                    item.salePrice ||
+                    item.product?.price ||
+                    0
+                );
 
-                    <small className="text-muted">
-                      Quantity: {item.quantity}
-                    </small>
+                const itemQuantity = Number(
+                  item.quantity || 1
+                );
+
+                return (
+                  <div
+                    key={
+                      item.productId ||
+                      item._id ||
+                      item.id ||
+                      index
+                    }
+                    className="d-flex justify-content-between mb-3"
+                  >
+                    <div>
+                      <p className="mb-1">
+                        {item.name ||
+                          item.product?.name ||
+                          "Product"}
+                      </p>
+
+                      <small className="text-muted">
+                        Quantity: {itemQuantity}
+                      </small>
+                    </div>
+
+                    <strong>
+                      ₹
+                      {(
+                        itemPrice * itemQuantity
+                      ).toFixed(2)}
+                    </strong>
                   </div>
-
-                  <strong>
-                    ₹
-                    {Number(item.price || 0) *
-                      Number(item.quantity || 0)}
-                  </strong>
-                </div>
-              ))}
+                );
+              })}
 
               <hr />
 
               <div className="d-flex justify-content-between mb-3">
                 <span>Subtotal</span>
 
-                <strong>₹{subtotal}</strong>
+                <strong>
+                  ₹{subtotal.toFixed(2)}
+                </strong>
               </div>
 
               <div className="d-flex justify-content-between mb-3">
                 <span>Delivery</span>
 
-                <strong className="text-success">
-                  Free
+                {deliveryCharge === 0 ? (
+                  <strong className="text-success">
+                    Free
+                  </strong>
+                ) : (
+                  <strong>
+                    ₹{deliveryCharge.toFixed(2)}
+                  </strong>
+                )}
+              </div>
+
+              {isEligibleForFreeDelivery && (
+                <small className="text-success mb-3">
+                  Free delivery applied!
+                </small>
+              )}
+
+              <div className="d-flex justify-content-between mb-3">
+                <span>Estimated Delivery</span>
+
+                <strong>
+                  {estimatedDeliveryTime}
                 </strong>
               </div>
 
@@ -429,24 +742,35 @@ const Checkout = () => {
                 <h5>Total</h5>
 
                 <h5 className="text-danger">
-                  ₹{total}
+                  ₹{total.toFixed(2)}
                 </h5>
               </div>
 
               {/* Payment Information */}
+
               <div className="alert alert-info">
                 <strong>Payment Method:</strong>
                 <br />
-                Cash on Delivery
+
+                {cashOnDelivery
+                  ? "Cash on Delivery"
+                  : "Cash on Delivery unavailable"}
               </div>
 
               {/* Place Order Button */}
+
               <Button
                 type="submit"
                 variant="contained"
                 fullWidth
                 className="btn-blue"
-                disabled={isSubmitting}
+                disabled={
+                  isSubmitting ||
+                  !acceptOrders ||
+                  !deliveryEnabled ||
+                  !cashOnDelivery ||
+                  subtotal < minimumOrderAmount
+                }
               >
                 {isSubmitting
                   ? "Placing Order..."
@@ -454,6 +778,7 @@ const Checkout = () => {
               </Button>
 
               {/* Return to Cart */}
+
               <Link
                 to="/cart"
                 className="btn btn-outline-secondary mt-3"

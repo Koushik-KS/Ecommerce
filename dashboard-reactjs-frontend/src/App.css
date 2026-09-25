@@ -1196,58 +1196,34 @@ body.dark .settings-actions {
   border-top-color: #34466b;
 }
 
-/* RESPONSIVE */
-
-@media (max-width: 900px) {
-  .settings-container {
-    flex-direction: column;
-  }
-
-  .settings-sidebar {
-    width: 100%;
-    display: flex;
-    gap: 5px;
-    overflow-x: auto;
-  }
-
-  .settings-nav-item {
-    white-space: nowrap;
-    width: auto;
-    margin-bottom: 0;
-  }
-
-  .settings-content {
-    width: 100%;
-  }
+.settings-form h3 {
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
-@media (max-width: 600px) {
-  .settings-page {
-    padding: 85px 15px 20px;
-  }
+.settings-nav-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
 
-  .settings-grid {
-    grid-template-columns: 1fr;
-  }
+.settings-nav-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+}
 
-  .settings-field.full-width {
-    grid-column: auto;
-  }
+.settings-actions button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
 
-  .settings-form {
-    padding: 18px;
-  }
-
-  .admin-account-card {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-
-  .settings-actions {
-    flex-direction: column;
-  }
-
-  .settings-save-btn {
-    width: 100%;
-  }
+.admin-account-meta p {
+  display: flex;
+  align-items: center;
+  gap: 6px;
 }

@@ -4,6 +4,7 @@ const router = express.Router();
 
 const Order = require("../models/Order");
 const Notification = require("../models/Notification");
+const Settings = require("../models/Settings");
 
 // ===============================
 // ALLOWED ORDER STATUSES
@@ -26,11 +27,16 @@ const generateOrderId = () => {
   const date = new Date();
 
   const year = date.getFullYear();
+
   const month = String(date.getMonth() + 1).padStart(
     2,
     "0"
   );
-  const day = String(date.getDate()).padStart(2, "0");
+
+  const day = String(date.getDate()).padStart(
+    2,
+    "0"
+  );
 
   const randomNumber = Math.floor(
     1000 + Math.random() * 9000
@@ -49,6 +55,14 @@ const isValidAmount = (amount) => {
     Number.isFinite(amount) &&
     amount >= 0
   );
+};
+
+// ===============================
+// ROUND AMOUNT
+// ===============================
+
+const roundAmount = (amount) => {
+  return Number(Number(amount).toFixed(2));
 };
 
 // ===============================
@@ -74,6 +88,20 @@ const normalizeOrderItems = (items) => {
 };
 
 // ===============================
+// LOAD STORE SETTINGS
+// ===============================
+
+const getStoreSettings = async () => {
+  let settings = await Settings.findOne();
+
+  if (!settings) {
+    settings = await Settings.create({});
+  }
+
+  return settings;
+};
+
+// ===============================
 // CREATE NEW ORDER
 // POST /api/orders
 // ===============================
@@ -83,10 +111,53 @@ router.post("/", async (req, res) => {
     const {
       customer,
       items,
-      subtotal,
-      deliveryCharge,
-      total,
     } = req.body;
+
+    // ==========================================
+    // LOAD ADMIN SETTINGS
+    // ==========================================
+
+    const settings = await getStoreSettings();
+
+    const deliverySettings = settings.delivery || {};
+
+    const orderSettings = settings.order || {};
+
+    // ==========================================
+    // CHECK WHETHER ORDERS ARE ACCEPTED
+    // ==========================================
+
+    if (orderSettings.acceptOrders === false) {
+      return res.status(403).json({
+        success: false,
+        message:
+          "Orders are currently unavailable. Please try again later.",
+      });
+    }
+
+    // ==========================================
+    // CHECK DELIVERY AVAILABILITY
+    // ==========================================
+
+    if (deliverySettings.deliveryEnabled === false) {
+      return res.status(403).json({
+        success: false,
+        message:
+          "Delivery is currently unavailable. Please try again later.",
+      });
+    }
+
+    // ==========================================
+    // CHECK CASH ON DELIVERY
+    // ==========================================
+
+    if (orderSettings.cashOnDelivery === false) {
+      return res.status(403).json({
+        success: false,
+        message:
+          "Cash on Delivery is currently unavailable.",
+      });
+    }
 
     // ==========================================
     // VALIDATE CUSTOMER OBJECT
@@ -132,6 +203,43 @@ router.post("/", async (req, res) => {
     }
 
     // ==========================================
+    // VALIDATE CUSTOMER MOBILE NUMBER
+    // ==========================================
+
+    if (!/^[6-9]\d{9}$/.test(String(customer.mobile))) {
+      return res.status(400).json({
+        success: false,
+        message: "Enter a valid 10-digit mobile number",
+      });
+    }
+
+    // ==========================================
+    // VALIDATE CUSTOMER EMAIL
+    // ==========================================
+
+    if (
+      !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(
+        String(customer.email)
+      )
+    ) {
+      return res.status(400).json({
+        success: false,
+        message: "Enter a valid email address",
+      });
+    }
+
+    // ==========================================
+    // VALIDATE CUSTOMER PINCODE
+    // ==========================================
+
+    if (!/^\d{6}$/.test(String(customer.pincode))) {
+      return res.status(400).json({
+        success: false,
+        message: "Enter a valid 6-digit pincode",
+      });
+    }
+
+    // ==========================================
     // VALIDATE ITEMS
     // ==========================================
 
@@ -143,35 +251,10 @@ router.post("/", async (req, res) => {
     }
 
     // ==========================================
-    // NORMALIZE PRODUCT IDs
-    // ==========================================
-
-    const normalizedItems = normalizeOrderItems(items);
-
-    // ==========================================
-    // VALIDATE PRODUCT IDs
-    // ==========================================
-
-    const invalidItemIndex = normalizedItems.findIndex(
-      (item) =>
-        !item.productId ||
-        item.productId.trim() === ""
-    );
-
-    if (invalidItemIndex !== -1) {
-      return res.status(400).json({
-        success: false,
-        message: `Product ID is missing for item ${
-          invalidItemIndex + 1
-        }`,
-      });
-    }
-
-    // ==========================================
     // VALIDATE ITEM OBJECTS
     // ==========================================
 
-    const invalidItemObject = normalizedItems.some(
+    const invalidItemObject = items.some(
       (item) =>
         !item ||
         typeof item !== "object" ||
@@ -186,43 +269,166 @@ router.post("/", async (req, res) => {
     }
 
     // ==========================================
-    // LOG NORMALIZED ITEMS
+    // NORMALIZE PRODUCT IDS
     // ==========================================
 
-    console.log(
-      "Normalized order items:",
-      JSON.stringify(normalizedItems, null, 2)
+    const normalizedItems = normalizeOrderItems(items);
+
+    // ==========================================
+    // VALIDATE PRODUCT IDS
+    // ==========================================
+
+    const invalidItemIndex = normalizedItems.findIndex(
+      (item) =>
+        !item.productId ||
+        String(item.productId).trim() === ""
+    );
+
+    if (invalidItemIndex !== -1) {
+      return res.status(400).json({
+        success: false,
+        message: `Product ID is missing for item ${
+          invalidItemIndex + 1
+        }`,
+      });
+    }
+
+    // ==========================================
+    // VALIDATE ITEM PRICE AND QUANTITY
+    // ==========================================
+
+    const invalidPriceOrQuantity =
+      normalizedItems.findIndex((item) => {
+        const price = Number(
+          item.price ||
+            item.salePrice ||
+            item.product?.price ||
+            0
+        );
+
+        const quantity = Number(item.quantity || 0);
+
+        return (
+          !Number.isFinite(price) ||
+          price < 0 ||
+          !Number.isFinite(quantity) ||
+          !Number.isInteger(quantity) ||
+          quantity <= 0
+        );
+      });
+
+    if (invalidPriceOrQuantity !== -1) {
+      return res.status(400).json({
+        success: false,
+        message:
+          "Each item must have a valid price and quantity",
+      });
+    }
+
+    // ==========================================
+    // CALCULATE SUBTOTAL ON SERVER
+    // ==========================================
+
+    const calculatedSubtotal = normalizedItems.reduce(
+      (total, item) => {
+        const price = Number(
+          item.price ||
+            item.salePrice ||
+            item.product?.price ||
+            0
+        );
+
+        const quantity = Number(item.quantity || 1);
+
+        return total + price * quantity;
+      },
+      0
+    );
+
+    const subtotal = roundAmount(calculatedSubtotal);
+
+    // ==========================================
+    // GET DELIVERY SETTINGS
+    // ==========================================
+
+    const deliveryChargeAmount = Math.max(
+      0,
+      Number(deliverySettings.deliveryCharge || 0)
+    );
+
+    const freeDeliveryAbove = Math.max(
+      0,
+      Number(deliverySettings.freeDeliveryAbove || 0)
+    );
+
+    const minimumOrderAmount = Math.max(
+      0,
+      Number(deliverySettings.minimumOrderAmount || 0)
+    );
+
+    const freeDeliveryEnabled =
+      deliverySettings.freeDeliveryEnabled !== false;
+
+    // ==========================================
+    // VALIDATE MINIMUM ORDER AMOUNT
+    // ==========================================
+
+    if (subtotal < minimumOrderAmount) {
+      return res.status(400).json({
+        success: false,
+        message: `Minimum order amount is ₹${minimumOrderAmount}. Your subtotal is ₹${subtotal}.`,
+      });
+    }
+
+    // ==========================================
+    // CALCULATE DELIVERY CHARGE ON SERVER
+    // ==========================================
+
+    const isEligibleForFreeDelivery =
+      freeDeliveryEnabled &&
+      freeDeliveryAbove > 0 &&
+      subtotal >= freeDeliveryAbove;
+
+    const deliveryCharge = isEligibleForFreeDelivery
+      ? 0
+      : roundAmount(deliveryChargeAmount);
+
+    // ==========================================
+    // CALCULATE FINAL TOTAL ON SERVER
+    // ==========================================
+
+    const total = roundAmount(
+      subtotal + deliveryCharge
     );
 
     // ==========================================
-    // VALIDATE AMOUNTS
+    // SELECT DEFAULT ORDER STATUS
     // ==========================================
 
-    if (
-      !isValidAmount(subtotal) ||
-      !isValidAmount(deliveryCharge) ||
-      !isValidAmount(total)
-    ) {
-      return res.status(400).json({
-        success: false,
-        message:
-          "Subtotal, delivery charge, and total must be valid numbers",
-      });
-    }
+    const configuredDefaultStatus =
+      String(
+        orderSettings.defaultStatus || "PENDING"
+      ).toUpperCase();
+
+    const defaultStatus = allowedStatuses.includes(
+      configuredDefaultStatus
+    )
+      ? configuredDefaultStatus
+      : "PENDING";
 
     // ==========================================
-    // VALIDATE TOTAL CALCULATION
+    // LOG ORDER CALCULATION
     // ==========================================
 
-    const calculatedTotal = subtotal + deliveryCharge;
-
-    if (Math.abs(calculatedTotal - total) > 0.01) {
-      return res.status(400).json({
-        success: false,
-        message:
-          "Order total does not match subtotal and delivery charge",
-      });
-    }
+    console.log("Order calculation:", {
+      subtotal,
+      deliveryCharge,
+      total,
+      minimumOrderAmount,
+      freeDeliveryAbove,
+      isEligibleForFreeDelivery,
+      defaultStatus,
+    });
 
     // ==========================================
     // CREATE ORDER
@@ -235,7 +441,7 @@ router.post("/", async (req, res) => {
       subtotal,
       deliveryCharge,
       total,
-      status: "PENDING",
+      status: defaultStatus,
     });
 
     const savedOrder = await order.save();
@@ -403,7 +609,7 @@ router.patch("/:orderId/status", async (req, res) => {
     const updatedOrder = await existingOrder.save();
 
     // ==========================================
-    // CREATE ORDER STATUS NOTIFICATION
+    // CREATE STATUS NOTIFICATION
     // ==========================================
 
     if (previousStatus !== normalizedStatus) {

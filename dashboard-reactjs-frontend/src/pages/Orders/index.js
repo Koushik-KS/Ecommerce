@@ -1,4 +1,3 @@
-
 import React, { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
@@ -14,8 +13,10 @@ const Orders = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("ALL");
 
+  // API URL
   const API_URL = "http://localhost:4000/api/orders";
 
+  // Fetch all orders
   const fetchOrders = async () => {
     try {
       setIsLoading(true);
@@ -31,12 +32,14 @@ const Orders = () => {
       setOrders(data.orders || []);
     } catch (err) {
       console.error("Fetch orders error:", err);
+
       setError(err.message || "Unable to load orders");
     } finally {
       setIsLoading(false);
     }
   };
 
+  // Fetch orders when the page loads
   useEffect(() => {
     fetchOrders();
   }, []);
@@ -79,18 +82,28 @@ const Orders = () => {
       alert("Order status updated successfully!");
     } catch (err) {
       console.error("Update status error:", err);
+
       alert(err.message || "Failed to update order status");
     } finally {
       setUpdatingOrderId("");
     }
   };
 
+  // Format date
   const formatDate = (date) => {
-    if (!date) return "N/A";
+    if (!date) {
+      return "N/A";
+    }
 
     return new Date(date).toLocaleString("en-IN");
   };
 
+  // Format currency
+  const formatCurrency = (amount) => {
+    return `₹${Number(amount || 0).toLocaleString("en-IN")}`;
+  };
+
+  // Get status badge class
   const getStatusClass = (status) => {
     switch (status) {
       case "PENDING":
@@ -153,7 +166,9 @@ const Orders = () => {
         {/* Page Header */}
         <div className="d-flex justify-content-between align-items-center mb-4">
           <div>
-            <h2 className="font-weight-bold">Orders</h2>
+            <h2 className="font-weight-bold">
+              Orders
+            </h2>
 
             <p className="text-muted mb-0">
               Manage customer orders and update order status.
@@ -183,14 +198,16 @@ const Orders = () => {
           </div>
         )}
 
-        {/* Orders Table */}
+        {/* Orders Content */}
         {!isLoading && !error && (
           <div className="card shadow-sm border-0">
             <div className="card-body">
 
               {/* Table Header */}
               <div className="d-flex justify-content-between align-items-center mb-3">
-                <h4 className="mb-0">Customer Orders</h4>
+                <h4 className="mb-0">
+                  Customer Orders
+                </h4>
 
                 <span className="badge bg-primary">
                   Showing: {filteredOrders.length} / {orders.length}
@@ -238,13 +255,33 @@ const Orders = () => {
                       setStatusFilter(event.target.value)
                     }
                   >
-                    <option value="ALL">All Statuses</option>
-                    <option value="PENDING">PENDING</option>
-                    <option value="CONFIRMED">CONFIRMED</option>
-                    <option value="PROCESSING">PROCESSING</option>
-                    <option value="SHIPPED">SHIPPED</option>
-                    <option value="DELIVERED">DELIVERED</option>
-                    <option value="CANCELLED">CANCELLED</option>
+                    <option value="ALL">
+                      All Statuses
+                    </option>
+
+                    <option value="PENDING">
+                      PENDING
+                    </option>
+
+                    <option value="CONFIRMED">
+                      CONFIRMED
+                    </option>
+
+                    <option value="PROCESSING">
+                      PROCESSING
+                    </option>
+
+                    <option value="SHIPPED">
+                      SHIPPED
+                    </option>
+
+                    <option value="DELIVERED">
+                      DELIVERED
+                    </option>
+
+                    <option value="CANCELLED">
+                      CANCELLED
+                    </option>
                   </select>
                 </div>
 
@@ -265,7 +302,9 @@ const Orders = () => {
               {/* Empty Orders */}
               {orders.length === 0 ? (
                 <div className="text-center py-5">
-                  <h5>No orders found</h5>
+                  <h5>
+                    No orders found
+                  </h5>
 
                   <p className="text-muted">
                     Customer orders will appear here.
@@ -273,7 +312,9 @@ const Orders = () => {
                 </div>
               ) : filteredOrders.length === 0 ? (
                 <div className="text-center py-5">
-                  <h5>No matching orders</h5>
+                  <h5>
+                    No matching orders
+                  </h5>
 
                   <p className="text-muted">
                     Try another search or status filter.
@@ -300,6 +341,8 @@ const Orders = () => {
                         <th>Customer</th>
                         <th>Mobile</th>
                         <th>Items</th>
+                        <th>Subtotal</th>
+                        <th>Delivery</th>
                         <th>Total</th>
                         <th>Date</th>
                         <th>Status</th>
@@ -313,26 +356,33 @@ const Orders = () => {
                         <tr
                           key={order._id || order.orderId}
                         >
-                          <td>{index + 1}</td>
+                          {/* Serial Number */}
+                          <td>
+                            {index + 1}
+                          </td>
 
+                          {/* Order ID */}
                           <td>
                             <strong>
                               {order.orderId || "N/A"}
                             </strong>
                           </td>
 
+                          {/* Customer Name */}
                           <td>
                             {order.customer?.fullName ||
                               order.customer?.name ||
                               "N/A"}
                           </td>
 
+                          {/* Mobile Number */}
                           <td>
                             {order.customer?.mobile ||
                               order.customer?.phone ||
                               "N/A"}
                           </td>
 
+                          {/* Total Items */}
                           <td>
                             {order.items?.reduce(
                               (total, item) =>
@@ -342,21 +392,37 @@ const Orders = () => {
                             )}
                           </td>
 
+                          {/* Subtotal */}
+                          <td>
+                            {formatCurrency(order.subtotal)}
+                          </td>
+
+                          {/* Delivery Charge */}
+                          <td>
+                            {Number(order.deliveryCharge || 0) === 0 ? (
+                              <span className="text-success fw-bold">
+                                Free
+                              </span>
+                            ) : (
+                              formatCurrency(order.deliveryCharge)
+                            )}
+                          </td>
+
+                          {/* Total Amount */}
                           <td>
                             <strong className="text-danger">
-                              ₹
-                              {Number(
-                                order.total || 0
-                              ).toLocaleString("en-IN")}
+                              {formatCurrency(order.total)}
                             </strong>
                           </td>
 
+                          {/* Order Date */}
                           <td>
                             <small>
                               {formatDate(order.createdAt)}
                             </small>
                           </td>
 
+                          {/* Current Status */}
                           <td>
                             <span
                               className={`badge ${getStatusClass(
@@ -367,6 +433,7 @@ const Orders = () => {
                             </span>
                           </td>
 
+                          {/* Update Status */}
                           <td>
                             <select
                               className="form-select"
@@ -420,6 +487,7 @@ const Orders = () => {
                             )}
                           </td>
 
+                          {/* View Details */}
                           <td>
                             <button
                               className="btn btn-primary btn-sm"
