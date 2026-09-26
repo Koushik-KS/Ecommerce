@@ -10,6 +10,8 @@ import {
   TextField,
   Typography,
   Alert,
+  InputAdornment,
+  IconButton,
 } from "@mui/material";
 
 import {
@@ -18,6 +20,8 @@ import {
 } from "react-router-dom";
 
 import axios from "axios";
+
+import { Visibility, VisibilityOff } from "@mui/icons-material";
 
 import { MyContext } from "../../App";
 
@@ -39,6 +43,8 @@ function SignIn() {
 
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
+
+  const [showPassword, setShowPassword] = useState(false);
 
   useEffect(() => {
     setisHeaderFooterShow(false);
@@ -100,18 +106,31 @@ function SignIn() {
           user,
         } = response.data;
 
-        // Save login details
-        localStorage.setItem("token", token);
+        // =========================
+        // SAVE LOGIN DETAILS
+        // =========================
+
+        localStorage.setItem(
+          "token",
+          token
+        );
+
         localStorage.setItem(
           "user",
           JSON.stringify(user)
         );
 
-        // Update global context
+        // =========================
+        // UPDATE GLOBAL CONTEXT
+        // =========================
+
         setUser(user);
         setIsLogin(true);
 
-        // Navigate to home page
+        // =========================
+        // GO TO HOME
+        // =========================
+
         navigate("/");
       }
     } catch (error) {
@@ -123,6 +142,14 @@ function SignIn() {
     } finally {
       setLoading(false);
     }
+  };
+
+  // =========================
+  // TOGGLE PASSWORD
+  // =========================
+
+  const handleTogglePassword = () => {
+    setShowPassword((previous) => !previous);
   };
 
   return (
@@ -148,6 +175,10 @@ function SignIn() {
           boxShadow: 3,
         }}
       >
+        {/* =========================
+            TITLE
+        ========================= */}
+
         <Typography
           variant="h4"
           fontWeight="bold"
@@ -157,11 +188,22 @@ function SignIn() {
           Welcome Back
         </Typography>
 
+        {/* =========================
+            ERROR MESSAGE
+        ========================= */}
+
         {errorMessage && (
-          <Alert severity="error" sx={{ mb: 2 }}>
+          <Alert
+            severity="error"
+            sx={{ mb: 2 }}
+          >
             {errorMessage}
           </Alert>
         )}
+
+        {/* =========================
+            EMAIL
+        ========================= */}
 
         <TextField
           fullWidth
@@ -174,16 +216,70 @@ function SignIn() {
           required
         />
 
+        {/* =========================
+            PASSWORD
+        ========================= */}
+
         <TextField
           fullWidth
           label="Password"
           name="password"
-          type="password"
+          type={
+            showPassword
+              ? "text"
+              : "password"
+          }
           value={formData.password}
           onChange={handleChange}
           margin="normal"
           required
+          InputProps={{
+            endAdornment: (
+              <InputAdornment position="end">
+                <IconButton
+                  onClick={
+                    handleTogglePassword
+                  }
+                  edge="end"
+                >
+                  {showPassword ? (
+                    <VisibilityOff />
+                  ) : (
+                    <Visibility />
+                  )}
+                </IconButton>
+              </InputAdornment>
+            ),
+          }}
         />
+
+        {/* =========================
+            FORGOT PASSWORD
+        ========================= */}
+
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "flex-end",
+            mt: 1,
+          }}
+        >
+          <Link
+            to="/forgot-password"
+            style={{
+              textDecoration: "none",
+              color: "#1976d2",
+              fontSize: "14px",
+              fontWeight: 500,
+            }}
+          >
+            Forgot Password?
+          </Link>
+        </Box>
+
+        {/* =========================
+            SIGN IN BUTTON
+        ========================= */}
 
         <Button
           fullWidth
@@ -191,10 +287,23 @@ function SignIn() {
           variant="contained"
           size="large"
           disabled={loading}
-          sx={{ mt: 3, mb: 2 }}
+          sx={{
+            mt: 3,
+            mb: 2,
+            height: 48,
+            textTransform: "none",
+            fontSize: "16px",
+            fontWeight: 600,
+          }}
         >
-          {loading ? "Signing In..." : "Sign In"}
+          {loading
+            ? "Signing In..."
+            : "Sign In"}
         </Button>
+
+        {/* =========================
+            SIGN UP
+        ========================= */}
 
         <Typography textAlign="center">
           Don't have an account?{" "}
