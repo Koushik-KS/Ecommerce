@@ -10,35 +10,75 @@ import {
   TextField,
   Typography,
   Alert,
+  InputAdornment,
+  IconButton,
 } from "@mui/material";
 
 import {
   Link,
   useNavigate,
+  useSearchParams,
 } from "react-router-dom";
 
 import axios from "axios";
+
+import {
+  Visibility,
+  VisibilityOff,
+} from "@mui/icons-material";
 
 import { MyContext } from "../../App";
 
 const API_URL = "http://localhost:4000";
 
-function ForgotPassword() {
+function ResetPassword() {
   const {
     setisHeaderFooterShow,
   } = useContext(MyContext);
 
   const navigate = useNavigate();
 
-  const [email, setEmail] = useState("");
+  const [searchParams] =
+    useSearchParams();
 
-  const [loading, setLoading] = useState(false);
+  // =====================================================
+  // EMAIL FROM URL
+  // =====================================================
 
-  const [message, setMessage] = useState("");
+  const email =
+    searchParams.get("email");
 
-  const [errorMessage, setErrorMessage] = useState("");
+  // =====================================================
+  // FORM
+  // =====================================================
 
-  const [emailSent, setEmailSent] = useState(false);
+  const [formData, setFormData] =
+    useState({
+      otp: "",
+      password: "",
+      confirmPassword: "",
+    });
+
+  const [showPassword, setShowPassword] =
+    useState(false);
+
+  const [
+    showConfirmPassword,
+    setShowConfirmPassword,
+  ] = useState(false);
+
+  const [loading, setLoading] =
+    useState(false);
+
+  const [
+    errorMessage,
+    setErrorMessage,
+  ] = useState("");
+
+  const [
+    successMessage,
+    setSuccessMessage,
+  ] = useState("");
 
   // =====================================================
   // HIDE HEADER AND FOOTER
@@ -53,36 +93,132 @@ function ForgotPassword() {
   }, [setisHeaderFooterShow]);
 
   // =====================================================
-  // HANDLE EMAIL CHANGE
+  // HANDLE INPUT
   // =====================================================
 
-  const handleChange = (event) => {
-    setEmail(event.target.value);
+  const handleChange = (
+    event
+  ) => {
+    const {
+      name,
+      value,
+    } = event.target;
 
-    setMessage("");
+    setFormData(
+      (previousData) => ({
+        ...previousData,
+        [name]: value,
+      })
+    );
+
     setErrorMessage("");
   };
 
   // =====================================================
-  // HANDLE FORGOT PASSWORD
+  // TOGGLE PASSWORD
   // =====================================================
 
-  const handleSubmit = async (event) => {
+  const handleTogglePassword =
+    () => {
+      setShowPassword(
+        (previous) => !previous
+      );
+    };
+
+  // =====================================================
+  // TOGGLE CONFIRM PASSWORD
+  // =====================================================
+
+  const handleToggleConfirmPassword =
+    () => {
+      setShowConfirmPassword(
+        (previous) => !previous
+      );
+    };
+
+  // =====================================================
+  // HANDLE RESET PASSWORD
+  // =====================================================
+
+  const handleSubmit = async (
+    event
+  ) => {
     event.preventDefault();
 
-    setMessage("");
     setErrorMessage("");
+    setSuccessMessage("");
 
-    const normalizedEmail =
-      email.trim().toLowerCase();
+    const {
+      otp,
+      password,
+      confirmPassword,
+    } = formData;
 
     // ===================================================
-    // VALIDATE EMAIL
+    // CHECK EMAIL
     // ===================================================
 
-    if (!normalizedEmail) {
+    if (!email) {
       setErrorMessage(
-        "Please enter your email address."
+        "Invalid password reset request. Please request a new OTP."
+      );
+
+      return;
+    }
+
+    // ===================================================
+    // CHECK OTP
+    // ===================================================
+
+    if (!otp) {
+      setErrorMessage(
+        "Please enter the OTP sent to your email."
+      );
+
+      return;
+    }
+
+    if (
+      !/^\d{6}$/.test(
+        otp.trim()
+      )
+    ) {
+      setErrorMessage(
+        "OTP must contain exactly 6 digits."
+      );
+
+      return;
+    }
+
+    // ===================================================
+    // CHECK PASSWORD
+    // ===================================================
+
+    if (
+      !password ||
+      !confirmPassword
+    ) {
+      setErrorMessage(
+        "Please enter your new password and confirm it."
+      );
+
+      return;
+    }
+
+    if (password.length < 6) {
+      setErrorMessage(
+        "Password must contain at least 6 characters."
+      );
+
+      return;
+    }
+
+    if (
+      password !==
+      confirmPassword
+    ) {
+      setErrorMessage(
+        "Passwords do not match."
       );
 
       return;
@@ -92,57 +228,64 @@ function ForgotPassword() {
       setLoading(true);
 
       // =================================================
-      // SEND OTP REQUEST
+      // RESET PASSWORD
       // =================================================
 
-      const response = await axios.post(
-        `${API_URL}/api/auth/forgot-password`,
-        {
-          email: normalizedEmail,
-        }
-      );
+      const response =
+        await axios.post(
+          `${API_URL}/api/auth/reset-password`,
+          {
+            email:
+              email
+                .trim()
+                .toLowerCase(),
+
+            otp:
+              otp.trim(),
+
+            newPassword:
+              password,
+          }
+        );
 
       if (response.data.success) {
-        setMessage(
+
+        setSuccessMessage(
           response.data.message ||
-            "A 6-digit OTP has been sent to your email."
+            "Password reset successful."
         );
 
-        setEmailSent(true);
+        setFormData({
+          otp: "",
+          password: "",
+          confirmPassword: "",
+        });
 
-        // =================================================
-        // SAVE EMAIL FOR RESET PASSWORD PAGE
-        // =================================================
+        // ===============================================
+        // GO TO SIGN IN
+        // ===============================================
 
-        sessionStorage.setItem(
-          "resetPasswordEmail",
-          normalizedEmail
-        );
+        setTimeout(() => {
+          navigate("/signIn");
+        }, 2000);
       }
     } catch (error) {
       console.error(
-        "Forgot password error:",
+        "Reset password error:",
         error
       );
 
       const backendMessage =
-        error.response?.data?.message;
+        error.response?.data
+          ?.message;
 
       setErrorMessage(
         backendMessage ||
-          "Unable to send OTP. Please try again."
+          "Unable to reset your password. Please try again."
       );
     } finally {
       setLoading(false);
     }
-  };
-
-  // =====================================================
-  // GO TO RESET PASSWORD
-  // =====================================================
-
-  const handleContinue = () => {
-    navigate("/reset-password");
   };
 
   return (
@@ -158,7 +301,8 @@ function ForgotPassword() {
 
         padding: 3,
 
-        backgroundColor: "#f5f5f5",
+        backgroundColor:
+          "#f5f5f5",
       }}
     >
       <Box
@@ -169,7 +313,8 @@ function ForgotPassword() {
 
           maxWidth: 450,
 
-          backgroundColor: "#ffffff",
+          backgroundColor:
+            "#ffffff",
 
           padding: 4,
 
@@ -178,9 +323,8 @@ function ForgotPassword() {
           boxShadow: 3,
         }}
       >
-        {/* =================================================
-            TITLE
-        ================================================= */}
+
+        {/* TITLE */}
 
         <Typography
           variant="h4"
@@ -188,12 +332,10 @@ function ForgotPassword() {
           textAlign="center"
           mb={1}
         >
-          Forgot Password?
+          Reset Password
         </Typography>
 
-        {/* =================================================
-            DESCRIPTION
-        ================================================= */}
+        {/* DESCRIPTION */}
 
         <Typography
           textAlign="center"
@@ -204,27 +346,37 @@ function ForgotPassword() {
             lineHeight: 1.6,
           }}
         >
-          Enter your registered email address and
-          we will send you a 6-digit OTP to reset
-          your password.
+          Enter the OTP sent to
+          your email and create
+          your new password.
         </Typography>
 
-        {/* =================================================
-            SUCCESS MESSAGE
-        ================================================= */}
+        {/* EMAIL */}
 
-        {message && (
+        {email && (
+          <Alert
+            severity="info"
+            sx={{ mb: 2 }}
+          >
+            OTP sent to:{" "}
+            <strong>
+              {email}
+            </strong>
+          </Alert>
+        )}
+
+        {/* SUCCESS */}
+
+        {successMessage && (
           <Alert
             severity="success"
             sx={{ mb: 2 }}
           >
-            {message}
+            {successMessage}
           </Alert>
         )}
 
-        {/* =================================================
-            ERROR MESSAGE
-        ================================================= */}
+        {/* ERROR */}
 
         {errorMessage && (
           <Alert
@@ -235,98 +387,151 @@ function ForgotPassword() {
           </Alert>
         )}
 
-        {/* =================================================
-            EMAIL
-        ================================================= */}
+        {/* OTP */}
 
         <TextField
           fullWidth
-          label="Email Address"
-          name="email"
-          type="email"
-          value={email}
+          label="6-Digit OTP"
+          name="otp"
+          type="text"
+          value={formData.otp}
           onChange={handleChange}
           margin="normal"
           required
-          disabled={loading || emailSent}
-          autoComplete="email"
+          disabled={loading}
+          inputProps={{
+            maxLength: 6,
+            inputMode:
+              "numeric",
+          }}
         />
 
-        {/* =================================================
-            SEND OTP BUTTON
-        ================================================= */}
+        {/* NEW PASSWORD */}
 
-        {!emailSent && (
-          <Button
-            fullWidth
-            type="submit"
-            variant="contained"
-            size="large"
-            disabled={loading}
-            sx={{
-              mt: 3,
+        <TextField
+          fullWidth
+          label="New Password"
+          name="password"
+          type={
+            showPassword
+              ? "text"
+              : "password"
+          }
+          value={
+            formData.password
+          }
+          onChange={handleChange}
+          margin="normal"
+          required
+          disabled={loading}
+          autoComplete="new-password"
+          InputProps={{
+            endAdornment: (
+              <InputAdornment position="end">
+                <IconButton
+                  onClick={
+                    handleTogglePassword
+                  }
+                  edge="end"
+                  disabled={
+                    loading
+                  }
+                >
+                  {showPassword ? (
+                    <VisibilityOff />
+                  ) : (
+                    <Visibility />
+                  )}
+                </IconButton>
+              </InputAdornment>
+            ),
+          }}
+        />
 
-              mb: 2,
+        {/* CONFIRM PASSWORD */}
 
-              height: 48,
+        <TextField
+          fullWidth
+          label="Confirm New Password"
+          name="confirmPassword"
+          type={
+            showConfirmPassword
+              ? "text"
+              : "password"
+          }
+          value={
+            formData.confirmPassword
+          }
+          onChange={handleChange}
+          margin="normal"
+          required
+          disabled={loading}
+          autoComplete="new-password"
+          InputProps={{
+            endAdornment: (
+              <InputAdornment position="end">
+                <IconButton
+                  onClick={
+                    handleToggleConfirmPassword
+                  }
+                  edge="end"
+                  disabled={
+                    loading
+                  }
+                >
+                  {showConfirmPassword ? (
+                    <VisibilityOff />
+                  ) : (
+                    <Visibility />
+                  )}
+                </IconButton>
+              </InputAdornment>
+            ),
+          }}
+        />
 
-              textTransform: "none",
+        {/* RESET BUTTON */}
 
-              fontSize: "16px",
+        <Button
+          fullWidth
+          type="submit"
+          variant="contained"
+          size="large"
+          disabled={
+            loading || !email
+          }
+          sx={{
+            mt: 3,
 
-              fontWeight: 600,
-            }}
-          >
-            {loading
-              ? "Sending OTP..."
-              : "Send OTP"}
-          </Button>
-        )}
+            mb: 2,
 
-        {/* =================================================
-            CONTINUE TO RESET PASSWORD
-        ================================================= */}
+            height: 48,
 
-        {emailSent && (
-          <Button
-            fullWidth
-            variant="contained"
-            size="large"
-            onClick={handleContinue}
-            sx={{
-              mt: 2,
+            textTransform:
+              "none",
 
-              mb: 2,
+            fontSize: "16px",
 
-              height: 48,
+            fontWeight: 600,
+          }}
+        >
+          {loading
+            ? "Resetting..."
+            : "Reset Password"}
+        </Button>
 
-              textTransform: "none",
-
-              fontSize: "16px",
-
-              fontWeight: 600,
-            }}
-          >
-            Enter OTP & Reset Password
-          </Button>
-        )}
-
-        {/* =================================================
-            BACK TO LOGIN
-        ================================================= */}
+        {/* SIGN IN */}
 
         <Typography
           textAlign="center"
-          sx={{
-            mt: 1,
-          }}
         >
           Remember your password?{" "}
 
           <Link
             to="/signIn"
             style={{
-              textDecoration: "none",
+              textDecoration:
+                "none",
 
               color: "#1976d2",
 
@@ -336,9 +541,10 @@ function ForgotPassword() {
             Sign In
           </Link>
         </Typography>
+
       </Box>
     </Box>
   );
 }
 
-export default ForgotPassword;
+export default ResetPassword;

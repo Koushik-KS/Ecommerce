@@ -1,4 +1,3 @@
-
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./App.css";
 
@@ -42,6 +41,13 @@ import SignUp from "./Pages/SignUp";
 import SearchResults from "./Pages/SearchResults";
 
 // =========================
+// PASSWORD RESET PAGES
+// =========================
+
+import ForgotPassword from "./Pages/ForgotPassword";
+import ResetPassword from "./Pages/ResetPassword";
+
+// =========================
 // CREATE CONTEXT
 // =========================
 
@@ -83,14 +89,19 @@ function App() {
   // =========================
 
   const [isLogin, setIsLogin] = useState(() => {
-    return Boolean(localStorage.getItem("token"));
+    return Boolean(
+      localStorage.getItem("token")
+    );
   });
 
   const [user, setUser] = useState(() => {
-    const savedUser = localStorage.getItem("user");
+    const savedUser =
+      localStorage.getItem("user");
 
     try {
-      return savedUser ? JSON.parse(savedUser) : null;
+      return savedUser
+        ? JSON.parse(savedUser)
+        : null;
     } catch (error) {
       console.error(
         "Error loading user from localStorage:",
@@ -106,10 +117,13 @@ function App() {
   // =========================
 
   const [cartItems, setCartItems] = useState(() => {
-    const savedCart = localStorage.getItem("cartItems");
+    const savedCart =
+      localStorage.getItem("cartItems");
 
     try {
-      return savedCart ? JSON.parse(savedCart) : [];
+      return savedCart
+        ? JSON.parse(savedCart)
+        : [];
     } catch (error) {
       console.error(
         "Error loading cart from localStorage:",
@@ -124,20 +138,26 @@ function App() {
   // WISHLIST STATE
   // =========================
 
-  const [wishlistItems, setWishlistItems] = useState(() => {
-    const savedWishlist = localStorage.getItem("wishlistItems");
+  const [wishlistItems, setWishlistItems] =
+    useState(() => {
+      const savedWishlist =
+        localStorage.getItem(
+          "wishlistItems"
+        );
 
-    try {
-      return savedWishlist ? JSON.parse(savedWishlist) : [];
-    } catch (error) {
-      console.error(
-        "Error loading wishlist from localStorage:",
-        error
-      );
+      try {
+        return savedWishlist
+          ? JSON.parse(savedWishlist)
+          : [];
+      } catch (error) {
+        console.error(
+          "Error loading wishlist from localStorage:",
+          error
+        );
 
-      return [];
-    }
-  });
+        return [];
+      }
+    });
 
   // =========================
   // GET COUNTRIES
@@ -150,7 +170,7 @@ function App() {
   }, []);
 
   // =========================
-  // SAVE CART TO LOCAL STORAGE
+  // SAVE CART
   // =========================
 
   useEffect(() => {
@@ -161,7 +181,7 @@ function App() {
   }, [cartItems]);
 
   // =========================
-  // SAVE WISHLIST TO LOCAL STORAGE
+  // SAVE WISHLIST
   // =========================
 
   useEffect(() => {
@@ -179,7 +199,9 @@ function App() {
     try {
       const response = await axios.get(url);
 
-      setCountryList(response.data.data);
+      setCountryList(
+        response.data.data
+      );
     } catch (error) {
       console.error(
         "Error fetching countries:",
@@ -189,7 +211,7 @@ function App() {
   };
 
   // =========================
-  // LOGOUT FUNCTION
+  // LOGOUT
   // =========================
 
   const logout = () => {
@@ -209,70 +231,105 @@ function App() {
       return "";
     }
 
-    return String(product._id || product.id || "");
+    return String(
+      product._id ||
+        product.id ||
+        ""
+    );
   };
 
   // =========================
   // ADD PRODUCT TO CART
   // =========================
 
-  const addToCart = (product, quantity = 1) => {
-    const productId = getProductId(product);
+  const addToCart = (
+    product,
+    quantity = 1
+  ) => {
+    const productId =
+      getProductId(product);
 
     if (!product || !productId) {
-      console.error("Invalid product data for cart");
+      console.error(
+        "Invalid product data for cart"
+      );
+
       return;
     }
 
-    const validQuantity = Number(quantity);
+    const validQuantity =
+      Number(quantity);
 
     if (
-      !Number.isFinite(validQuantity) ||
+      !Number.isFinite(
+        validQuantity
+      ) ||
       validQuantity < 1
     ) {
       return;
     }
 
-    setCartItems((previousItems) => {
-      const existingProduct = previousItems.find(
-        (item) => getProductId(item) === productId
-      );
+    setCartItems(
+      (previousItems) => {
+        const existingProduct =
+          previousItems.find(
+            (item) =>
+              getProductId(item) ===
+              productId
+          );
 
-      if (existingProduct) {
-        return previousItems.map((item) =>
-          getProductId(item) === productId
-            ? {
-                ...item,
-                quantity:
-                  Number(item.quantity || 1) +
-                  Math.floor(validQuantity),
-              }
-            : item
-        );
+        if (existingProduct) {
+          return previousItems.map(
+            (item) =>
+              getProductId(item) ===
+              productId
+                ? {
+                    ...item,
+                    quantity:
+                      Number(
+                        item.quantity ||
+                          1
+                      ) +
+                      Math.floor(
+                        validQuantity
+                      ),
+                  }
+                : item
+          );
+        }
+
+        return [
+          ...previousItems,
+          {
+            ...product,
+            _id: productId,
+            quantity:
+              Math.floor(
+                validQuantity
+              ),
+          },
+        ];
       }
-
-      return [
-        ...previousItems,
-        {
-          ...product,
-          _id: productId,
-          quantity: Math.floor(validQuantity),
-        },
-      ];
-    });
+    );
   };
 
   // =========================
   // REMOVE PRODUCT FROM CART
   // =========================
 
-  const removeFromCart = (productId) => {
-    const normalizedId = String(productId || "");
+  const removeFromCart = (
+    productId
+  ) => {
+    const normalizedId =
+      String(productId || "");
 
-    setCartItems((previousItems) =>
-      previousItems.filter(
-        (item) => getProductId(item) !== normalizedId
-      )
+    setCartItems(
+      (previousItems) =>
+        previousItems.filter(
+          (item) =>
+            getProductId(item) !==
+            normalizedId
+        )
     );
   };
 
@@ -280,26 +337,40 @@ function App() {
   // UPDATE PRODUCT QUANTITY
   // =========================
 
-  const updateQuantity = (productId, quantity) => {
-    const normalizedId = String(productId || "");
-    const newQuantity = Number(quantity);
+  const updateQuantity = (
+    productId,
+    quantity
+  ) => {
+    const normalizedId =
+      String(productId || "");
+
+    const newQuantity =
+      Number(quantity);
 
     if (
-      !Number.isFinite(newQuantity) ||
+      !Number.isFinite(
+        newQuantity
+      ) ||
       newQuantity < 1
     ) {
       return;
     }
 
-    setCartItems((previousItems) =>
-      previousItems.map((item) =>
-        getProductId(item) === normalizedId
-          ? {
-              ...item,
-              quantity: Math.floor(newQuantity),
-            }
-          : item
-      )
+    setCartItems(
+      (previousItems) =>
+        previousItems.map(
+          (item) =>
+            getProductId(item) ===
+            normalizedId
+              ? {
+                  ...item,
+                  quantity:
+                    Math.floor(
+                      newQuantity
+                    ),
+                }
+              : item
+        )
     );
   };
 
@@ -312,38 +383,56 @@ function App() {
   };
 
   // =========================
-  // CART TOTAL QUANTITY
+  // CART COUNT
   // =========================
 
-  const cartCount = cartItems.reduce(
-    (total, item) =>
-      total + Number(item.quantity || 0),
-    0
-  );
+  const cartCount =
+    cartItems.reduce(
+      (total, item) =>
+        total +
+        Number(
+          item.quantity || 0
+        ),
+      0
+    );
 
   // =========================
-  // CART TOTAL PRICE
+  // CART TOTAL
   // =========================
 
-  const cartTotal = cartItems.reduce(
-    (total, item) => {
-      const productPrice = Number(
-        item.price || item.salePrice || 0
-      );
+  const cartTotal =
+    cartItems.reduce(
+      (total, item) => {
+        const productPrice =
+          Number(
+            item.price ||
+              item.salePrice ||
+              0
+          );
 
-      const quantity = Number(item.quantity || 0);
+        const quantity =
+          Number(
+            item.quantity || 0
+          );
 
-      return total + productPrice * quantity;
-    },
-    0
-  );
+        return (
+          total +
+          productPrice *
+            quantity
+        );
+      },
+      0
+    );
 
   // =========================
-  // ADD PRODUCT TO WISHLIST
+  // ADD TO WISHLIST
   // =========================
 
-  const addToWishlist = (product) => {
-    const productId = getProductId(product);
+  const addToWishlist = (
+    product
+  ) => {
+    const productId =
+      getProductId(product);
 
     if (!product || !productId) {
       console.error(
@@ -354,45 +443,59 @@ function App() {
       return;
     }
 
-    setWishlistItems((previousItems) => {
-      const productAlreadyExists = previousItems.some(
-        (item) => getProductId(item) === productId
-      );
+    setWishlistItems(
+      (previousItems) => {
+        const productAlreadyExists =
+          previousItems.some(
+            (item) =>
+              getProductId(item) ===
+              productId
+          );
 
-      if (productAlreadyExists) {
-        return previousItems;
+        if (productAlreadyExists) {
+          return previousItems;
+        }
+
+        return [
+          ...previousItems,
+          {
+            ...product,
+            _id: productId,
+          },
+        ];
       }
-
-      return [
-        ...previousItems,
-        {
-          ...product,
-          _id: productId,
-        },
-      ];
-    });
-  };
-
-  // =========================
-  // REMOVE PRODUCT FROM WISHLIST
-  // =========================
-
-  const removeFromWishlist = (productId) => {
-    const normalizedId = String(productId || "");
-
-    setWishlistItems((previousItems) =>
-      previousItems.filter(
-        (item) => getProductId(item) !== normalizedId
-      )
     );
   };
 
   // =========================
-  // TOGGLE WISHLIST PRODUCT
+  // REMOVE FROM WISHLIST
   // =========================
 
-  const toggleWishlist = (product) => {
-    const productId = getProductId(product);
+  const removeFromWishlist = (
+    productId
+  ) => {
+    const normalizedId =
+      String(productId || "");
+
+    setWishlistItems(
+      (previousItems) =>
+        previousItems.filter(
+          (item) =>
+            getProductId(item) !==
+            normalizedId
+        )
+    );
+  };
+
+  // =========================
+  // TOGGLE WISHLIST
+  // =========================
+
+  const toggleWishlist = (
+    product
+  ) => {
+    const productId =
+      getProductId(product);
 
     if (!product || !productId) {
       console.error(
@@ -403,40 +506,52 @@ function App() {
       return;
     }
 
-    setWishlistItems((previousItems) => {
-      const productExists = previousItems.some(
-        (item) => getProductId(item) === productId
-      );
+    setWishlistItems(
+      (previousItems) => {
+        const productExists =
+          previousItems.some(
+            (item) =>
+              getProductId(item) ===
+              productId
+          );
 
-      if (productExists) {
-        return previousItems.filter(
-          (item) => getProductId(item) !== productId
-        );
+        if (productExists) {
+          return previousItems.filter(
+            (item) =>
+              getProductId(item) !==
+              productId
+          );
+        }
+
+        return [
+          ...previousItems,
+          {
+            ...product,
+            _id: productId,
+          },
+        ];
       }
-
-      return [
-        ...previousItems,
-        {
-          ...product,
-          _id: productId,
-        },
-      ];
-    });
+    );
   };
 
   // =========================
-  // CHECK WISHLIST PRODUCT
+  // CHECK WISHLIST
   // =========================
 
-  const isInWishlist = (productId) => {
-    const normalizedId = String(productId || "");
+  const isInWishlist = (
+    productId
+  ) => {
+    const normalizedId =
+      String(productId || "");
 
     if (!normalizedId) {
       return false;
     }
 
     return wishlistItems.some(
-      (item) => getProductId(item) === normalizedId
+      (item) =>
+        getProductId(item) ===
+        normalizedId
     );
   };
 
@@ -452,30 +567,27 @@ function App() {
   // WISHLIST COUNT
   // =========================
 
-  const wishlistCount = wishlistItems.length;
+  const wishlistCount =
+    wishlistItems.length;
 
   // =========================
   // CONTEXT VALUES
   // =========================
 
   const values = {
-    // Country
     countryList,
     selectCountry,
     setSelectCountry,
 
-    // Product Modal
     isOpenProductModal,
     setisOpenProductModal,
 
     selectedProduct,
     setSelectedProduct,
 
-    // Header and Footer
     isHeaderFooterShow,
     setisHeaderFooterShow,
 
-    // Login
     isLogin,
     setIsLogin,
 
@@ -484,7 +596,6 @@ function App() {
 
     logout,
 
-    // Cart
     cartItems,
     setCartItems,
     addToCart,
@@ -494,7 +605,6 @@ function App() {
     cartCount,
     cartTotal,
 
-    // Wishlist
     wishlistItems,
     setWishlistItems,
     addToWishlist,
@@ -510,10 +620,15 @@ function App() {
       <MyContext.Provider value={values}>
 
         {/* HEADER */}
-        {isHeaderFooterShow && <Header />}
+
+        {isHeaderFooterShow && (
+          <Header />
+        )}
 
         {/* ROUTES */}
+
         <Routes>
+
           <Route
             path="/"
             element={<Home />}
@@ -526,7 +641,9 @@ function App() {
 
           <Route
             path="/product/:id"
-            element={<ProductDetails />}
+            element={
+              <ProductDetails />
+            }
           />
 
           <Route
@@ -546,7 +663,9 @@ function App() {
 
           <Route
             path="/order-success"
-            element={<OrderSuccess />}
+            element={
+              <OrderSuccess />
+            }
           />
 
           <Route
@@ -559,28 +678,60 @@ function App() {
             element={<Contact />}
           />
 
+          {/* SIGN IN */}
+
           <Route
             path="/signIn"
             element={<SignIn />}
           />
+
+          {/* SIGN UP */}
 
           <Route
             path="/signUp"
             element={<SignUp />}
           />
 
-          {/* SEARCH RESULTS ROUTE */}
+          {/* FORGOT PASSWORD */}
+
+          <Route
+            path="/forgot-password"
+            element={
+              <ForgotPassword />
+            }
+          />
+
+          {/* RESET PASSWORD */}
+
+          <Route
+            path="/reset-password"
+            element={
+              <ResetPassword />
+            }
+          />
+
+          {/* SEARCH */}
+
           <Route
             path="/search"
-            element={<SearchResults />}
+            element={
+              <SearchResults />
+            }
           />
+
         </Routes>
 
         {/* FOOTER */}
-        {isHeaderFooterShow && <Footer />}
+
+        {isHeaderFooterShow && (
+          <Footer />
+        )}
 
         {/* PRODUCT MODAL */}
-        {isOpenProductModal && <ProductModal />}
+
+        {isOpenProductModal && (
+          <ProductModal />
+        )}
 
       </MyContext.Provider>
     </BrowserRouter>
