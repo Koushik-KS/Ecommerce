@@ -1,16 +1,9 @@
+
 import { useCallback, useEffect, useState } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
 
-// =========================
-// API URL
-// =========================
-
-const API_URL = `${process.env.REACT_APP_API_URL}/api/orders`;
-
-// =========================
-// RECENT ORDERS COMPONENT
-// =========================
+const API_URL = "http://localhost:4000/api/orders";
 
 const RecentOrders = () => {
   const [orders, setOrders] = useState([]);
@@ -177,9 +170,7 @@ const RecentOrders = () => {
 
   return (
     <div className="card shadow border-0 p-3 mt-4">
-
       <div className="d-flex align-items-center justify-content-between mb-3">
-
         <h3 className="hd mb-0">
           Recent Orders
         </h3>
@@ -190,10 +181,7 @@ const RecentOrders = () => {
         >
           View All
         </Link>
-
       </div>
-
-      {/* LOADING */}
 
       {loading && (
         <p className="text-muted mb-0">
@@ -201,15 +189,11 @@ const RecentOrders = () => {
         </p>
       )}
 
-      {/* ERROR */}
-
       {error && (
         <div className="alert alert-danger">
           {error}
         </div>
       )}
-
-      {/* NO ORDERS */}
 
       {!loading &&
         !error &&
@@ -219,15 +203,11 @@ const RecentOrders = () => {
           </p>
         )}
 
-      {/* ORDERS TABLE */}
-
       {!loading &&
         !error &&
         orders.length > 0 && (
           <div className="table-responsive">
-
             <table className="table table-bordered table-hover align-middle mb-0">
-
               <thead className="table-light">
                 <tr>
                   <th>#</th>
@@ -241,7 +221,6 @@ const RecentOrders = () => {
               </thead>
 
               <tbody>
-
                 {orders.map((order, index) => (
                   <tr
                     key={
@@ -250,14 +229,7 @@ const RecentOrders = () => {
                       index
                     }
                   >
-
-                    {/* NUMBER */}
-
-                    <td>
-                      {index + 1}
-                    </td>
-
-                    {/* ORDER ID */}
+                    <td>{index + 1}</td>
 
                     <td>
                       <strong>
@@ -266,13 +238,11 @@ const RecentOrders = () => {
                     </td>
 
                     {/* CUSTOMER */}
-
                     <td>
                       {getCustomerName(order)}
                     </td>
 
                     {/* TOTAL */}
-
                     <td className="text-danger fw-bold">
                       ₹
                       {getOrderTotal(
@@ -281,7 +251,6 @@ const RecentOrders = () => {
                     </td>
 
                     {/* STATUS */}
-
                     <td>
                       <span
                         className={`badge ${getStatusClass(
@@ -293,7 +262,6 @@ const RecentOrders = () => {
                     </td>
 
                     {/* DATE */}
-
                     <td>
                       {formatDate(
                         order.createdAt ||
@@ -302,7 +270,6 @@ const RecentOrders = () => {
                     </td>
 
                     {/* ACTION */}
-
                     <td>
                       <Link
                         to={`/orders/${
@@ -314,17 +281,12 @@ const RecentOrders = () => {
                         View
                       </Link>
                     </td>
-
                   </tr>
                 ))}
-
               </tbody>
-
             </table>
-
           </div>
         )}
-
     </div>
   );
 };

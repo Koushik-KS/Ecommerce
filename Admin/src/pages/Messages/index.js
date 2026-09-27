@@ -1,3 +1,4 @@
+
 import {
   useEffect,
   useState,
@@ -27,7 +28,8 @@ import {
 // API URL
 // =====================================================
 
-const API_URL = `${process.env.REACT_APP_API_URL}/api/messages`;
+const API_URL =
+  "http://localhost:4000/api/messages";
 
 // =====================================================
 // MESSAGES COMPONENT
@@ -214,9 +216,7 @@ function Messages() {
       );
 
       setSelectedMessage(data.data);
-
       setShowReplyModal(false);
-
       setReplyText("");
 
       alert("Reply saved successfully.");
@@ -330,13 +330,11 @@ function Messages() {
     return (
       <div className="messages-page">
         <div className="text-center py-5">
-
           <Spinner animation="border" />
 
           <p className="mt-3">
             Loading messages...
           </p>
-
         </div>
       </div>
     );
@@ -348,13 +346,11 @@ function Messages() {
 
   return (
     <div className="messages-page">
-
       {/* =================================================
           PAGE HEADER
       ================================================= */}
 
       <div className="messages-header mb-4">
-
         <div>
           <h2 className="mb-1">
             Messages
@@ -365,7 +361,7 @@ function Messages() {
           </p>
         </div>
 
-        {/* Refresh button */}
+        {/* Refresh button below heading */}
 
         <Button
           variant="primary"
@@ -374,7 +370,6 @@ function Messages() {
           <FaSyncAlt className="me-2" />
           Refresh
         </Button>
-
       </div>
 
       {/* =================================================
@@ -382,12 +377,9 @@ function Messages() {
       ================================================= */}
 
       <Row className="g-3 mb-4">
-
         <Col md={4}>
           <Card className="message-summary-card shadow-sm border-0">
-
             <Card.Body>
-
               <h6 className="text-muted">
                 Total Messages
               </h6>
@@ -395,17 +387,13 @@ function Messages() {
               <h3>
                 {messages.length}
               </h3>
-
             </Card.Body>
-
           </Card>
         </Col>
 
         <Col md={4}>
           <Card className="message-summary-card shadow-sm border-0">
-
             <Card.Body>
-
               <h6 className="text-muted">
                 Unread Messages
               </h6>
@@ -418,17 +406,13 @@ function Messages() {
                   ).length
                 }
               </h3>
-
             </Card.Body>
-
           </Card>
         </Col>
 
         <Col md={4}>
           <Card className="message-summary-card shadow-sm border-0">
-
             <Card.Body>
-
               <h6 className="text-muted">
                 Replied Messages
               </h6>
@@ -441,12 +425,9 @@ function Messages() {
                   ).length
                 }
               </h3>
-
             </Card.Body>
-
           </Card>
         </Col>
-
       </Row>
 
       {/* =================================================
@@ -464,23 +445,17 @@ function Messages() {
       ================================================= */}
 
       <Card className="messages-table-card shadow-sm border-0">
-
         <Card.Body>
-
           <div className="d-flex align-items-center mb-3">
-
             <FaEnvelope className="me-2" />
 
             <h5 className="mb-0">
               Customer Messages
             </h5>
-
           </div>
 
           {messages.length === 0 ? (
-
             <div className="text-center py-5">
-
               <h5>
                 No messages found
               </h5>
@@ -489,21 +464,15 @@ function Messages() {
                 Customer order messages will
                 appear here.
               </p>
-
             </div>
-
           ) : (
-
             <div className="table-responsive">
-
               <Table
                 bordered
                 hover
                 className="messages-table align-middle"
               >
-
                 <thead>
-
                   <tr>
                     <th>#</th>
                     <th>Customer</th>
@@ -513,14 +482,11 @@ function Messages() {
                     <th>Date</th>
                     <th>Actions</th>
                   </tr>
-
                 </thead>
 
                 <tbody>
-
                   {messages.map(
                     (message, index) => (
-
                       <tr
                         key={message._id}
                         className={
@@ -529,13 +495,11 @@ function Messages() {
                             : ""
                         }
                       >
-
                         <td>
                           {index + 1}
                         </td>
 
                         <td>
-
                           <strong>
                             {message.customerName}
                           </strong>
@@ -545,7 +509,6 @@ function Messages() {
                           <small className="text-muted">
                             {message.customerEmail}
                           </small>
-
                         </td>
 
                         <td>
@@ -553,7 +516,6 @@ function Messages() {
                         </td>
 
                         <td>
-
                           <span
                             title={message.message}
                           >
@@ -565,7 +527,6 @@ function Messages() {
                                 )}...`
                               : message.message}
                           </span>
-
                         </td>
 
                         <td>
@@ -575,21 +536,15 @@ function Messages() {
                         </td>
 
                         <td>
-
                           {message.createdAt
                             ? new Date(
                                 message.createdAt
                               ).toLocaleDateString()
                             : "-"}
-
                         </td>
 
                         <td>
-
                           <div className="message-actions d-flex gap-2">
-
-                            {/* VIEW */}
-
                             <Button
                               variant="outline-primary"
                               size="sm"
@@ -602,8 +557,6 @@ function Messages() {
                             >
                               <FaEye />
                             </Button>
-
-                            {/* REPLY */}
 
                             <Button
                               variant="outline-success"
@@ -618,8 +571,6 @@ function Messages() {
                               <FaReply />
                             </Button>
 
-                            {/* DELETE */}
-
                             <Button
                               variant="outline-danger"
                               size="sm"
@@ -632,26 +583,16 @@ function Messages() {
                             >
                               <FaTrash />
                             </Button>
-
                           </div>
-
                         </td>
-
                       </tr>
-
                     )
                   )}
-
                 </tbody>
-
               </Table>
-
             </div>
-
           )}
-
         </Card.Body>
-
       </Card>
 
       {/* =================================================
@@ -663,17 +604,13 @@ function Messages() {
         onHide={() => setShowViewModal(false)}
         centered
       >
-
         <Modal.Header closeButton>
-
           <Modal.Title>
             Message Details
           </Modal.Title>
-
         </Modal.Header>
 
         <Modal.Body>
-
           {selectedMessage && (
             <>
               <p>
@@ -735,16 +672,12 @@ function Messages() {
               )}
             </>
           )}
-
         </Modal.Body>
 
         <Modal.Footer>
-
           <Button
             variant="secondary"
-            onClick={() =>
-              setShowViewModal(false)
-            }
+            onClick={() => setShowViewModal(false)}
           >
             Close
           </Button>
@@ -764,9 +697,7 @@ function Messages() {
               Reply
             </Button>
           )}
-
         </Modal.Footer>
-
       </Modal>
 
       {/* =================================================
@@ -778,19 +709,14 @@ function Messages() {
         onHide={() => setShowReplyModal(false)}
         centered
       >
-
         <Modal.Header closeButton>
-
           <Modal.Title>
             Reply to Customer
           </Modal.Title>
-
         </Modal.Header>
 
         <Form onSubmit={handleReply}>
-
           <Modal.Body>
-
             {selectedMessage && (
               <>
                 <p>
@@ -808,7 +734,6 @@ function Messages() {
                 </p>
 
                 <Form.Group>
-
                   <Form.Label>
                     Your Reply
                   </Form.Label>
@@ -825,15 +750,12 @@ function Messages() {
                     }
                     required
                   />
-
                 </Form.Group>
               </>
             )}
-
           </Modal.Body>
 
           <Modal.Footer>
-
             <Button
               variant="secondary"
               onClick={() =>
@@ -849,7 +771,6 @@ function Messages() {
               type="submit"
               disabled={replyLoading}
             >
-
               {replyLoading ? (
                 <>
                   <Spinner
@@ -865,15 +786,10 @@ function Messages() {
                   Save Reply
                 </>
               )}
-
             </Button>
-
           </Modal.Footer>
-
         </Form>
-
       </Modal>
-
     </div>
   );
 }
