@@ -35,6 +35,10 @@ const allowedOrigins = [
   "http://localhost:3001",
   "http://127.0.0.1:3000",
   "http://127.0.0.1:3001",
+
+  // Add your Vercel frontend URL here after deployment
+  // Example:
+  // "https://your-client.vercel.app",
 ];
 
 app.use(
@@ -52,9 +56,7 @@ app.use(
 
       console.warn(`Blocked CORS origin: ${origin}`);
 
-      return callback(
-        new Error("Not allowed by CORS")
-      );
+      return callback(new Error("Not allowed by CORS"));
     },
     credentials: true,
   })
@@ -64,7 +66,6 @@ app.use(
 // BODY PARSER MIDDLEWARE
 // =====================================================
 
-// Increase JSON request size for Base64 images
 app.use(
   express.json({
     limit: "10mb",
@@ -82,73 +83,49 @@ app.use(
 // CATEGORY ROUTES
 // =====================================================
 
-app.use(
-  "/api/category",
-  categoryRoutes
-);
+app.use("/api/category", categoryRoutes);
 
 // =====================================================
 // PRODUCT ROUTES
 // =====================================================
 
-app.use(
-  "/api/products",
-  productRoutes
-);
+app.use("/api/products", productRoutes);
 
 // =====================================================
 // ORDER ROUTES
 // =====================================================
 
-app.use(
-  "/api/orders",
-  orderRoutes
-);
+app.use("/api/orders", orderRoutes);
 
 // =====================================================
 // MESSAGE ROUTES
 // =====================================================
 
-app.use(
-  "/api/messages",
-  messagesRoutes
-);
+app.use("/api/messages", messagesRoutes);
 
 // =====================================================
 // AUTHENTICATION ROUTES
 // =====================================================
 
-app.use(
-  "/api/auth",
-  authRoutes
-);
+app.use("/api/auth", authRoutes);
 
 // =====================================================
 // REVIEW ROUTES
 // =====================================================
 
-app.use(
-  "/api/reviews",
-  reviewRoutes
-);
+app.use("/api/reviews", reviewRoutes);
 
 // =====================================================
 // NOTIFICATION ROUTES
 // =====================================================
 
-app.use(
-  "/api/notifications",
-  notificationRoutes
-);
+app.use("/api/notifications", notificationRoutes);
 
 // =====================================================
 // SETTINGS ROUTES
 // =====================================================
 
-app.use(
-  "/api/settings",
-  settingsRoutes
-);
+app.use("/api/settings", settingsRoutes);
 
 // =====================================================
 // BASIC API TEST ROUTE
@@ -210,10 +187,8 @@ mongoose
 
     const PORT = process.env.PORT || 4000;
 
-    app.listen(PORT, () => {
-      console.log(
-        `Server is running at http://localhost:${PORT}`
-      );
+    app.listen(PORT, "0.0.0.0", () => {
+      console.log(`Server is running on port ${PORT}`);
     });
   })
   .catch((err) => {
