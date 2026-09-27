@@ -39,7 +39,6 @@ const API_URL = "http://localhost:4000";
 // ADMIN PROFILE IMAGE
 // =====================================================
 
-// Google Drive file ID
 const ADMIN_PROFILE_IMAGE =
   "https://drive.google.com/thumbnail?id=16vdjZ2JldugPPOoXN1HOuuh7yJMLDvFO&sz=w500";
 
@@ -97,7 +96,6 @@ const Header = () => {
 
   const handleOpenNotificationsDrop = (event) => {
     setNotificationAnchorEl(event.currentTarget);
-
     fetchNotifications();
   };
 
@@ -404,30 +402,40 @@ const Header = () => {
 
   return (
     <header className="d-flex align-items-center">
-      <div className="container-fluid w-100">
-        <div className="row d-flex align-items-center w-100">
+      <div className="container-fluid w-100 px-2 px-sm-3">
+        <div className="row d-flex align-items-center w-100 g-0">
 
           {/* =================================================
               LOGO
           ================================================= */}
 
-          <div className="col-sm-2 part1">
+          <div className="col-5 col-sm-2 part1">
             <Link
               to="/"
               className="d-flex align-items-center logo"
+              style={{
+                textDecoration: "none",
+                minWidth: 0,
+              }}
             >
               <img
                 src={logo}
                 alt="Store Logo"
                 style={{
-                  width: "60px",
-                  height: "60px",
+                  width: "50px",
+                  height: "50px",
+                  objectFit: "cover",
+                  borderRadius: "8px",
+                  flexShrink: 0,
                 }}
               />
 
               <span
+                className="d-none d-md-inline"
                 style={{
-                  marginLeft: "4px",
+                  marginLeft: "6px",
+                  fontWeight: "700",
+                  whiteSpace: "nowrap",
                 }}
               >
                 STORE
@@ -439,15 +447,27 @@ const Header = () => {
               MENU AND SEARCH
           ================================================= */}
 
-          <div className="col-sm-4 d-flex align-items-center part2">
-
+          <div
+            className="col-7 col-sm-4 d-flex align-items-center part2"
+            style={{
+              minWidth: 0,
+              gap: "4px",
+            }}
+          >
             <Button
-              className="rounded-circle"
+              className="rounded-circle flex-shrink-0"
               onClick={() =>
                 context.setIsToggleSidebar(
                   !context.isToggleSidebar
                 )
               }
+              style={{
+                minWidth: "40px",
+                width: "40px",
+                height: "40px",
+                padding: 0,
+              }}
+              aria-label="Toggle sidebar"
             >
               {context.isToggleSidebar === false ? (
                 <MdMenuOpen />
@@ -456,8 +476,15 @@ const Header = () => {
               )}
             </Button>
 
-            <SearchBox />
-
+            <div
+              style={{
+                flex: 1,
+                minWidth: 0,
+                overflow: "hidden",
+              }}
+            >
+              <SearchBox />
+            </div>
           </div>
 
           {/* =================================================
@@ -465,9 +492,10 @@ const Header = () => {
           ================================================= */}
 
           <div
-            className="col-sm-6 d-flex align-items-center justify-content-end part3"
+            className="col-12 col-sm-6 d-flex align-items-center justify-content-between justify-content-sm-end part3 mt-2 mt-sm-0"
             style={{
-              gap: "8px",
+              gap: "4px",
+              minWidth: 0,
             }}
           >
 
@@ -476,12 +504,19 @@ const Header = () => {
             ================================================= */}
 
             <Button
-              className="rounded-circle"
+              className="rounded-circle flex-shrink-0"
               onClick={() =>
                 context.setThemeMode(
                   !context.themeMode
                 )
               }
+              style={{
+                minWidth: "40px",
+                width: "40px",
+                height: "40px",
+                padding: 0,
+              }}
+              aria-label="Change theme"
             >
               <CiLight />
             </Button>
@@ -490,7 +525,16 @@ const Header = () => {
                 CART BUTTON
             ================================================= */}
 
-            <Button className="rounded-circle">
+            <Button
+              className="rounded-circle flex-shrink-0"
+              style={{
+                minWidth: "40px",
+                width: "40px",
+                height: "40px",
+                padding: 0,
+              }}
+              aria-label="Cart"
+            >
               <IoIosCart />
             </Button>
 
@@ -498,7 +542,16 @@ const Header = () => {
                 EMAIL BUTTON
             ================================================= */}
 
-            <Button className="rounded-circle">
+            <Button
+              className="rounded-circle flex-shrink-0"
+              style={{
+                minWidth: "40px",
+                width: "40px",
+                height: "40px",
+                padding: 0,
+              }}
+              aria-label="Messages"
+            >
               <MdOutlineMailOutline />
             </Button>
 
@@ -506,13 +559,19 @@ const Header = () => {
                 NOTIFICATION BUTTON
             ================================================= */}
 
-            <div className="dropdownWrapper position-relative">
+            <div className="dropdownWrapper position-relative flex-shrink-0">
 
               <Button
                 className="rounded-circle"
                 onClick={
                   handleOpenNotificationsDrop
                 }
+                style={{
+                  minWidth: "40px",
+                  width: "40px",
+                  height: "40px",
+                  padding: 0,
+                }}
                 aria-label="Open notifications"
               >
                 <FaRegBell />
@@ -565,7 +624,7 @@ const Header = () => {
                 PaperProps={{
                   style: {
                     width: "390px",
-                    maxWidth: "95vw",
+                    maxWidth: "calc(100vw - 20px)",
                     maxHeight: "520px",
                   },
                 }}
@@ -575,6 +634,9 @@ const Header = () => {
 
                 <div
                   className="px-3 pt-2 pb-2 d-flex align-items-center justify-content-between"
+                  style={{
+                    gap: "8px",
+                  }}
                 >
                   <h4
                     style={{
@@ -597,7 +659,6 @@ const Header = () => {
                           marginRight: "4px",
                         }}
                       />
-
                       Mark all read
                     </Button>
                   )}
@@ -613,6 +674,7 @@ const Header = () => {
                   style={{
                     maxHeight: "360px",
                     overflowY: "auto",
+                    overflowX: "hidden",
                   }}
                 >
 
@@ -621,7 +683,7 @@ const Header = () => {
                     <div
                       className="p-3 text-center"
                       style={{
-                        minWidth: "300px",
+                        minWidth: "250px",
                       }}
                     >
                       Loading notifications...
@@ -632,7 +694,7 @@ const Header = () => {
                     <div
                       className="p-3 text-center"
                       style={{
-                        minWidth: "300px",
+                        minWidth: "250px",
                         color: "#d32f2f",
                       }}
                     >
@@ -644,7 +706,7 @@ const Header = () => {
                     <div
                       className="p-3 text-center"
                       style={{
-                        minWidth: "300px",
+                        minWidth: "250px",
                       }}
                     >
                       No notifications available.
@@ -682,6 +744,7 @@ const Header = () => {
                               display: "flex",
                               width: "100%",
                               gap: "10px",
+                              minWidth: 0,
                             }}
                           >
 
@@ -715,6 +778,8 @@ const Header = () => {
                                       : "700",
                                   margin:
                                     "0 0 5px",
+                                  overflowWrap:
+                                    "anywhere",
                                 }}
                               >
                                 {notification.title}
@@ -758,7 +823,9 @@ const Header = () => {
                               }}
                               style={{
                                 minWidth: "30px",
+                                width: "30px",
                                 padding: "4px",
+                                flexShrink: 0,
                               }}
                               aria-label="Delete notification"
                             >
@@ -803,7 +870,10 @@ const Header = () => {
 
             {context.isLogin !== true ? (
 
-              <Link to="/login">
+              <Link
+                to="/login"
+                className="flex-shrink-0"
+              >
                 <Button className="btn-blue btn-round">
                   Sign In
                 </Button>
@@ -811,22 +881,26 @@ const Header = () => {
 
             ) : (
 
-              <div className="myAccWrapper">
+              <div className="myAccWrapper flex-shrink-0">
 
                 <Button
                   className="myAcc d-flex align-items-center"
                   onClick={
                     handleOpenMyAccDrop
                   }
+                  style={{
+                    minWidth: 0,
+                    padding: "4px 6px",
+                  }}
                 >
 
-                  <div>
+                  <div className="flex-shrink-0">
                     <UserAvatarImgComponent
                       img={ADMIN_PROFILE_IMAGE}
                     />
                   </div>
 
-                  <div className="userInfo">
+                  <div className="userInfo d-none d-lg-block">
                     <h4>
                       Koushik Shetty
                     </h4>

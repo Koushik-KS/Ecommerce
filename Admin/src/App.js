@@ -53,15 +53,10 @@ function App() {
   // SIDEBAR STATE
   // =====================================================
 
-  const [
-    isToggleSidebar,
-    setIsToggleSidebar,
-  ] = useState(false);
+  const [isToggleSidebar, setIsToggleSidebar] = useState(false);
 
   // =====================================================
   // LOGIN STATE
-  // =====================================================
-  // Check localStorage when application starts.
   // =====================================================
 
   const [isLogin, setIsLogin] = useState(
@@ -86,6 +81,52 @@ function App() {
   const [themeMode, setThemeMode] = useState(true);
 
   // =====================================================
+  // MOBILE SCREEN STATE
+  // =====================================================
+
+  const [isMobile, setIsMobile] = useState(
+    typeof window !== "undefined"
+      ? window.innerWidth <= 991
+      : false
+  );
+
+  // =====================================================
+  // DETECT MOBILE / TABLET SCREEN
+  // =====================================================
+
+  useEffect(() => {
+    const handleResize = () => {
+      const mobile = window.innerWidth <= 991;
+
+      setIsMobile(mobile);
+
+      // Automatically reset sidebar when moving
+      // from mobile/tablet to desktop.
+      if (!mobile) {
+        setIsToggleSidebar(false);
+      }
+    };
+
+    handleResize();
+
+    window.addEventListener("resize", handleResize);
+
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, []);
+
+  // =====================================================
+  // CLOSE SIDEBAR WHEN MOBILE OVERLAY IS USED
+  // =====================================================
+
+  const closeMobileSidebar = () => {
+    if (isMobile) {
+      setIsToggleSidebar(true);
+    }
+  };
+
+  // =====================================================
   // THEME SETUP
   // =====================================================
 
@@ -94,18 +135,12 @@ function App() {
       document.body.classList.remove("dark");
       document.body.classList.add("light");
 
-      localStorage.setItem(
-        "themeMode",
-        "light"
-      );
+      localStorage.setItem("themeMode", "light");
     } else {
       document.body.classList.remove("light");
       document.body.classList.add("dark");
 
-      localStorage.setItem(
-        "themeMode",
-        "dark"
-      );
+      localStorage.setItem("themeMode", "dark");
     }
   }, [themeMode]);
 
@@ -118,6 +153,9 @@ function App() {
       setisHideSidebarAndHeader(false);
     } else {
       setisHideSidebarAndHeader(true);
+
+      // Make sure sidebar is closed after logout.
+      setIsToggleSidebar(false);
     }
   }, [isLogin]);
 
@@ -137,6 +175,10 @@ function App() {
 
     themeMode,
     setThemeMode,
+
+    // Mobile information can also be used by
+    // Header / Sidebar components if required later.
+    isMobile,
   };
 
   // =====================================================
@@ -154,6 +196,23 @@ function App() {
     }
 
     return children;
+  };
+
+  // =====================================================
+  // MOBILE SIDEBAR OVERLAY
+  // =====================================================
+
+  const mobileOverlayStyle = {
+    position: "fixed",
+    top: isMobile && window.innerWidth <= 767 ? "60px" : "64px",
+    left: 0,
+    right: 0,
+    bottom: 0,
+    width: "100%",
+    height: "calc(100vh - 60px)",
+    background: "rgba(0, 0, 0, 0.38)",
+    zIndex: 1050,
+    cursor: "pointer",
   };
 
   // =====================================================
@@ -176,7 +235,11 @@ function App() {
             MAIN LAYOUT
         ================================================= */}
 
-        <div className="main d-flex">
+        <div
+          className={`main d-flex ${
+            isMobile ? "mobile-layout" : ""
+          }`}
+        >
 
           {/* =================================================
               SIDEBAR
@@ -193,6 +256,21 @@ function App() {
               <Sidebar />
             </div>
           )}
+
+          {/* =================================================
+              MOBILE SIDEBAR OVERLAY
+          ================================================= */}
+
+          {isLogin === true &&
+            isMobile === true &&
+            isToggleSidebar === false && (
+              <div
+                className="mobile-sidebar-overlay"
+                style={mobileOverlayStyle}
+                onClick={closeMobileSidebar}
+                aria-hidden="true"
+              />
+            )}
 
           {/* =================================================
               MAIN CONTENT
@@ -398,13 +476,6 @@ function App() {
                   </ProtectedRoute>
                 }
               />
-
-              {/* =================================================
-                  SIGN UP REMOVED
-              ================================================= */}
-
-              {/* No /signUp route because you are using
-                  permanent admin credentials. */}
 
               {/* =================================================
                   UNKNOWN ROUTES
