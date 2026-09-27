@@ -1,27 +1,61 @@
 import React from "react";
+
 import { FaUserShield } from "react-icons/fa";
 import { MdEmail } from "react-icons/md";
+
 import { Button } from "@mui/material";
 
+// =====================================================
+// ADMIN PROFILE
+// =====================================================
+
 const AdminProfile = () => {
+
+  // ===================================================
+  // ADMIN DETAILS
+  // ===================================================
+
   const admin = {
     name: "Koushik Shetty",
-    email: "admin@example.com",
+
+    email: "koushikshetty102@gmail.com",
+
     role: "Administrator",
+
+    // Google Drive image URL
     image:
-      "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSTx3SRpQ8G8mKf3SUHnnn5mzgz7jx2WnePnA&s",
+      "https://drive.google.com/thumbnail?id=16vdjZ2JldugPPOoXN1HOuuh7yJMLDvFO&sz=w500",
   };
 
+  // ===================================================
+  // LOGOUT
+  // ===================================================
+
   const handleLogout = () => {
+
+    // Remove login information
     localStorage.removeItem("token");
     localStorage.removeItem("admin");
     localStorage.removeItem("isLogin");
 
+    localStorage.removeItem("adminLoggedIn");
+    localStorage.removeItem("adminEmail");
+
+    // Go to login page
     window.location.href = "/login";
   };
 
+  // ===================================================
+  // RETURN UI
+  // ===================================================
+
   return (
     <div className="container-fluid py-4">
+
+      {/* =================================================
+          PROFILE CARD
+      ================================================= */}
+
       <div
         style={{
           maxWidth: "700px",
@@ -29,22 +63,43 @@ const AdminProfile = () => {
           background: "#ffffff",
           borderRadius: "15px",
           padding: "35px",
-          boxShadow: "0 4px 20px rgba(0,0,0,0.08)",
+          boxShadow:
+            "0 4px 20px rgba(0,0,0,0.08)",
         }}
       >
-        {/* TITLE */}
+
+        {/* =================================================
+            TITLE
+        ================================================= */}
+
         <div className="text-center mb-4">
-          <h2 style={{ marginBottom: "5px" }}>
+
+          <h2
+            style={{
+              marginBottom: "5px",
+            }}
+          >
             Admin Profile
           </h2>
 
-          <p style={{ color: "#777", margin: 0 }}>
+          <p
+            style={{
+              color: "#777",
+              margin: 0,
+            }}
+          >
             Manage your administrator profile
           </p>
+
         </div>
 
-        {/* PROFILE PHOTO */}
-        <div className="text-center mb-4">
+        {/* =================================================
+            PROFILE PHOTO
+        ================================================= */}
+
+        <div
+          className="text-center mb-4"
+        >
           <img
             src={admin.image}
             alt="Admin"
@@ -54,11 +109,16 @@ const AdminProfile = () => {
               borderRadius: "50%",
               objectFit: "cover",
               border: "4px solid #eeeeee",
+              display: "block",
+              margin: "0 auto",
             }}
           />
         </div>
 
-        {/* ADMIN ICON */}
+        {/* =================================================
+            ADMIN ICON
+        ================================================= */}
+
         <div
           className="d-flex justify-content-center mb-4"
           style={{
@@ -69,14 +129,22 @@ const AdminProfile = () => {
           <FaUserShield />
         </div>
 
-        {/* ADMIN NAME */}
+        {/* =================================================
+            ADMIN NAME
+        ================================================= */}
+
         <div
           style={{
             textAlign: "center",
             marginBottom: "20px",
           }}
         >
-          <h3 style={{ marginBottom: "5px" }}>
+
+          <h3
+            style={{
+              marginBottom: "5px",
+            }}
+          >
             {admin.name}
           </h3>
 
@@ -88,9 +156,13 @@ const AdminProfile = () => {
           >
             {admin.role}
           </span>
+
         </div>
 
-        {/* EMAIL */}
+        {/* =================================================
+            EMAIL
+        ================================================= */}
+
         <div
           style={{
             display: "flex",
@@ -102,6 +174,7 @@ const AdminProfile = () => {
             marginBottom: "25px",
           }}
         >
+
           <MdEmail
             style={{
               fontSize: "25px",
@@ -110,6 +183,7 @@ const AdminProfile = () => {
           />
 
           <div>
+
             <small
               style={{
                 color: "#777",
@@ -119,11 +193,18 @@ const AdminProfile = () => {
               Email
             </small>
 
-            <strong>{admin.email}</strong>
+            <strong>
+              {admin.email}
+            </strong>
+
           </div>
+
         </div>
 
-        {/* LOGOUT */}
+        {/* =================================================
+            LOGOUT BUTTON
+        ================================================= */}
+
         <Button
           variant="contained"
           color="error"
@@ -138,7 +219,9 @@ const AdminProfile = () => {
         >
           Logout
         </Button>
+
       </div>
+
     </div>
   );
 };

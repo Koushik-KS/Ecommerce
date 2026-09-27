@@ -24,7 +24,7 @@ const defaultSettings = {
   general: {
     storeName: "My E-Commerce Store",
     description: "",
-    email: "",
+    email: "koushikshetty102@gmail.com",
     phone: "",
     address: "",
     city: "",
@@ -79,7 +79,7 @@ function Settings() {
 
   const [admin, setAdmin] = useState({
     name: "Koushik Shetty",
-    email: "admin@example.com",
+    email: "koushikshetty102@gmail.com",
     role: "Administrator",
     status: "Active",
   });

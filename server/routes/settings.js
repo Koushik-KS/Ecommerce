@@ -21,7 +21,7 @@ router.get("/", async (req, res) => {
       settings,
       admin: {
         name: process.env.ADMIN_NAME || "Koushik Shetty",
-        email: process.env.ADMIN_EMAIL || "admin@example.com",
+        email: process.env.ADMIN_EMAIL || "koushikshetty102@gmail.com",
         role: "Administrator",
         status: "Active",
       },

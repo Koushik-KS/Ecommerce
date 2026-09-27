@@ -36,6 +36,14 @@ import UserAvatarImgComponent from "../userAvatarImg";
 const API_URL = "http://localhost:4000";
 
 // =====================================================
+// ADMIN PROFILE IMAGE
+// =====================================================
+
+// Google Drive file ID
+const ADMIN_PROFILE_IMAGE =
+  "https://drive.google.com/thumbnail?id=16vdjZ2JldugPPOoXN1HOuuh7yJMLDvFO&sz=w500";
+
+// =====================================================
 // HEADER COMPONENT
 // =====================================================
 
@@ -54,30 +62,18 @@ const Header = () => {
   // NOTIFICATION MENU STATE
   // ===================================================
 
-  const [
-    notificationAnchorEl,
-    setNotificationAnchorEl,
-  ] = useState(null);
+  const [notificationAnchorEl, setNotificationAnchorEl] =
+    useState(null);
 
-  const [
-    notifications,
-    setNotifications,
-  ] = useState([]);
+  const [notifications, setNotifications] = useState([]);
 
-  const [
-    unreadCount,
-    setUnreadCount,
-  ] = useState(0);
+  const [unreadCount, setUnreadCount] = useState(0);
 
-  const [
-    isLoadingNotifications,
-    setIsLoadingNotifications,
-  ] = useState(false);
+  const [isLoadingNotifications, setIsLoadingNotifications] =
+    useState(false);
 
-  const [
-    notificationError,
-    setNotificationError,
-  ] = useState("");
+  const [notificationError, setNotificationError] =
+    useState("");
 
   const openNotifications = Boolean(
     notificationAnchorEl
@@ -218,8 +214,7 @@ const Header = () => {
         (previousNotifications) =>
           previousNotifications.map(
             (notification) =>
-              notification._id ===
-              notificationId
+              notification._id === notificationId
                 ? {
                     ...notification,
                     isRead: true,
@@ -295,8 +290,7 @@ const Header = () => {
       const notificationToDelete =
         notifications.find(
           (notification) =>
-            notification._id ===
-            notificationId
+            notification._id === notificationId
         );
 
       const response = await fetch(
@@ -319,8 +313,7 @@ const Header = () => {
         (previousNotifications) =>
           previousNotifications.filter(
             (notification) =>
-              notification._id !==
-              notificationId
+              notification._id !== notificationId
           )
       );
 
@@ -401,9 +394,7 @@ const Header = () => {
       }, 30000);
 
     return () => {
-      clearInterval(
-        notificationInterval
-      );
+      clearInterval(notificationInterval);
     };
   }, []);
 
@@ -458,8 +449,7 @@ const Header = () => {
                 )
               }
             >
-              {context.isToggleSidebar ===
-              false ? (
+              {context.isToggleSidebar === false ? (
                 <MdMenuOpen />
               ) : (
                 <IoMenu />
@@ -516,9 +506,8 @@ const Header = () => {
                 NOTIFICATION BUTTON
             ================================================= */}
 
-            <div
-              className="dropdownWrapper position-relative"
-            >
+            <div className="dropdownWrapper position-relative">
+
               <Button
                 className="rounded-circle"
                 onClick={
@@ -559,9 +548,7 @@ const Header = () => {
               ================================================= */}
 
               <Menu
-                anchorEl={
-                  notificationAnchorEl
-                }
+                anchorEl={notificationAnchorEl}
                 id="notifications"
                 open={openNotifications}
                 onClose={
@@ -630,6 +617,7 @@ const Header = () => {
                 >
 
                   {isLoadingNotifications ? (
+
                     <div
                       className="p-3 text-center"
                       style={{
@@ -638,7 +626,9 @@ const Header = () => {
                     >
                       Loading notifications...
                     </div>
+
                   ) : notificationError ? (
+
                     <div
                       className="p-3 text-center"
                       style={{
@@ -648,8 +638,9 @@ const Header = () => {
                     >
                       {notificationError}
                     </div>
-                  ) : notifications.length ===
-                    0 ? (
+
+                  ) : notifications.length === 0 ? (
+
                     <div
                       className="p-3 text-center"
                       style={{
@@ -658,17 +649,17 @@ const Header = () => {
                     >
                       No notifications available.
                     </div>
+
                   ) : (
+
                     notifications.map(
                       (notification) => (
+
                         <MenuItem
-                          key={
-                            notification._id
-                          }
+                          key={notification._id}
                           style={{
                             whiteSpace: "normal",
-                            alignItems:
-                              "flex-start",
+                            alignItems: "flex-start",
                             backgroundColor:
                               notification.isRead
                                 ? "transparent"
@@ -685,6 +676,7 @@ const Header = () => {
                             }
                           }}
                         >
+
                           <div
                             style={{
                               display: "flex",
@@ -725,9 +717,7 @@ const Header = () => {
                                     "0 0 5px",
                                 }}
                               >
-                                {
-                                  notification.title
-                                }
+                                {notification.title}
                               </h4>
 
                               <p
@@ -739,9 +729,7 @@ const Header = () => {
                                     "anywhere",
                                 }}
                               >
-                                {
-                                  notification.message
-                                }
+                                {notification.message}
                               </p>
 
                               <p
@@ -778,9 +766,12 @@ const Header = () => {
                             </Button>
 
                           </div>
+
                         </MenuItem>
+
                       )
                     )
+
                   )}
 
                 </div>
@@ -803,6 +794,7 @@ const Header = () => {
                 </div>
 
               </Menu>
+
             </div>
 
             {/* =================================================
@@ -830,7 +822,7 @@ const Header = () => {
 
                   <div>
                     <UserAvatarImgComponent
-                      img="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSTx3SRpQ8G8mKf3SUHnnn5mzgz7jx2WnePnA&s"
+                      img={ADMIN_PROFILE_IMAGE}
                     />
                   </div>
 
@@ -848,7 +840,6 @@ const Header = () => {
 
                 {/* =================================================
                     ACCOUNT MENU
-                    ONLY MY ACCOUNT
                 ================================================= */}
 
                 <Menu
@@ -871,9 +862,7 @@ const Header = () => {
                   }}
                 >
 
-                  {/* =================================================
-                      MY ACCOUNT
-                  ================================================= */}
+                  {/* MY ACCOUNT */}
 
                   <MenuItem
                     component={Link}
@@ -896,6 +885,7 @@ const Header = () => {
             )}
 
           </div>
+
         </div>
       </div>
     </header>
