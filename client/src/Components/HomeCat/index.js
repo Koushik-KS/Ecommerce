@@ -1,15 +1,12 @@
 import React, { useEffect, useState } from "react";
-import { Swiper, SwiperSlide } from "swiper/react";
-import { Navigation } from "swiper/modules";
 import { Link } from "react-router-dom";
 import axios from "axios";
 
+import { Swiper, SwiperSlide } from "swiper/react";
+import { Navigation } from "swiper/modules";
+
 import "swiper/css";
 import "swiper/css/navigation";
-
-// =====================================================
-// API BASE URL
-// =====================================================
 
 const API_BASE_URL = `${process.env.REACT_APP_API_URL}/api`;
 
@@ -22,11 +19,14 @@ const HomeCat = () => {
   // =====================================================
 
   const itemBg = [
-    "#fffceb",
-    "#ecffec",
-    "#feefea",
-    "#e8f9ff",
-    "#f9e8ff",
+    "#f5f5f5",
+    "#eef7ff",
+    "#fff4e6",
+    "#f3f0ff",
+    "#eafaf1",
+    "#fff0f5",
+    "#f0f8ff",
+    "#fafafa",
   ];
 
   // =====================================================
@@ -38,13 +38,16 @@ const HomeCat = () => {
       try {
         setLoading(true);
 
+        console.log(
+          "Fetching categories from:",
+          `${API_BASE_URL}/category`
+        );
+
         const response = await axios.get(
           `${API_BASE_URL}/category`
         );
 
-        // Support both:
-        // 1. Direct array response
-        // 2. { categories: [] } response
+        console.log("Category API response:", response.data);
 
         if (Array.isArray(response.data)) {
           setCategories(response.data);
@@ -59,6 +62,11 @@ const HomeCat = () => {
         console.error(
           "Error fetching featured categories:",
           error
+        );
+
+        console.error(
+          "API URL:",
+          `${API_BASE_URL}/category`
         );
 
         setCategories([]);
@@ -104,6 +112,7 @@ const HomeCat = () => {
             navigation={true}
             modules={[Navigation]}
             className="mySwiper"
+
             breakpoints={{
               576: {
                 slidesPerView: 3,

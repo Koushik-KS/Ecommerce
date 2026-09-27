@@ -31,21 +31,23 @@ const settingsRoutes = require("./routes/settings");
 // =====================================================
 
 const allowedOrigins = [
+  // Local development URLs
   "http://localhost:3000",
   "http://localhost:3001",
   "http://127.0.0.1:3000",
   "http://127.0.0.1:3001",
 
-  // Add your Vercel frontend URL here after deployment
+  // Vercel frontend URL will be added here later
   // Example:
   // "https://your-client.vercel.app",
+  // "https://your-admin.vercel.app",
 ];
 
 app.use(
   cors({
     origin: function (origin, callback) {
       // Allow requests without an origin
-      // Example: Postman or server-side requests
+      // Example: Postman, server-side requests
       if (!origin) {
         return callback(null, true);
       }
@@ -56,8 +58,11 @@ app.use(
 
       console.warn(`Blocked CORS origin: ${origin}`);
 
-      return callback(new Error("Not allowed by CORS"));
+      return callback(
+        new Error("Not allowed by CORS")
+      );
     },
+
     credentials: true,
   })
 );
@@ -166,6 +171,7 @@ app.use((err, req, res, next) => {
   return res.status(500).json({
     success: false,
     message: "Internal server error.",
+
     error:
       process.env.NODE_ENV === "production"
         ? undefined
@@ -183,19 +189,32 @@ mongoose
     console.log("Database connection ready...");
 
     // Verify Gmail SMTP connection
-    await verifyEmailConnection();
+    // Keep this for now because it is part
+    // of your existing email service.
+    try {
+      await verifyEmailConnection();
+      console.log("Email connection verified...");
+    } catch (emailError) {
+      console.error(
+        "Email connection verification failed:",
+        emailError.message
+      );
 
-    const PORT = process.env.PORT || 4000;
-
-    app.listen(PORT, "0.0.0.0", () => {
-      console.log(`Server is running on port ${PORT}`);
-    });
+      // Do not stop the API if email verification fails.
+      // Database/API can still work.
+    }
   })
   .catch((err) => {
     console.error(
       "Database connection error:",
       err.message
     );
-
-    process.exit(1);
   });
+
+// =====================================================
+// EXPORT EXPRESS APP
+// =====================================================
+
+// Vercel uses this exported Express application
+// as a serverless function.
+module.exports = app;

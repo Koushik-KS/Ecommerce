@@ -26,7 +26,12 @@ import "swiper/css/navigation";
 // BACKEND API BASE URL
 // ==========================================
 
-const API_BASE_URL = "https://ecommerce-hsm4.onrender.com";
+const API_BASE_URL =
+  "https://ecommerce-server-ecru.vercel.app";
+
+// ==========================================
+// HOME COMPONENT
+// ==========================================
 
 const Home = () => {
   const navigate = useNavigate();
@@ -119,6 +124,7 @@ const Home = () => {
       );
     }
 
+    // Products
     return (
       <Swiper
         slidesPerView={4}
@@ -143,14 +149,9 @@ const Home = () => {
       >
         {items.map((product) => (
           <SwiperSlide
-            key={
-              product._id ||
-              product.id
-            }
+            key={product._id || product.id}
           >
-            <ProductItem
-              product={product}
-            />
+            <ProductItem product={product} />
           </SwiperSlide>
         ))}
       </Swiper>
@@ -181,7 +182,6 @@ const Home = () => {
 
       <section className="homeProducts">
         <div className="container">
-
           <div className="row">
 
             {/* =================================
