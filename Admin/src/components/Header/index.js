@@ -30,10 +30,10 @@ import { MyContext } from "../../App";
 import UserAvatarImgComponent from "../userAvatarImg";
 
 // =====================================================
-// API URL
+// BACKEND API URL
 // =====================================================
 
-const API_URL = "http://localhost:4000";
+const API_URL = "https://ecommerce-hsm4.onrender.com";
 
 // =====================================================
 // ADMIN PROFILE IMAGE
@@ -659,6 +659,7 @@ const Header = () => {
                           marginRight: "4px",
                         }}
                       />
+
                       Mark all read
                     </Button>
                   )}
@@ -845,7 +846,9 @@ const Header = () => {
 
                 <Divider />
 
-                {/* FOOTER */}
+                {/* =================================================
+                    FOOTER
+                ================================================= */}
 
                 <div
                   className="px-3 pt-2 pb-2"

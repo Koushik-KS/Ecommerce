@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from "react";
 
 import Button from "@mui/material/Button";
@@ -8,7 +7,20 @@ import { MdDoneAll } from "react-icons/md";
 import { MdDeleteOutline } from "react-icons/md";
 import { FaBell } from "react-icons/fa";
 
-const API_URL = "http://localhost:4000";
+// =====================================================
+// BACKEND API URL
+// =====================================================
+
+// Local development:
+// const API_URL = "http://localhost:4000";
+
+// Production / Render:
+// Replace this with your actual Render backend URL.
+const API_URL = "https://ecommerce-hsm4.onrender.com";
+
+// =====================================================
+// NOTIFICATIONS COMPONENT
+// =====================================================
 
 const Notifications = () => {
   const [notifications, setNotifications] = useState([]);
@@ -32,15 +44,11 @@ const Notifications = () => {
 
       const data = await response.json();
 
-      console.log(
-        "Notification API response:",
-        data
-      );
+      console.log("Notification API response:", data);
 
       if (!response.ok || !data.success) {
         throw new Error(
-          data.message ||
-            "Failed to fetch notifications."
+          data.message || "Failed to fetch notifications."
         );
       }
 
@@ -53,7 +61,7 @@ const Notifications = () => {
       );
 
       setErrorMessage(
-        "Unable to load notifications."
+        error.message || "Unable to load notifications."
       );
     } finally {
       setIsLoading(false);
@@ -218,13 +226,16 @@ const Notifications = () => {
       return "";
     }
 
-    return new Date(createdAt).toLocaleString(
-      "en-IN",
-      {
-        dateStyle: "medium",
-        timeStyle: "short",
-      }
-    );
+    const date = new Date(createdAt);
+
+    if (Number.isNaN(date.getTime())) {
+      return "";
+    }
+
+    return date.toLocaleString("en-IN", {
+      dateStyle: "medium",
+      timeStyle: "short",
+    });
   };
 
   // =====================================================
@@ -271,7 +282,6 @@ const Notifications = () => {
         minHeight: "100vh",
       }}
     >
-
       {/* PAGE HEADER */}
 
       <div
@@ -326,8 +336,9 @@ const Notifications = () => {
           <Button
             variant="contained"
             onClick={fetchNotifications}
+            disabled={isLoading}
           >
-            Refresh
+            {isLoading ? "Refreshing..." : "Refresh"}
           </Button>
         </div>
       </div>
@@ -396,7 +407,16 @@ const Notifications = () => {
               color: "#d32f2f",
             }}
           >
-            {errorMessage}
+            <h5>Unable to load notifications</h5>
+
+            <p>{errorMessage}</p>
+
+            <Button
+              variant="contained"
+              onClick={fetchNotifications}
+            >
+              Try Again
+            </Button>
           </div>
         ) : notifications.length === 0 ? (
           <div
@@ -427,6 +447,8 @@ const Notifications = () => {
         ) : (
           notifications.map((notification) => (
             <React.Fragment key={notification._id}>
+              {/* NOTIFICATION */}
+
               <div
                 className="d-flex align-items-start"
                 style={{
@@ -438,7 +460,6 @@ const Notifications = () => {
                       : "#f0f7ff",
                 }}
               >
-
                 {/* NOTIFICATION ICON */}
 
                 <div
@@ -484,7 +505,8 @@ const Notifications = () => {
                         color: "#263238",
                       }}
                     >
-                      {notification.title}
+                      {notification.title ||
+                        "Notification"}
                     </h5>
 
                     {!notification.isRead && (

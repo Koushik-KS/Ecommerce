@@ -21,7 +21,20 @@ import axios from "axios";
 
 import { MyContext } from "../../App";
 
-const API_URL = "http://localhost:4000";
+// =====================================================
+// API BASE URL
+// client/.env
+// REACT_APP_API_URL=https://ecommerce-hsm4.onrender.com
+// =====================================================
+
+const API_BASE_URL = process.env.REACT_APP_API_URL;
+
+const API_URL = `${API_BASE_URL}/api`;
+
+
+// =====================================================
+// FORGOT PASSWORD COMPONENT
+// =====================================================
 
 function ForgotPassword() {
   const {
@@ -30,14 +43,11 @@ function ForgotPassword() {
 
   const navigate = useNavigate();
 
-  const [email, setEmail] =
-    useState("");
+  const [email, setEmail] = useState("");
 
-  const [loading, setLoading] =
-    useState(false);
+  const [loading, setLoading] = useState(false);
 
-  const [errorMessage, setErrorMessage] =
-    useState("");
+  const [errorMessage, setErrorMessage] = useState("");
 
   // =====================================================
   // HIDE HEADER AND FOOTER
@@ -64,15 +74,14 @@ function ForgotPassword() {
   // HANDLE FORGOT PASSWORD
   // =====================================================
 
-  const handleSubmit = async (
-    event
-  ) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
 
     setErrorMessage("");
 
-    const normalizedEmail =
-      email.trim().toLowerCase();
+    const normalizedEmail = email
+      .trim()
+      .toLowerCase();
 
     // ===================================================
     // VALIDATION
@@ -93,17 +102,18 @@ function ForgotPassword() {
       // SEND OTP
       // =================================================
 
-      const response =
-        await axios.post(
-          `${API_URL}/api/auth/forgot-password`,
-          {
-            email:
-              normalizedEmail,
-          }
-        );
+      const response = await axios.post(
+        `${API_URL}/auth/forgot-password`,
+        {
+          email: normalizedEmail,
+        }
+      );
+
+      // =================================================
+      // SUCCESS
+      // =================================================
 
       if (response.data.success) {
-
         // ===============================================
         // OPEN RESET PASSWORD PAGE
         // ===============================================
@@ -113,6 +123,11 @@ function ForgotPassword() {
             normalizedEmail
           )}`
         );
+      } else {
+        setErrorMessage(
+          response.data.message ||
+            "Unable to send OTP. Please try again."
+        );
       }
     } catch (error) {
       console.error(
@@ -121,8 +136,7 @@ function ForgotPassword() {
       );
 
       const backendMessage =
-        error.response?.data
-          ?.message;
+        error.response?.data?.message;
 
       setErrorMessage(
         backendMessage ||
@@ -132,6 +146,10 @@ function ForgotPassword() {
       setLoading(false);
     }
   };
+
+  // =====================================================
+  // RENDER
+  // =====================================================
 
   return (
     <Box
@@ -157,8 +175,7 @@ function ForgotPassword() {
 
           maxWidth: 450,
 
-          backgroundColor:
-            "#ffffff",
+          backgroundColor: "#ffffff",
 
           padding: 4,
 
@@ -168,7 +185,9 @@ function ForgotPassword() {
         }}
       >
 
-        {/* TITLE */}
+        {/* =================================================
+            TITLE
+        ================================================= */}
 
         <Typography
           variant="h4"
@@ -179,7 +198,9 @@ function ForgotPassword() {
           Forgot Password?
         </Typography>
 
-        {/* DESCRIPTION */}
+        {/* =================================================
+            DESCRIPTION
+        ================================================= */}
 
         <Typography
           textAlign="center"
@@ -190,13 +211,13 @@ function ForgotPassword() {
             lineHeight: 1.6,
           }}
         >
-          Enter your registered
-          email address and we
-          will send you a password
-          reset OTP.
+          Enter your registered email address and we
+          will send you a password reset OTP.
         </Typography>
 
-        {/* ERROR */}
+        {/* =================================================
+            ERROR MESSAGE
+        ================================================= */}
 
         {errorMessage && (
           <Alert
@@ -207,7 +228,9 @@ function ForgotPassword() {
           </Alert>
         )}
 
-        {/* EMAIL */}
+        {/* =================================================
+            EMAIL
+        ================================================= */}
 
         <TextField
           fullWidth
@@ -219,9 +242,12 @@ function ForgotPassword() {
           margin="normal"
           required
           autoComplete="email"
+          disabled={loading}
         />
 
-        {/* SEND OTP */}
+        {/* =================================================
+            SEND OTP BUTTON
+        ================================================= */}
 
         <Button
           fullWidth
@@ -236,8 +262,7 @@ function ForgotPassword() {
 
             height: 48,
 
-            textTransform:
-              "none",
+            textTransform: "none",
 
             fontSize: "16px",
 
@@ -249,18 +274,17 @@ function ForgotPassword() {
             : "Send OTP"}
         </Button>
 
-        {/* BACK TO LOGIN */}
+        {/* =================================================
+            BACK TO LOGIN
+        ================================================= */}
 
-        <Typography
-          textAlign="center"
-        >
+        <Typography textAlign="center">
           Remember your password?{" "}
 
           <Link
             to="/signIn"
             style={{
-              textDecoration:
-                "none",
+              textDecoration: "none",
 
               color: "#1976d2",
 

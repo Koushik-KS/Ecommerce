@@ -1,4 +1,3 @@
-
 import React, {
   useCallback,
   useEffect,
@@ -38,7 +37,7 @@ import UserAvatarImgComponent from "../../components/userAvatarImg";
 // API CONFIGURATION
 // =====================================================
 
-const API_URL = "http://localhost:4000/api";
+const API_URL = "https://ecommerce-hsm4.onrender.com/api";
 
 const FALLBACK_IMAGE =
   "https://via.placeholder.com/600x600?text=No+Image";
@@ -219,13 +218,6 @@ const ProductDetails = () => {
         ? data.reviews
         : [];
 
-      console.log("Fetched reviews:", fetchedReviews);
-      console.log("Total reviews:", data.totalReviews);
-      console.log(
-        "Rating distribution:",
-        data.ratingDistribution
-      );
-
       setReviews(fetchedReviews);
 
       setAverageRating(
@@ -321,7 +313,6 @@ const ProductDetails = () => {
         "error",
         "Reply must contain at least 3 characters."
       );
-
       return;
     }
 
@@ -331,7 +322,6 @@ const ProductDetails = () => {
         "error",
         "Reply cannot exceed 1000 characters."
       );
-
       return;
     }
 

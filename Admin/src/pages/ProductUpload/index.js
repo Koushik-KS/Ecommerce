@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 
@@ -18,7 +17,7 @@ import { FaCloudUploadAlt } from "react-icons/fa";
 // API URL
 // =====================================================
 
-const API_URL = "http://localhost:4000/api";
+const API_URL = "https://ecommerce-hsm4.onrender.com/api";
 
 // =====================================================
 // STYLED BREADCRUMB
@@ -53,12 +52,10 @@ const StyledBreadcrumb = styled(Chip)(({ theme }) => {
 
 const ProductUpload = () => {
   const navigate = useNavigate();
-
   const [searchParams] = useSearchParams();
 
   // Product ID exists only in edit mode
   const editProductId = searchParams.get("edit");
-
   const isEditMode = Boolean(editProductId);
 
   // =====================================================
@@ -80,12 +77,8 @@ const ProductUpload = () => {
   const [categories, setCategories] = useState([]);
   const [images, setImages] = useState([]);
 
-  const [loadingCategories, setLoadingCategories] =
-    useState(true);
-
-  const [loadingProduct, setLoadingProduct] =
-    useState(false);
-
+  const [loadingCategories, setLoadingCategories] = useState(true);
+  const [loadingProduct, setLoadingProduct] = useState(false);
   const [submitting, setSubmitting] = useState(false);
 
   const [message, setMessage] = useState("");
@@ -99,29 +92,35 @@ const ProductUpload = () => {
     const fetchCategories = async () => {
       try {
         setLoadingCategories(true);
+        setError("");
 
-        const response = await fetch(
-          `${API_URL}/category`
-        );
+        const response = await fetch(`${API_URL}/category`);
+
+        const data = await response.json().catch(() => []);
 
         if (!response.ok) {
           throw new Error(
-            "Failed to fetch categories"
+            data?.message || "Failed to fetch categories"
           );
         }
 
-        const data = await response.json();
+        // Support different backend response formats
+        const categoryData =
+          Array.isArray(data)
+            ? data
+            : Array.isArray(data.categories)
+            ? data.categories
+            : Array.isArray(data.data)
+            ? data.data
+            : [];
 
-        setCategories(
-          Array.isArray(data) ? data : []
-        );
+        setCategories(categoryData);
       } catch (error) {
-        console.error(
-          "Category fetch error:",
-          error
-        );
+        console.error("Category fetch error:", error);
 
-        setError("Unable to load categories.");
+        setError(
+          error.message || "Unable to load categories."
+        );
       } finally {
         setLoadingCategories(false);
       }
@@ -136,7 +135,6 @@ const ProductUpload = () => {
 
   useEffect(() => {
     const fetchProductForEdit = async () => {
-      // Do not fetch a product in add mode
       if (!editProductId) {
         return;
       }
@@ -149,17 +147,16 @@ const ProductUpload = () => {
           `${API_URL}/products/${editProductId}`
         );
 
+        const data = await response.json().catch(() => ({}));
+
         if (!response.ok) {
           throw new Error(
-            "Failed to fetch product details"
+            data.message ||
+              "Failed to fetch product details"
           );
         }
 
-        const data = await response.json();
-
-        // Support APIs that return the product
-        // directly or inside a product property
-        const product = data.product || data;
+        const product = data.product || data.data || data;
 
         if (!product || !product._id) {
           throw new Error(
@@ -167,14 +164,23 @@ const ProductUpload = () => {
           );
         }
 
-        // Fill form fields
+        // =================================================
+        // FILL FORM FIELDS
+        // =================================================
+
         setName(product.name || "");
 
         setDescription(
           product.description || ""
         );
 
-        setBrand(product.brand || "");
+        // Handle brand object or string
+        const brandValue =
+          typeof product.brand === "object"
+            ? product.brand?.name
+            : product.brand;
+
+        setBrand(brandValue || "");
 
         setRegularPrice(
           product.regularPrice ?? ""
@@ -190,7 +196,10 @@ const ProductUpload = () => {
           Number(product.rating ?? 0)
         );
 
-        // Handle category object or category ID
+        // =================================================
+        // CATEGORY
+        // =================================================
+
         const categoryId =
           typeof product.category === "object"
             ? product.category?._id
@@ -198,12 +207,38 @@ const ProductUpload = () => {
 
         setCategoryVal(categoryId || "");
 
-        // Load existing images
-        setImages(
-          Array.isArray(product.images)
-            ? product.images.filter(Boolean)
-            : []
-        );
+        // =================================================
+        // EXISTING IMAGES
+        // =================================================
+
+        const existingImages = Array.isArray(
+          product.images
+        )
+          ? product.images
+              .map((image) => {
+                if (typeof image === "string") {
+                  return image;
+                }
+
+                if (
+                  typeof image === "object" &&
+                  image !== null
+                ) {
+                  return (
+                    image.url ||
+                    image.secure_url ||
+                    image.src ||
+                    image.image ||
+                    ""
+                  );
+                }
+
+                return "";
+              })
+              .filter(Boolean)
+          : [];
+
+        setImages(existingImages);
       } catch (error) {
         console.error(
           "Fetch product for edit error:",
@@ -259,7 +294,10 @@ const ProductUpload = () => {
     setError("");
 
     // Maximum 5 total images
-    if (images.length + selectedFiles.length > 5) {
+    if (
+      images.length + selectedFiles.length >
+      5
+    ) {
       setError(
         `You can upload a maximum of 5 images. ` +
           `You already have ${images.length} image(s).`
@@ -283,7 +321,7 @@ const ProductUpload = () => {
       return;
     }
 
-    // Validate file size
+    // Maximum file size = 5 MB
     const maxFileSize = 5 * 1024 * 1024;
 
     const largeFile = selectedFiles.find(
@@ -306,14 +344,12 @@ const ProductUpload = () => {
         )
       );
 
-      // Append images instead of replacing
-      // existing images
       setImages((previousImages) => [
         ...previousImages,
         ...base64Images,
       ]);
 
-      // Allow selecting the same file again
+      // Allow selecting same file again
       event.target.value = "";
     } catch (error) {
       console.error(
@@ -391,7 +427,9 @@ const ProductUpload = () => {
       return false;
     }
 
-    if (Number(regularPrice) < Number(price)) {
+    if (
+      Number(regularPrice) < Number(price)
+    ) {
       setError(
         "Regular price should be greater than or equal to selling price."
       );
@@ -482,10 +520,17 @@ const ProductUpload = () => {
 
         rating: Number(ratingsValue || 0),
 
-        numReviews: 0,
+        numReviews: isEditMode
+          ? undefined
+          : 0,
 
         isFeatured: false,
       };
+
+      // Remove undefined field
+      if (productData.numReviews === undefined) {
+        delete productData.numReviews;
+      }
 
       // =================================================
       // ADD OR UPDATE
@@ -499,6 +544,16 @@ const ProductUpload = () => {
         ? "PUT"
         : "POST";
 
+      console.log(
+        "Product request URL:",
+        requestUrl
+      );
+
+      console.log(
+        "Product request method:",
+        requestMethod
+      );
+
       const response = await fetch(requestUrl, {
         method: requestMethod,
 
@@ -509,15 +564,21 @@ const ProductUpload = () => {
         body: JSON.stringify(productData),
       });
 
-      const responseText = await response.text();
+      const responseText =
+        await response.text();
 
       let data;
 
       try {
         data = JSON.parse(responseText);
       } catch {
+        console.error(
+          "Invalid backend response:",
+          responseText
+        );
+
         throw new Error(
-          "Server returned an invalid response. Check the backend terminal."
+          "Server returned an invalid response. Check the backend server."
         );
       }
 
@@ -545,7 +606,7 @@ const ProductUpload = () => {
         resetForm();
       }
 
-      // Navigate after success
+      // Navigate to products page
       setTimeout(() => {
         navigate("/products");
       }, 1000);
@@ -572,7 +633,10 @@ const ProductUpload = () => {
     return (
       <div className="card shadow border-0 p-4 mt-4">
         <h4>Loading product details...</h4>
-        <p>Please wait.</p>
+
+        <p className="mb-0">
+          Please wait.
+        </p>
       </div>
     );
   }
@@ -583,9 +647,13 @@ const ProductUpload = () => {
 
   return (
     <div className="right-content w-100">
-      {/* HEADER */}
+
+      {/* ================================================
+          HEADER
+      ================================================= */}
 
       <div className="card shadow border-0 w-100 flex-row p-4">
+
         <h5 className="title">
           {isEditMode
             ? "Edit Product"
@@ -596,6 +664,7 @@ const ProductUpload = () => {
           aria-label="breadcrumb"
           className="ml-auto breadcrumb-wrapper"
         >
+
           <StyledBreadcrumb
             component="a"
             href="#"
@@ -609,7 +678,9 @@ const ProductUpload = () => {
             component="a"
             label="Products"
             href="#"
-            deleteIcon={<ExpandMoreIcon />}
+            deleteIcon={
+              <ExpandMoreIcon />
+            }
           />
 
           <StyledBreadcrumb
@@ -619,20 +690,29 @@ const ProductUpload = () => {
                 : "Product Upload"
             }
             href="#"
-            deleteIcon={<ExpandMoreIcon />}
+            deleteIcon={
+              <ExpandMoreIcon />
+            }
           />
+
         </Breadcrumbs>
       </div>
 
-      {/* FORM */}
+      {/* ================================================
+          FORM
+      ================================================= */}
 
       <form
         className="form"
         onSubmit={handleSubmit}
       >
+
         <div className="row">
+
           <div className="col-sm-9">
+
             <div className="card p-4">
+
               <h5 className="mb-4">
                 Basic Information
               </h5>
@@ -656,6 +736,7 @@ const ProductUpload = () => {
               {/* PRODUCT NAME */}
 
               <div className="form-group">
+
                 <h6>TITLE</h6>
 
                 <input
@@ -663,15 +744,19 @@ const ProductUpload = () => {
                   className="form-control"
                   value={name}
                   onChange={(event) =>
-                    setName(event.target.value)
+                    setName(
+                      event.target.value
+                    )
                   }
                   placeholder="Enter product name"
                 />
+
               </div>
 
               {/* DESCRIPTION */}
 
               <div className="form-group">
+
                 <h6>DESCRIPTION</h6>
 
                 <textarea
@@ -685,15 +770,19 @@ const ProductUpload = () => {
                   }
                   placeholder="Enter product description"
                 />
+
               </div>
 
               {/* CATEGORY AND BRAND */}
 
               <div className="row">
+
                 {/* CATEGORY */}
 
                 <div className="col">
+
                   <div className="form-group">
+
                     <h6>CATEGORY</h6>
 
                     <Select
@@ -709,14 +798,18 @@ const ProductUpload = () => {
                         loadingCategories
                       }
                     >
+
                       <MenuItem value="">
+
                         <em>
                           {loadingCategories
                             ? "Loading categories..."
-                            : categories.length === 0
+                            : categories.length ===
+                              0
                             ? "No categories found"
                             : "Select Category"}
                         </em>
+
                       </MenuItem>
 
                       {categories.map(
@@ -729,14 +822,19 @@ const ProductUpload = () => {
                           </MenuItem>
                         )
                       )}
+
                     </Select>
+
                   </div>
+
                 </div>
 
                 {/* BRAND */}
 
                 <div className="col">
+
                   <div className="form-group">
+
                     <h6>BRAND</h6>
 
                     <input
@@ -750,18 +848,26 @@ const ProductUpload = () => {
                       }
                       placeholder="Enter brand name"
                     />
+
                   </div>
+
                 </div>
+
               </div>
 
               {/* PRICE */}
 
               <div className="row">
+
                 {/* REGULAR PRICE */}
 
                 <div className="col">
+
                   <div className="form-group">
-                    <h6>REGULAR PRICE</h6>
+
+                    <h6>
+                      REGULAR PRICE
+                    </h6>
 
                     <input
                       type="number"
@@ -776,14 +882,20 @@ const ProductUpload = () => {
                       min="0"
                       step="0.01"
                     />
+
                   </div>
+
                 </div>
 
                 {/* SELLING PRICE */}
 
                 <div className="col">
+
                   <div className="form-group">
-                    <h6>SELLING PRICE</h6>
+
+                    <h6>
+                      SELLING PRICE
+                    </h6>
 
                     <input
                       type="number"
@@ -798,8 +910,11 @@ const ProductUpload = () => {
                       min="0"
                       step="0.01"
                     />
+
                   </div>
+
                 </div>
+
               </div>
 
               {/* DISCOUNT PREVIEW */}
@@ -808,33 +923,48 @@ const ProductUpload = () => {
                 Number(price) > 0 &&
                 Number(regularPrice) >=
                   Number(price) && (
+
                   <div className="alert alert-info">
+
                     <strong>
-                      Discount:{" "}
-                    </strong>
+                      Discount:
+                    </strong>{" "}
 
                     {Math.round(
-                      ((Number(regularPrice) -
-                        Number(price)) /
-                        Number(regularPrice)) *
-                        100
+                      (
+                        (Number(
+                          regularPrice
+                        ) -
+                          Number(price)) /
+                        Number(
+                          regularPrice
+                        )
+                      ) * 100
                     )}
                     %
+
                   </div>
                 )}
 
               {/* RATING AND STOCK */}
 
               <div className="row">
+
                 {/* RATING */}
 
                 <div className="col">
+
                   <div className="form-group">
+
                     <h6>RATING</h6>
 
                     <Rating
                       name="product-rating"
-                      value={ratingsValue}
+                      value={
+                        Number(
+                          ratingsValue
+                        )
+                      }
                       onChange={(
                         event,
                         newValue
@@ -844,14 +974,20 @@ const ProductUpload = () => {
                         );
                       }}
                     />
+
                   </div>
+
                 </div>
 
                 {/* STOCK */}
 
                 <div className="col">
+
                   <div className="form-group">
-                    <h6>PRODUCT STOCK</h6>
+
+                    <h6>
+                      PRODUCT STOCK
+                    </h6>
 
                     <input
                       type="number"
@@ -866,14 +1002,20 @@ const ProductUpload = () => {
                       min="0"
                       step="1"
                     />
+
                   </div>
+
                 </div>
+
               </div>
 
               {/* IMAGE UPLOAD */}
 
               <div className="form-group mt-3">
-                <h6>PRODUCT IMAGES</h6>
+
+                <h6>
+                  PRODUCT IMAGES
+                </h6>
 
                 <input
                   id="product-images"
@@ -881,13 +1023,15 @@ const ProductUpload = () => {
                   className="form-control"
                   accept="image/*"
                   multiple
-                  onChange={handleImageChange}
+                  onChange={
+                    handleImageChange
+                  }
                 />
 
                 <small className="text-muted">
-                  Select up to 5 images. Each
-                  image must be smaller than
-                  5 MB.
+                  Select up to 5 images.
+                  Each image must be
+                  smaller than 5 MB.
                 </small>
 
                 {/* IMAGE PREVIEW */}
@@ -900,8 +1044,10 @@ const ProductUpload = () => {
                     </p>
 
                     <div className="row mt-3">
+
                       {images.map(
                         (image, index) => (
+
                           <div
                             className="col-md-4 col-sm-6 mb-3"
                             key={`${index}-${image.slice(
@@ -909,18 +1055,29 @@ const ProductUpload = () => {
                               30
                             )}`}
                           >
+
                             <div className="card p-2">
+
                               <img
                                 src={image}
                                 alt={`Product preview ${
                                   index + 1
                                 }`}
                                 style={{
-                                  width: "100%",
-                                  height: "150px",
-                                  objectFit: "cover",
+                                  width:
+                                    "100%",
+                                  height:
+                                    "150px",
+                                  objectFit:
+                                    "cover",
                                   borderRadius:
                                     "8px",
+                                }}
+                                onError={(
+                                  event
+                                ) => {
+                                  event.currentTarget.style.display =
+                                    "none";
                                 }}
                               />
 
@@ -936,13 +1093,18 @@ const ProductUpload = () => {
                               >
                                 Remove
                               </Button>
+
                             </div>
+
                           </div>
+
                         )
                       )}
+
                     </div>
                   </>
                 )}
+
               </div>
 
               {/* SUBMIT BUTTON */}
@@ -955,6 +1117,7 @@ const ProductUpload = () => {
                   loadingCategories
                 }
               >
+
                 <FaCloudUploadAlt />
 
                 &nbsp;
@@ -966,11 +1129,17 @@ const ProductUpload = () => {
                   : isEditMode
                   ? "UPDATE PRODUCT"
                   : "PUBLISH AND VIEW"}
+
               </Button>
+
             </div>
+
           </div>
+
         </div>
+
       </form>
+
     </div>
   );
 };

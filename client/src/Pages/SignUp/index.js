@@ -21,7 +21,15 @@ import axios from "axios";
 
 import { MyContext } from "../../App";
 
-const API_URL = "http://localhost:4000";
+// =====================================================
+// API URL
+// =====================================================
+
+const API_URL = "https://ecommerce-hsm4.onrender.com";
+
+// =====================================================
+// SIGN UP COMPONENT
+// =====================================================
 
 function SignUp() {
   const {
@@ -30,6 +38,10 @@ function SignUp() {
 
   const navigate = useNavigate();
 
+  // =====================================================
+  // FORM STATE
+  // =====================================================
+
   const [formData, setFormData] = useState({
     name: "",
     phone: "",
@@ -37,9 +49,21 @@ function SignUp() {
     password: "",
   });
 
+  // =====================================================
+  // UI STATES
+  // =====================================================
+
   const [loading, setLoading] = useState(false);
-  const [errorMessage, setErrorMessage] = useState("");
-  const [successMessage, setSuccessMessage] = useState("");
+
+  const [errorMessage, setErrorMessage] =
+    useState("");
+
+  const [successMessage, setSuccessMessage] =
+    useState("");
+
+  // =====================================================
+  // HIDE HEADER AND FOOTER
+  // =====================================================
 
   useEffect(() => {
     setisHeaderFooterShow(false);
@@ -49,22 +73,29 @@ function SignUp() {
     };
   }, [setisHeaderFooterShow]);
 
-  // =========================
+  // =====================================================
   // HANDLE INPUT
-  // =========================
+  // =====================================================
 
   const handleChange = (event) => {
-    const { name, value } = event.target;
+    const {
+      name,
+      value,
+    } = event.target;
 
-    setFormData((previousData) => ({
-      ...previousData,
-      [name]: value,
-    }));
+    setFormData(
+      (previousData) => ({
+        ...previousData,
+        [name]: value,
+      })
+    );
+
+    setErrorMessage("");
   };
 
-  // =========================
+  // =====================================================
   // HANDLE REGISTER
-  // =========================
+  // =====================================================
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -79,8 +110,20 @@ function SignUp() {
       password,
     } = formData;
 
-    if (!name || !phone || !email || !password) {
-      setErrorMessage("Please fill in all fields.");
+    // ===================================================
+    // VALIDATION
+    // ===================================================
+
+    if (
+      !name.trim() ||
+      !phone.trim() ||
+      !email.trim() ||
+      !password
+    ) {
+      setErrorMessage(
+        "Please fill in all fields."
+      );
+
       return;
     }
 
@@ -88,25 +131,38 @@ function SignUp() {
       setErrorMessage(
         "Password must contain at least 6 characters."
       );
+
       return;
     }
+
+    // ===================================================
+    // REGISTER USER
+    // ===================================================
 
     try {
       setLoading(true);
 
-      const response = await axios.post(
-        `${API_URL}/api/auth/register`,
-        {
-          name: name.trim(),
-          phone: phone.trim(),
-          email: email.trim(),
-          password,
-        }
-      );
+      const response =
+        await axios.post(
+          `${API_URL}/api/auth/register`,
+          {
+            name: name.trim(),
+            phone: phone.trim(),
+            email: email
+              .trim()
+              .toLowerCase(),
+            password,
+          }
+        );
+
+      // =================================================
+      // SUCCESS
+      // =================================================
 
       if (response.data.success) {
         setSuccessMessage(
-          "Registration successful. Redirecting to login..."
+          response.data.message ||
+            "Registration successful. Redirecting to login..."
         );
 
         setFormData({
@@ -119,8 +175,18 @@ function SignUp() {
         setTimeout(() => {
           navigate("/signIn");
         }, 1500);
+      } else {
+        setErrorMessage(
+          response.data.message ||
+            "Registration failed. Please try again."
+        );
       }
     } catch (error) {
+      console.error(
+        "Registration error:",
+        error
+      );
+
       const message =
         error.response?.data?.message ||
         "Registration failed. Please try again.";
@@ -131,14 +197,23 @@ function SignUp() {
     }
   };
 
+  // =====================================================
+  // RENDER
+  // =====================================================
+
   return (
     <Box
       sx={{
         minHeight: "100vh",
+
         display: "flex",
+
         justifyContent: "center",
+
         alignItems: "center",
+
         padding: 3,
+
         backgroundColor: "#f5f5f5",
       }}
     >
@@ -147,13 +222,22 @@ function SignUp() {
         onSubmit={handleSubmit}
         sx={{
           width: "100%",
+
           maxWidth: 450,
+
           backgroundColor: "#ffffff",
+
           padding: 4,
+
           borderRadius: 3,
+
           boxShadow: 3,
         }}
       >
+        {/* =================================================
+            TITLE
+        ================================================= */}
+
         <Typography
           variant="h4"
           fontWeight="bold"
@@ -163,17 +247,35 @@ function SignUp() {
           Create Account
         </Typography>
 
+        {/* =================================================
+            ERROR MESSAGE
+        ================================================= */}
+
         {errorMessage && (
-          <Alert severity="error" sx={{ mb: 2 }}>
+          <Alert
+            severity="error"
+            sx={{ mb: 2 }}
+          >
             {errorMessage}
           </Alert>
         )}
 
+        {/* =================================================
+            SUCCESS MESSAGE
+        ================================================= */}
+
         {successMessage && (
-          <Alert severity="success" sx={{ mb: 2 }}>
+          <Alert
+            severity="success"
+            sx={{ mb: 2 }}
+          >
             {successMessage}
           </Alert>
         )}
+
+        {/* =================================================
+            FULL NAME
+        ================================================= */}
 
         <TextField
           fullWidth
@@ -183,7 +285,12 @@ function SignUp() {
           onChange={handleChange}
           margin="normal"
           required
+          disabled={loading}
         />
+
+        {/* =================================================
+            PHONE
+        ================================================= */}
 
         <TextField
           fullWidth
@@ -193,7 +300,12 @@ function SignUp() {
           onChange={handleChange}
           margin="normal"
           required
+          disabled={loading}
         />
+
+        {/* =================================================
+            EMAIL
+        ================================================= */}
 
         <TextField
           fullWidth
@@ -204,7 +316,12 @@ function SignUp() {
           onChange={handleChange}
           margin="normal"
           required
+          disabled={loading}
         />
+
+        {/* =================================================
+            PASSWORD
+        ================================================= */}
 
         <TextField
           fullWidth
@@ -215,7 +332,13 @@ function SignUp() {
           onChange={handleChange}
           margin="normal"
           required
+          disabled={loading}
+          autoComplete="new-password"
         />
+
+        {/* =================================================
+            SIGN UP BUTTON
+        ================================================= */}
 
         <Button
           fullWidth
@@ -223,14 +346,35 @@ function SignUp() {
           variant="contained"
           size="large"
           disabled={loading}
-          sx={{ mt: 3, mb: 2 }}
+          sx={{
+            mt: 3,
+            mb: 2,
+            height: 48,
+            textTransform: "none",
+            fontSize: "16px",
+            fontWeight: 600,
+          }}
         >
-          {loading ? "Creating Account..." : "Sign Up"}
+          {loading
+            ? "Creating Account..."
+            : "Sign Up"}
         </Button>
+
+        {/* =================================================
+            SIGN IN
+        ================================================= */}
 
         <Typography textAlign="center">
           Already have an account?{" "}
-          <Link to="/signIn">
+
+          <Link
+            to="/signIn"
+            style={{
+              textDecoration: "none",
+              color: "#1976d2",
+              fontWeight: 500,
+            }}
+          >
             Sign In
           </Link>
         </Typography>

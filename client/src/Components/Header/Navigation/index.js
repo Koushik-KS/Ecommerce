@@ -5,17 +5,21 @@ import { Link } from "react-router-dom";
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 
+const API_BASE_URL = `${process.env.REACT_APP_API_URL}/api`;
+
 const Navigation = () => {
-  const [isopenSidebarVal, setisopenSidebarVal] = useState(false);
+  const [isopenSidebarVal, setisopenSidebarVal] =
+    useState(false);
 
   // Categories from Admin Dashboard
   const [categories, setCategories] = useState([]);
 
-  const [loadingCategories, setLoadingCategories] = useState(true);
+  const [loadingCategories, setLoadingCategories] =
+    useState(true);
 
-  // =========================
+  // =====================================================
   // GET CATEGORIES
-  // =========================
+  // =====================================================
 
   useEffect(() => {
     const getCategories = async () => {
@@ -23,11 +27,15 @@ const Navigation = () => {
         setLoadingCategories(true);
 
         const response = await axios.get(
-          "http://localhost:4000/api/category"
+          `${API_BASE_URL}/category`
         );
 
         if (Array.isArray(response.data)) {
           setCategories(response.data);
+        } else if (
+          Array.isArray(response.data?.categories)
+        ) {
+          setCategories(response.data.categories);
         } else {
           setCategories([]);
         }
@@ -46,37 +54,55 @@ const Navigation = () => {
     getCategories();
   }, []);
 
-  // =========================
+  // =====================================================
   // FORMAT CATEGORY NAME
-  // =========================
+  // =====================================================
 
   const formatCategoryName = (name) => {
     if (!name) {
       return "";
     }
 
-    return String(name)
-      .charAt(0)
-      .toUpperCase() + String(name).slice(1);
+    const categoryName = String(name);
+
+    return (
+      categoryName.charAt(0).toUpperCase() +
+      categoryName.slice(1)
+    );
   };
+
+  // =====================================================
+  // CLOSE SIDEBAR
+  // =====================================================
+
+  const closeSidebar = () => {
+    setisopenSidebarVal(false);
+  };
+
+  // =====================================================
+  // RENDER
+  // =====================================================
 
   return (
     <nav>
       <div className="container">
         <div className="row">
 
-          {/* =========================
+          {/* =================================================
               ALL CATEGORIES
-          ========================= */}
+          ================================================= */}
 
           <div className="col-sm-2 navPart1">
             <div className="catWapper">
+
+              {/* ALL CATEGORIES BUTTON */}
 
               <Button
                 className="allcatTab align-items-center"
                 onClick={() =>
                   setisopenSidebarVal(
-                    !isopenSidebarVal
+                    (previousValue) =>
+                      !previousValue
                   )
                 }
               >
@@ -95,37 +121,51 @@ const Navigation = () => {
                 <span className="ml-auto"></span>
               </Button>
 
-              {/* SIDEBAR CATEGORY MENU */}
+              {/* =================================================
+                  SIDEBAR CATEGORY MENU
+              ================================================= */}
+
               <div
                 className={`sidebarNav ${
-                  isopenSidebarVal
-                    ? "open"
-                    : ""
+                  isopenSidebarVal ? "open" : ""
                 }`}
               >
                 <ul>
 
+                  {/* LOADING */}
+
                   {loadingCategories ? (
                     <li>
-                      <Button>
+                      <Button disabled>
                         Loading categories...
                       </Button>
                     </li>
                   ) : categories.length === 0 ? (
+
+                    /* NO CATEGORIES */
+
                     <li>
-                      <Button>
+                      <Button disabled>
                         No categories available
                       </Button>
                     </li>
                   ) : (
-                    categories.map((category) => (
-                      <li key={category._id}>
 
+                    /* CATEGORY LIST */
+
+                    categories.map((category) => (
+                      <li
+                        key={
+                          category._id ||
+                          category.id
+                        }
+                      >
                         <Link
-                          to={`/cat/${category._id}`}
-                          onClick={() =>
-                            setisopenSidebarVal(false)
-                          }
+                          to={`/cat/${
+                            category._id ||
+                            category.id
+                          }`}
+                          onClick={closeSidebar}
                         >
                           <Button>
                             {formatCategoryName(
@@ -135,7 +175,6 @@ const Navigation = () => {
                             <FaAngleRight className="ml-auto" />
                           </Button>
                         </Link>
-
                       </li>
                     ))
                   )}
@@ -145,15 +184,18 @@ const Navigation = () => {
             </div>
           </div>
 
-          {/* =========================
+          {/* =================================================
               MAIN NAVIGATION
-          ========================= */}
+          ================================================= */}
 
-          <div className="col-sm-10 navPart2 d-flex align-items-center-center">
+          <div className="col-sm-10 navPart2 d-flex align-items-center">
 
             <ul className="list list-inline m-auto">
 
-              {/* HOME */}
+              {/* =================================================
+                  HOME
+              ================================================= */}
+
               <li className="list-inline-item">
                 <Link to="/">
                   <Button>
@@ -162,15 +204,24 @@ const Navigation = () => {
                 </Link>
               </li>
 
-              {/* DYNAMIC CATEGORIES */}
+              {/* =================================================
+                  DYNAMIC CATEGORIES
+              ================================================= */}
+
               {!loadingCategories &&
                 categories.map((category) => (
                   <li
                     className="list-inline-item"
-                    key={category._id}
+                    key={
+                      category._id ||
+                      category.id
+                    }
                   >
                     <Link
-                      to={`/cat/${category._id}`}
+                      to={`/cat/${
+                        category._id ||
+                        category.id
+                      }`}
                     >
                       <Button>
                         {formatCategoryName(
@@ -181,9 +232,10 @@ const Navigation = () => {
                   </li>
                 ))}
 
-             
+              {/* =================================================
+                  CONTACT
+              ================================================= */}
 
-              {/* CONTACT */}
               <li className="list-inline-item">
                 <Link to="/contact">
                   <Button>

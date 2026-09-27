@@ -1,4 +1,3 @@
-
 import { useCallback, useEffect, useMemo, useState } from "react";
 import axios from "axios";
 
@@ -18,24 +17,26 @@ import { Chart } from "react-google-charts";
 import CircularProgress from "@mui/material/CircularProgress";
 import Alert from "@mui/material/Alert";
 
-// =========================
-// API URL
-// =========================
+// =====================================================
+// BACKEND API URL
+// =====================================================
 
-const API_URL = "http://localhost:4000/api/orders";
+const API_URL =
+  process.env.REACT_APP_API_URL ||
+  "https://ecommerce-hsm4.onrender.com/api/orders";
 
-// =========================
+// =====================================================
 // DASHBOARD COMPONENT
-// =========================
+// =====================================================
 
 const Dashboard = () => {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
-  // =========================
+  // ===================================================
   // FETCH ORDERS
-  // =========================
+  // ===================================================
 
   const fetchOrders = useCallback(async () => {
     try {
@@ -56,12 +57,17 @@ const Dashboard = () => {
       ) {
         orderData = responseData.orders;
       } else {
-        throw new Error("Invalid orders response format");
+        throw new Error(
+          "Invalid orders response format"
+        );
       }
 
       setOrders(orderData);
     } catch (err) {
-      console.error("Dashboard order fetch error:", err);
+      console.error(
+        "Dashboard order fetch error:",
+        err
+      );
 
       setError(
         err.response?.data?.message ||
@@ -73,18 +79,18 @@ const Dashboard = () => {
     }
   }, []);
 
-  // =========================
+  // ===================================================
   // LOAD ORDERS
-  // =========================
+  // ===================================================
 
   useEffect(() => {
     window.scrollTo(0, 0);
     fetchOrders();
   }, [fetchOrders]);
 
-  // =========================
+  // ===================================================
   // GET ORDER TOTAL
-  // =========================
+  // ===================================================
 
   const getOrderTotal = (order) => {
     const total =
@@ -101,9 +107,9 @@ const Dashboard = () => {
       : 0;
   };
 
-  // =========================
+  // ===================================================
   // DASHBOARD STATISTICS
-  // =========================
+  // ===================================================
 
   const totalOrders = orders.length;
 
@@ -117,7 +123,8 @@ const Dashboard = () => {
   const getStatusCount = (status) => {
     return orders.filter(
       (order) =>
-        String(order.status || "").toUpperCase() === status
+        String(order.status || "").toUpperCase() ===
+        status
     ).length;
   };
 
@@ -125,27 +132,34 @@ const Dashboard = () => {
     getStatusCount("PENDING") +
     getStatusCount("PENDING_CONFIRMATION");
 
-  const confirmedOrders = getStatusCount("CONFIRMED");
+  const confirmedOrders =
+    getStatusCount("CONFIRMED");
 
-  const processingOrders = getStatusCount("PROCESSING");
+  const processingOrders =
+    getStatusCount("PROCESSING");
 
-  const shippedOrders = getStatusCount("SHIPPED");
+  const shippedOrders =
+    getStatusCount("SHIPPED");
 
-  const deliveredOrders = getStatusCount("DELIVERED");
+  const deliveredOrders =
+    getStatusCount("DELIVERED");
 
-  const cancelledOrders = getStatusCount("CANCELLED");
+  const cancelledOrders =
+    getStatusCount("CANCELLED");
 
-  // =========================
+  // ===================================================
   // FORMAT CURRENCY
-  // =========================
+  // ===================================================
 
   const formatCurrency = (amount) => {
-    return `₹${Number(amount || 0).toLocaleString("en-IN")}`;
+    return `₹${Number(amount || 0).toLocaleString(
+      "en-IN"
+    )}`;
   };
 
-  // =========================
+  // ===================================================
   // ORDER STATUS CHART
-  // =========================
+  // ===================================================
 
   const chartData = [
     ["Order Status", "Orders"],
@@ -171,9 +185,9 @@ const Dashboard = () => {
     },
   };
 
-  // =========================
+  // ===================================================
   // BEST-SELLING PRODUCTS
-  // =========================
+  // ===================================================
 
   const bestSellingProducts = useMemo(() => {
     const productSales = {};
@@ -191,7 +205,9 @@ const Dashboard = () => {
           item.product?.name ||
           "Unknown Product";
 
-        const quantity = Number(item.quantity || 1);
+        const quantity = Number(
+          item.quantity || 1
+        );
 
         const price = Number(
           item.price ||
@@ -200,13 +216,15 @@ const Dashboard = () => {
             0
         );
 
-        const validQuantity = Number.isFinite(quantity)
-          ? quantity
-          : 0;
+        const validQuantity =
+          Number.isFinite(quantity)
+            ? quantity
+            : 0;
 
-        const validPrice = Number.isFinite(price)
-          ? price
-          : 0;
+        const validPrice =
+          Number.isFinite(price)
+            ? price
+            : 0;
 
         if (!productSales[productName]) {
           productSales[productName] = {
@@ -216,7 +234,8 @@ const Dashboard = () => {
           };
         }
 
-        productSales[productName].quantity += validQuantity;
+        productSales[productName].quantity +=
+          validQuantity;
 
         productSales[productName].sales +=
           validPrice * validQuantity;
@@ -228,9 +247,9 @@ const Dashboard = () => {
       .slice(0, 10);
   }, [orders]);
 
-  // =========================
+  // ===================================================
   // MONTHLY REVENUE
-  // =========================
+  // ===================================================
 
   const monthlyRevenueData = useMemo(() => {
     const monthlyRevenue = {};
@@ -248,13 +267,14 @@ const Dashboard = () => {
         orderDate.getMonth() + 1
       ).padStart(2, "0")}`;
 
-      const monthName = orderDate.toLocaleDateString(
-        "en-IN",
-        {
-          month: "short",
-          year: "numeric",
-        }
-      );
+      const monthName =
+        orderDate.toLocaleDateString(
+          "en-IN",
+          {
+            month: "short",
+            year: "numeric",
+          }
+        );
 
       if (!monthlyRevenue[monthKey]) {
         monthlyRevenue[monthKey] = {
@@ -278,6 +298,10 @@ const Dashboard = () => {
     ];
   }, [orders]);
 
+  // ===================================================
+  // REVENUE CHART OPTIONS
+  // ===================================================
+
   const revenueChartOptions = {
     title: "Monthly Revenue",
     curveType: "function",
@@ -297,9 +321,9 @@ const Dashboard = () => {
     },
   };
 
-  // =========================
+  // ===================================================
   // LOADING SCREEN
-  // =========================
+  // ===================================================
 
   if (loading) {
     return (
@@ -309,17 +333,20 @@ const Dashboard = () => {
     );
   }
 
-  // =========================
+  // ===================================================
   // DASHBOARD UI
-  // =========================
+  // ===================================================
 
   return (
     <div className="right-content w-100">
+
       {/* Dashboard Header */}
 
       <div className="d-flex align-items-center justify-content-between mb-4">
         <div>
-          <h2 className="hd">Dashboard</h2>
+          <h2 className="hd">
+            Dashboard
+          </h2>
 
           <p className="text-muted mb-0">
             Overview of your store performance
@@ -331,14 +358,19 @@ const Dashboard = () => {
           onClick={fetchOrders}
           disabled={loading}
         >
-          {loading ? "Refreshing..." : "Refresh Statistics"}
+          {loading
+            ? "Refreshing..."
+            : "Refresh Statistics"}
         </button>
       </div>
 
       {/* Error Message */}
 
       {error && (
-        <Alert severity="error" className="mb-4">
+        <Alert
+          severity="error"
+          className="mb-4"
+        >
           {error}
         </Alert>
       )}
@@ -346,22 +378,32 @@ const Dashboard = () => {
       {/* Dashboard Statistics */}
 
       <div className="row dashboardBoxWrapperRow">
+
         <div className="col-md-8">
           <div className="dashboardBoxWrapper d-flex flex-wrap">
+
             <DashboardBox
               title="Total Orders"
               value={totalOrders}
               subtitle="All Time"
-              color={["#1da256", "#48d483"]}
+              color={[
+                "#1da256",
+                "#48d483",
+              ]}
               icon={<FaShoppingCart />}
               grow={true}
             />
 
             <DashboardBox
               title="Total Revenue"
-              value={formatCurrency(totalRevenue)}
+              value={formatCurrency(
+                totalRevenue
+              )}
               subtitle="All Time"
-              color={["#c012e2", "#eb64fe"]}
+              color={[
+                "#c012e2",
+                "#eb64fe",
+              ]}
               icon={<FaBagShopping />}
               grow={true}
             />
@@ -370,7 +412,10 @@ const Dashboard = () => {
               title="Pending Orders"
               value={pendingOrders}
               subtitle="Needs Attention"
-              color={["#e1950e", "#f3cd29"]}
+              color={[
+                "#e1950e",
+                "#f3cd29",
+              ]}
               icon={<FaRegUser />}
               grow={false}
             />
@@ -379,10 +424,14 @@ const Dashboard = () => {
               title="Delivered Orders"
               value={deliveredOrders}
               subtitle="Completed"
-              color={["#2c78e5", "#60aff5"]}
+              color={[
+                "#2c78e5",
+                "#60aff5",
+              ]}
               icon={<GiStarsStack />}
               grow={true}
             />
+
           </div>
         </div>
 
@@ -390,6 +439,7 @@ const Dashboard = () => {
 
         <div className="col-md-4 pl-0">
           <div className="box graphBox">
+
             <div className="d-flex align-items-center justify-content-between">
               <h6 className="text-white mb-0">
                 Order Statistics
@@ -403,23 +453,32 @@ const Dashboard = () => {
               width="100%"
               height="250px"
             />
+
           </div>
         </div>
+
       </div>
 
       {/* Best-Selling Products */}
 
       <div className="card shadow border-0 p-3 mt-4">
+
         <div className="d-flex align-items-center justify-content-between">
-          <h3 className="hd">Best Selling Products</h3>
+
+          <h3 className="hd">
+            Best Selling Products
+          </h3>
 
           <span className="badge bg-primary">
             {bestSellingProducts.length} Products
           </span>
+
         </div>
 
         <div className="table-responsive mt-3">
+
           <table className="table table-bordered v-align">
+
             <thead className="thead-dark">
               <tr>
                 <th>#</th>
@@ -430,41 +489,71 @@ const Dashboard = () => {
             </thead>
 
             <tbody>
+
               {bestSellingProducts.length === 0 ? (
+
                 <tr>
-                  <td colSpan="4" className="text-center">
+                  <td
+                    colSpan="4"
+                    className="text-center"
+                  >
                     No product sales available.
                   </td>
                 </tr>
+
               ) : (
-                bestSellingProducts.map((product, index) => (
-                  <tr key={product.name}>
-                    <td>{index + 1}</td>
 
-                    <td>
-                      <strong>{product.name}</strong>
-                    </td>
+                bestSellingProducts.map(
+                  (product, index) => (
 
-                    <td>{product.quantity}</td>
+                    <tr key={product.name}>
 
-                    <td className="text-danger">
-                      {formatCurrency(product.sales)}
-                    </td>
-                  </tr>
-                ))
+                      <td>
+                        {index + 1}
+                      </td>
+
+                      <td>
+                        <strong>
+                          {product.name}
+                        </strong>
+                      </td>
+
+                      <td>
+                        {product.quantity}
+                      </td>
+
+                      <td className="text-danger">
+                        {formatCurrency(
+                          product.sales
+                        )}
+                      </td>
+
+                    </tr>
+
+                  )
+                )
+
               )}
+
             </tbody>
+
           </table>
+
         </div>
       </div>
 
       {/* Order Summary */}
 
       <div className="card shadow border-0 p-3 mt-4">
-        <h3 className="hd">Order Summary</h3>
+
+        <h3 className="hd">
+          Order Summary
+        </h3>
 
         <div className="table-responsive mt-3">
+
           <table className="table table-bordered">
+
             <thead className="thead-dark">
               <tr>
                 <th>STATUS</th>
@@ -473,6 +562,7 @@ const Dashboard = () => {
             </thead>
 
             <tbody>
+
               <tr>
                 <td>PENDING</td>
                 <td>{pendingOrders}</td>
@@ -502,17 +592,24 @@ const Dashboard = () => {
                 <td>CANCELLED</td>
                 <td>{cancelledOrders}</td>
               </tr>
+
             </tbody>
+
           </table>
+
         </div>
       </div>
 
       {/* Monthly Revenue Chart */}
 
       <div className="card shadow border-0 p-3 mt-4">
-        <h3 className="hd">Monthly Revenue</h3>
+
+        <h3 className="hd">
+          Monthly Revenue
+        </h3>
 
         {monthlyRevenueData.length > 1 ? (
+
           <Chart
             chartType="LineChart"
             width="100%"
@@ -520,16 +617,21 @@ const Dashboard = () => {
             data={monthlyRevenueData}
             options={revenueChartOptions}
           />
+
         ) : (
+
           <p className="text-muted mb-0">
             Not enough data to display monthly revenue.
           </p>
+
         )}
+
       </div>
 
       {/* Recent Orders */}
 
       <RecentOrders />
+
     </div>
   );
 };

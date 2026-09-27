@@ -1,4 +1,3 @@
-
 import React, { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 
@@ -15,7 +14,7 @@ import { MdDelete } from "react-icons/md";
 // API URL
 // =====================================================
 
-const API_URL = "http://localhost:4000/api/products";
+const API_URL = "https://ecommerce-hsm4.onrender.com/api/products";
 
 const FALLBACK_IMAGE =
   "https://via.placeholder.com/100?text=No+Image";
@@ -49,11 +48,13 @@ const Products = () => {
 
       const response = await fetch(API_URL);
 
-      if (!response.ok) {
-        throw new Error("Failed to fetch products");
-      }
+      const data = await response.json().catch(() => ({}));
 
-      const data = await response.json();
+      if (!response.ok) {
+        throw new Error(
+          data.message || "Failed to fetch products"
+        );
+      }
 
       const productData = Array.isArray(data)
         ? data
@@ -68,7 +69,8 @@ const Products = () => {
       console.error("Fetch products error:", fetchError);
 
       setError(
-        "Unable to load products. Please check your backend server."
+        fetchError.message ||
+          "Unable to load products. Please check your backend server."
       );
     } finally {
       setLoading(false);
@@ -118,7 +120,10 @@ const Products = () => {
       return firstImage;
     }
 
-    if (typeof firstImage === "object" && firstImage !== null) {
+    if (
+      typeof firstImage === "object" &&
+      firstImage !== null
+    ) {
       return (
         firstImage.url ||
         firstImage.secure_url ||
@@ -137,7 +142,9 @@ const Products = () => {
 
   const categories = useMemo(() => {
     const categoryNames = products
-      .map((product) => getCategoryName(product.category))
+      .map((product) =>
+        getCategoryName(product.category)
+      )
       .filter(
         (category) =>
           category && category !== "No Category"
@@ -162,15 +169,21 @@ const Products = () => {
       const searchValue = search.toLowerCase().trim();
 
       const matchesSearch =
-        productName.toLowerCase().includes(searchValue) ||
-        brandName.toLowerCase().includes(searchValue);
+        productName
+          .toLowerCase()
+          .includes(searchValue) ||
+        brandName
+          .toLowerCase()
+          .includes(searchValue);
 
       const matchesCategory =
         categoryFilter === "" ||
         String(categoryName).toLowerCase() ===
           categoryFilter.toLowerCase();
 
-      const stock = Number(product.countInStock || 0);
+      const stock = Number(
+        product.countInStock || 0
+      );
 
       const matchesStock =
         stockFilter === "" ||
@@ -198,16 +211,25 @@ const Products = () => {
     filteredProducts.length / productsPerPage
   );
 
-  const startIndex = (page - 1) * productsPerPage;
+  const startIndex =
+    (page - 1) * productsPerPage;
 
   const currentProducts = filteredProducts.slice(
     startIndex,
     startIndex + productsPerPage
   );
 
+  // =====================================================
+  // RESET PAGE WHEN FILTER CHANGES
+  // =====================================================
+
   useEffect(() => {
     setPage(1);
-  }, [search, categoryFilter, stockFilter]);
+  }, [
+    search,
+    categoryFilter,
+    stockFilter,
+  ]);
 
   // =====================================================
   // DELETE PRODUCT
@@ -230,21 +252,35 @@ const Products = () => {
         }
       );
 
+      const data = await response
+        .json()
+        .catch(() => ({}));
+
       if (!response.ok) {
-        throw new Error("Failed to delete product");
+        throw new Error(
+          data.message ||
+            "Failed to delete product"
+        );
       }
 
       alert("Product deleted successfully");
 
       setProducts((previousProducts) =>
         previousProducts.filter(
-          (product) => product._id !== productId
+          (product) =>
+            product._id !== productId
         )
       );
     } catch (deleteError) {
-      console.error("Delete product error:", deleteError);
+      console.error(
+        "Delete product error:",
+        deleteError
+      );
 
-      alert("Unable to delete product");
+      alert(
+        deleteError.message ||
+          "Unable to delete product"
+      );
     }
   };
 
@@ -267,7 +303,10 @@ const Products = () => {
     return (
       <div className="card shadow border-0 p-4 mt-4">
         <h3 className="hd">Products</h3>
-        <p>Loading products...</p>
+
+        <p className="mb-0">
+          Loading products...
+        </p>
       </div>
     );
   }
@@ -278,19 +317,31 @@ const Products = () => {
 
   return (
     <div className="card shadow border-0 p-3 mt-4">
-      {/* HEADER */}
 
-      <div className="d-flex justify-content-between align-items-center">
-        <h3 className="hd">Products</h3>
+      {/* =================================================
+          HEADER
+      ================================================= */}
+
+      <div className="d-flex justify-content-between align-items-center flex-wrap gap-2">
+
+        <h3 className="hd mb-0">
+          Products
+        </h3>
 
         <Link to="/product/upload">
-          <Button variant="contained" color="primary">
+          <Button
+            variant="contained"
+            color="primary"
+          >
             Add Product
           </Button>
         </Link>
+
       </div>
 
-      {/* ERROR */}
+      {/* =================================================
+          ERROR
+      ================================================= */}
 
       {error && (
         <div className="alert alert-danger mt-3">
@@ -298,9 +349,12 @@ const Products = () => {
         </div>
       )}
 
-      {/* FILTERS */}
+      {/* =================================================
+          FILTERS
+      ================================================= */}
 
       <div className="row cardFilters mt-3">
+
         {/* SEARCH */}
 
         <div className="col-md-4 mb-3">
@@ -322,11 +376,16 @@ const Products = () => {
         <div className="col-md-3 mb-3">
           <h4>CATEGORY BY</h4>
 
-          <FormControl size="small" className="w-100">
+          <FormControl
+            size="small"
+            className="w-100"
+          >
             <Select
               value={categoryFilter}
               onChange={(event) =>
-                setCategoryFilter(event.target.value)
+                setCategoryFilter(
+                  event.target.value
+                )
               }
               displayEmpty
             >
@@ -334,11 +393,16 @@ const Products = () => {
                 <em>All Categories</em>
               </MenuItem>
 
-              {categories.map((category, index) => (
-                <MenuItem key={index} value={category}>
-                  {category}
-                </MenuItem>
-              ))}
+              {categories.map(
+                (category, index) => (
+                  <MenuItem
+                    key={index}
+                    value={category}
+                  >
+                    {category}
+                  </MenuItem>
+                )
+              )}
             </Select>
           </FormControl>
         </div>
@@ -348,11 +412,16 @@ const Products = () => {
         <div className="col-md-3 mb-3">
           <h4>STOCK BY</h4>
 
-          <FormControl size="small" className="w-100">
+          <FormControl
+            size="small"
+            className="w-100"
+          >
             <Select
               value={stockFilter}
               onChange={(event) =>
-                setStockFilter(event.target.value)
+                setStockFilter(
+                  event.target.value
+                )
               }
               displayEmpty
             >
@@ -382,21 +451,28 @@ const Products = () => {
             Clear
           </Button>
         </div>
+
       </div>
 
-      {/* PRODUCT COUNT */}
+      {/* =================================================
+          PRODUCT COUNT
+      ================================================= */}
 
       <div className="mt-2 mb-3">
-        <p>
+        <p className="mb-0">
           Total Products:{" "}
           <b>{filteredProducts.length}</b>
         </p>
       </div>
 
-      {/* PRODUCT TABLE */}
+      {/* =================================================
+          PRODUCT TABLE
+      ================================================= */}
 
       <div className="table-responsive mt-3">
+
         <table className="table table-bordered v-align">
+
           <thead className="thead-dark">
             <tr>
               <th>UID</th>
@@ -406,19 +482,29 @@ const Products = () => {
               </th>
 
               <th>CATEGORY</th>
+
               <th>BRAND</th>
+
               <th>REGULAR PRICE</th>
+
               <th>SELLING PRICE</th>
+
               <th>STOCK</th>
+
               <th>RATING</th>
+
               <th>ORDER</th>
+
               <th>SALES</th>
+
               <th>ACTION</th>
             </tr>
           </thead>
 
           <tbody>
+
             {currentProducts.length === 0 ? (
+
               <tr>
                 <td
                   colSpan="11"
@@ -427,229 +513,308 @@ const Products = () => {
                   No products found
                 </td>
               </tr>
+
             ) : (
-              currentProducts.map((product, index) => {
-                const categoryName = getCategoryName(
-                  product.category
-                );
 
-                const brandName = getBrandName(
-                  product.brand
-                );
+              currentProducts.map(
+                (product, index) => {
 
-                const image = getProductImage(
-                  product.images
-                );
+                  const categoryName =
+                    getCategoryName(
+                      product.category
+                    );
 
-                const stock = Number(
-                  product.countInStock || 0
-                );
+                  const brandName =
+                    getBrandName(
+                      product.brand
+                    );
 
-                const regularPrice = Number(
-                  product.regularPrice || 0
-                );
+                  const image =
+                    getProductImage(
+                      product.images
+                    );
 
-                const sellingPrice = Number(
-                  product.price || 0
-                );
+                  const stock = Number(
+                    product.countInStock || 0
+                  );
 
-                const rating = Number(
-                  product.rating || 0
-                );
+                  const regularPrice =
+                    Number(
+                      product.regularPrice || 0
+                    );
 
-                const numReviews = Number(
-                  product.numReviews || 0
-                );
+                  const sellingPrice =
+                    Number(
+                      product.price || 0
+                    );
 
-                return (
-                  <tr key={product._id}>
-                    {/* UID */}
+                  const rating = Number(
+                    product.rating || 0
+                  );
 
-                    <td>
-                      #{startIndex + index + 1}
-                    </td>
+                  const numReviews =
+                    Number(
+                      product.numReviews || 0
+                    );
 
-                    {/* PRODUCT */}
+                  return (
+                    <tr
+                      key={product._id}
+                    >
 
-                    <td>
-                      <div className="d-flex align-items-center productBox">
-                        <div className="imgWrapper">
-                          <div className="img">
-                            <img
-                              src={image}
-                              alt={
-                                product.name || "Product"
-                              }
-                              className="w-100"
-                              style={{
-                                width: "80px",
-                                height: "80px",
-                                objectFit: "cover",
-                                borderRadius: "8px",
-                              }}
-                              onError={(event) => {
-                                event.currentTarget.src =
-                                  FALLBACK_IMAGE;
-                              }}
-                            />
+                      {/* UID */}
+
+                      <td>
+                        #{startIndex + index + 1}
+                      </td>
+
+                      {/* PRODUCT */}
+
+                      <td>
+                        <div className="d-flex align-items-center productBox">
+
+                          <div className="imgWrapper">
+
+                            <div className="img">
+
+                              <img
+                                src={image}
+                                alt={
+                                  product.name ||
+                                  "Product"
+                                }
+                                className="w-100"
+                                style={{
+                                  width: "80px",
+                                  height: "80px",
+                                  objectFit:
+                                    "cover",
+                                  borderRadius:
+                                    "8px",
+                                }}
+                                onError={(
+                                  event
+                                ) => {
+                                  event.currentTarget.src =
+                                    FALLBACK_IMAGE;
+                                }}
+                              />
+
+                            </div>
+
                           </div>
-                        </div>
 
-                        <div className="info pl-2">
-                          <h6>
-                            {product.name ||
-                              "Unnamed Product"}
-                          </h6>
+                          <div className="info pl-2">
 
-                          <p>
-                            {product.description
-                              ? String(
+                            <h6>
+                              {product.name ||
+                                "Unnamed Product"}
+                            </h6>
+
+                            <p>
+                              {product.description
+                                ? String(
+                                    product.description
+                                  ).substring(
+                                    0,
+                                    60
+                                  )
+                                : "No description"}
+
+                              {product.description &&
+                                String(
                                   product.description
-                                ).substring(0, 60)
-                              : "No description"}
-                            ...
-                          </p>
+                                ).length > 60
+                                ? "..."
+                                : ""}
+                            </p>
+
+                          </div>
+
                         </div>
-                      </div>
-                    </td>
+                      </td>
 
-                    {/* CATEGORY */}
+                      {/* CATEGORY */}
 
-                    <td>{categoryName}</td>
+                      <td>
+                        {categoryName}
+                      </td>
 
-                    {/* BRAND */}
+                      {/* BRAND */}
 
-                    <td>{brandName}</td>
+                      <td>
+                        {brandName}
+                      </td>
 
-                    {/* REGULAR PRICE */}
+                      {/* REGULAR PRICE */}
 
-                    <td>
-                      <span
-                        style={{
-                          textDecoration: "line-through",
-                          color: "#777",
-                        }}
-                      >
-                        ₹
-                        {regularPrice.toLocaleString(
-                          "en-IN"
-                        )}
-                      </span>
-                    </td>
+                      <td>
 
-                    {/* SELLING PRICE */}
-
-                    <td>
-                      <span
-                        className="text-danger"
-                        style={{
-                          fontWeight: "600",
-                        }}
-                      >
-                        ₹
-                        {sellingPrice.toLocaleString(
-                          "en-IN"
-                        )}
-                      </span>
-                    </td>
-
-                    {/* STOCK */}
-
-                    <td>
-                      <span
-                        className={
-                          stock > 0
-                            ? "badge bg-success"
-                            : "badge bg-danger"
-                        }
-                      >
-                        {stock}
-                      </span>
-                    </td>
-
-                    {/* RATING */}
-
-                    <td>
-                      ⭐ {rating}
-                      <br />
-                      <small>
-                        ({numReviews})
-                      </small>
-                    </td>
-
-                    {/* ORDER */}
-
-                    <td>-</td>
-
-                    {/* SALES */}
-
-                    <td>-</td>
-
-                    {/* ACTIONS */}
-
-                    <td>
-                      <div className="actions d-flex align-items-center">
-                        {/* VIEW PRODUCT */}
-
-                        <Link
-                          to={`/product/details/${product._id}`}
-                          onClick={() => {
-                            localStorage.setItem(
-                              "lastViewedProductId",
-                              product._id
-                            );
+                        <span
+                          style={{
+                            textDecoration:
+                              "line-through",
+                            color: "#777",
                           }}
                         >
-                          <Button
-                            className="secondary"
-                            color="secondary"
-                            title="View Product"
-                          >
-                            <FaEye />
-                          </Button>
-                        </Link>
+                          ₹
+                          {regularPrice.toLocaleString(
+                            "en-IN"
+                          )}
+                        </span>
 
-                        {/* EDIT PRODUCT */}
+                      </td>
 
-                        <Link
-                          to={`/product/upload?edit=${product._id}`}
+                      {/* SELLING PRICE */}
+
+                      <td>
+
+                        <span
+                          className="text-danger"
+                          style={{
+                            fontWeight: "600",
+                          }}
                         >
-                          <Button
-                            className="success"
-                            color="success"
-                            title="Edit Product"
-                          >
-                            <FaPencilAlt />
-                          </Button>
-                        </Link>
+                          ₹
+                          {sellingPrice.toLocaleString(
+                            "en-IN"
+                          )}
+                        </span>
 
-                        {/* DELETE PRODUCT */}
+                      </td>
 
-                        <Button
-                          className="error"
-                          color="error"
-                          title="Delete Product"
-                          onClick={() =>
-                            deleteProduct(product._id)
+                      {/* STOCK */}
+
+                      <td>
+
+                        <span
+                          className={
+                            stock > 0
+                              ? "badge bg-success"
+                              : "badge bg-danger"
                           }
                         >
-                          <MdDelete />
-                        </Button>
-                      </div>
-                    </td>
-                  </tr>
-                );
-              })
+                          {stock > 0
+                            ? stock
+                            : "Out"}
+                        </span>
+
+                      </td>
+
+                      {/* RATING */}
+
+                      <td>
+
+                        <span>
+                          ⭐ {rating}
+                        </span>
+
+                        <br />
+
+                        <small>
+                          ({numReviews})
+                        </small>
+
+                      </td>
+
+                      {/* ORDER */}
+
+                      <td>
+                        -
+                      </td>
+
+                      {/* SALES */}
+
+                      <td>
+                        -
+                      </td>
+
+                      {/* ACTIONS */}
+
+                      <td>
+
+                        <div className="actions d-flex align-items-center">
+
+                          {/* VIEW */}
+
+                          <Link
+                            to={`/product/details/${product._id}`}
+                            onClick={() => {
+                              localStorage.setItem(
+                                "lastViewedProductId",
+                                product._id
+                              );
+                            }}
+                          >
+                            <Button
+                              className="secondary"
+                              color="secondary"
+                              title="View Product"
+                            >
+                              <FaEye />
+                            </Button>
+                          </Link>
+
+                          {/* EDIT */}
+
+                          <Link
+                            to={`/product/upload?edit=${product._id}`}
+                          >
+                            <Button
+                              className="success"
+                              color="success"
+                              title="Edit Product"
+                            >
+                              <FaPencilAlt />
+                            </Button>
+                          </Link>
+
+                          {/* DELETE */}
+
+                          <Button
+                            className="error"
+                            color="error"
+                            title="Delete Product"
+                            onClick={() =>
+                              deleteProduct(
+                                product._id
+                              )
+                            }
+                          >
+                            <MdDelete />
+                          </Button>
+
+                        </div>
+
+                      </td>
+
+                    </tr>
+                  );
+                }
+              )
+
             )}
+
           </tbody>
+
         </table>
 
-        {/* TABLE FOOTER */}
+        {/* =================================================
+            TABLE FOOTER
+        ================================================= */}
 
-        <div className="d-flex tableFooter justify-content-between align-items-center">
-          <p>
-            Showing <b>{currentProducts.length}</b> of{" "}
-            <b>{filteredProducts.length}</b> results
+        <div className="d-flex tableFooter justify-content-between align-items-center flex-wrap gap-3">
+
+          <p className="mb-0">
+            Showing{" "}
+            <b>
+              {currentProducts.length}
+            </b>{" "}
+            of{" "}
+            <b>
+              {filteredProducts.length}
+            </b>{" "}
+            results
           </p>
 
           {totalPages > 1 && (
@@ -665,8 +830,11 @@ const Products = () => {
               showLastButton
             />
           )}
+
         </div>
+
       </div>
+
     </div>
   );
 };

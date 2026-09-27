@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
@@ -23,22 +22,26 @@ import { Navigation } from "swiper/modules";
 import "swiper/css";
 import "swiper/css/navigation";
 
-const API_URL = "http://localhost:4000/api";
+// ==========================================
+// BACKEND API BASE URL
+// ==========================================
+
+const API_BASE_URL = "https://ecommerce-hsm4.onrender.com";
 
 const Home = () => {
   const navigate = useNavigate();
 
-  // =========================
+  // ==========================================
   // STATES
-  // =========================
+  // ==========================================
 
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
-  // =========================
+  // ==========================================
   // FETCH PRODUCTS
-  // =========================
+  // ==========================================
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -46,7 +49,9 @@ const Home = () => {
         setLoading(true);
         setError("");
 
-        const response = await fetch(`${API_URL}/products`);
+        const response = await fetch(
+          `${API_BASE_URL}/api/products`
+        );
 
         if (!response.ok) {
           throw new Error("Failed to fetch products.");
@@ -54,9 +59,14 @@ const Home = () => {
 
         const data = await response.json();
 
-        setProducts(Array.isArray(data) ? data : []);
+        setProducts(
+          Array.isArray(data) ? data : []
+        );
       } catch (error) {
-        console.error("Product fetch error:", error);
+        console.error(
+          "Product fetch error:",
+          error
+        );
 
         setError(
           "Unable to load products. Please try again."
@@ -69,19 +79,20 @@ const Home = () => {
     fetchProducts();
   }, []);
 
-  // =========================
+  // ==========================================
   // VIEW ALL HANDLER
-  // =========================
+  // ==========================================
 
   const handleViewAll = () => {
     navigate("/search");
   };
 
-  // =========================
+  // ==========================================
   // PRODUCT SLIDER
-  // =========================
+  // ==========================================
 
   const renderProductSlides = (items) => {
+    // Loading
     if (loading) {
       return (
         <div className="text-center py-4">
@@ -90,6 +101,7 @@ const Home = () => {
       );
     }
 
+    // Error
     if (error) {
       return (
         <div className="alert alert-danger">
@@ -98,6 +110,7 @@ const Home = () => {
       );
     }
 
+    // No products
     if (items.length === 0) {
       return (
         <div className="text-center py-4">
@@ -129,41 +142,54 @@ const Home = () => {
         }}
       >
         {items.map((product) => (
-          <SwiperSlide key={product._id || product.id}>
-            <ProductItem product={product} />
+          <SwiperSlide
+            key={
+              product._id ||
+              product.id
+            }
+          >
+            <ProductItem
+              product={product}
+            />
           </SwiperSlide>
         ))}
       </Swiper>
     );
   };
 
+  // ==========================================
+  // PAGE UI
+  // ==========================================
+
   return (
     <>
-      {/* =========================
+      {/* ======================================
           HOME BANNER
-      ========================= */}
+      ====================================== */}
 
       <HomeBanner />
 
-      {/* =========================
+      {/* ======================================
           HOME CATEGORIES
-      ========================= */}
+      ====================================== */}
 
       <HomeCat />
 
-      {/* =========================
+      {/* ======================================
           HOME PRODUCTS
-      ========================= */}
+      ====================================== */}
 
       <section className="homeProducts">
         <div className="container">
+
           <div className="row">
 
-            {/* =========================
+            {/* =================================
                 LEFT BANNERS
-            ========================= */}
+            ================================= */}
 
             <div className="col-md-3">
+
               <div className="banner">
                 <img
                   src={banner1}
@@ -179,20 +205,23 @@ const Home = () => {
                   className="cursor w-100"
                 />
               </div>
+
             </div>
 
-            {/* =========================
+            {/* =================================
                 PRODUCT SECTION
-            ========================= */}
+            ================================= */}
 
             <div className="col-md-9 productRow">
 
-              {/* =========================
-                  BEST PRODUCTS
-              ========================= */}
+              {/* =================================
+                  BEST PRODUCTS HEADER
+              ================================= */}
 
               <div className="d-flex align-items-center">
+
                 <div className="info w-75">
+
                   <h3 className="mb-0 hd">
                     BEST PRODUCT
                   </h3>
@@ -200,6 +229,7 @@ const Home = () => {
                   <p className="text-light text-sml mb-0">
                     Do not miss this offer in this month.
                   </p>
+
                 </div>
 
                 <Button
@@ -209,20 +239,25 @@ const Home = () => {
                   View All
                   <IoIosArrowRoundForward />
                 </Button>
+
               </div>
 
-              {/* BEST PRODUCT SLIDER */}
+              {/* =================================
+                  BEST PRODUCT SLIDER
+              ================================= */}
 
               <div className="product_row w-100 mt-2">
                 {renderProductSlides(products)}
               </div>
 
-              {/* =========================
-                  NEW PRODUCTS
-              ========================= */}
+              {/* =================================
+                  NEW PRODUCTS HEADER
+              ================================= */}
 
               <div className="d-flex align-items-center mt-4">
+
                 <div className="info w-75">
+
                   <h3 className="mb-0 hd">
                     NEW PRODUCTS
                   </h3>
@@ -230,6 +265,7 @@ const Home = () => {
                   <p className="text-light text-sml mb-0">
                     New products with updated stocks.
                   </p>
+
                 </div>
 
                 <Button
@@ -239,19 +275,23 @@ const Home = () => {
                   View All
                   <IoIosArrowRoundForward />
                 </Button>
+
               </div>
 
-              {/* NEW PRODUCT SLIDER */}
+              {/* =================================
+                  NEW PRODUCT SLIDER
+              ================================= */}
 
               <div className="product_row w-100 mt-3">
                 {renderProductSlides(products)}
               </div>
 
-              {/* =========================
+              {/* =================================
                   BANNERS
-              ========================= */}
+              ================================= */}
 
               <div className="d-flex mt-4 mb-5 bannerSec">
+
                 <div className="banner mr-3">
                   <img
                     src={banner3}
@@ -267,21 +307,30 @@ const Home = () => {
                     className="cursor w-100"
                   />
                 </div>
+
               </div>
+
             </div>
           </div>
         </div>
       </section>
 
-      {/* =========================
+      {/* ======================================
           NEWSLETTER
-      ========================= */}
+      ====================================== */}
 
       <section className="newsLetterSection mt-0 mb-1 d-flex align-items-center">
+
         <div className="container">
+
           <div className="row">
 
+            {/* =================================
+                NEWSLETTER TEXT
+            ================================= */}
+
             <div className="col-md-6">
+
               <p className="text-white mb-1">
                 20% discount for your first order
               </p>
@@ -298,8 +347,11 @@ const Home = () => {
 
               <form
                 className="newsletterForm"
-                onSubmit={(event) => event.preventDefault()}
+                onSubmit={(event) =>
+                  event.preventDefault()
+                }
               >
+
                 <MdOutlineMail />
 
                 <input
@@ -311,10 +363,17 @@ const Home = () => {
                 <Button type="submit">
                   Subscribe
                 </Button>
+
               </form>
+
             </div>
 
+            {/* =================================
+                NEWSLETTER IMAGE
+            ================================= */}
+
             <div className="col-md-6 d-flex justify-content-end align-items-end">
+
               <img
                 src={newsLetterImg}
                 alt="Newsletter"
@@ -324,6 +383,7 @@ const Home = () => {
                   height: "180px",
                 }}
               />
+
             </div>
 
           </div>

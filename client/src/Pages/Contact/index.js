@@ -1,8 +1,19 @@
-
 import { useState } from "react";
 import Button from "@mui/material/Button";
 
-const API_URL = "http://localhost:4000/api/messages";
+// =====================================================
+// API BASE URL
+// client/.env
+// REACT_APP_API_URL=https://ecommerce-hsm4.onrender.com
+// =====================================================
+
+const API_BASE_URL = process.env.REACT_APP_API_URL;
+
+const API_URL = `${API_BASE_URL}/api/messages`;
+
+// =====================================================
+// CONTACT COMPONENT
+// =====================================================
 
 const Contact = () => {
   const [formData, setFormData] = useState({
@@ -27,6 +38,15 @@ const Contact = () => {
       ...previousData,
       [name]: value,
     }));
+
+    // Clear messages while typing
+    if (successMessage) {
+      setSuccessMessage("");
+    }
+
+    if (errorMessage) {
+      setErrorMessage("");
+    }
   };
 
   // =====================================================
@@ -38,6 +58,10 @@ const Contact = () => {
 
     setSuccessMessage("");
     setErrorMessage("");
+
+    // ===================================================
+    // VALIDATION
+    // ===================================================
 
     if (
       !formData.customerName.trim() ||
@@ -54,31 +78,63 @@ const Contact = () => {
     try {
       setLoading(true);
 
+      // =================================================
+      // SEND MESSAGE TO BACKEND
+      // =================================================
+
       const response = await fetch(API_URL, {
         method: "POST",
+
         headers: {
           "Content-Type": "application/json",
         },
+
         body: JSON.stringify({
           customerName: formData.customerName.trim(),
+
           customerEmail: formData.customerEmail.trim(),
+
           orderId: formData.orderId.trim(),
+
           message: formData.message.trim(),
         }),
       });
 
-      const data = await response.json();
+      // =================================================
+      // READ RESPONSE
+      // =================================================
+
+      let data = {};
+
+      try {
+        data = await response.json();
+      } catch (jsonError) {
+        console.error(
+          "Invalid JSON response from server:",
+          jsonError
+        );
+      }
+
+      // =================================================
+      // HANDLE BACKEND ERROR
+      // =================================================
 
       if (!response.ok) {
         throw new Error(
-          data.message || "Failed to send message."
+          data.message ||
+            "Failed to send message. Please try again."
         );
       }
+
+      // =================================================
+      // SUCCESS
+      // =================================================
 
       setSuccessMessage(
         "Your message has been sent successfully. Our team will contact you soon."
       );
 
+      // Clear form
       setFormData({
         customerName: "",
         customerEmail: "",
@@ -97,12 +153,21 @@ const Contact = () => {
     }
   };
 
+  // =====================================================
+  // RENDER
+  // =====================================================
+
   return (
     <section className="section contactPage">
       <div className="container">
         <div className="row justify-content-center">
           <div className="col-md-8">
             <div className="card p-5 shadow-sm">
+
+              {/* =================================================
+                  PAGE HEADER
+              ================================================= */}
+
               <div className="text-center mb-4">
                 <h2 className="hd">
                   Contact Us
@@ -114,11 +179,19 @@ const Contact = () => {
                 </p>
               </div>
 
+              {/* =================================================
+                  SUCCESS MESSAGE
+              ================================================= */}
+
               {successMessage && (
                 <div className="alert alert-success">
                   {successMessage}
                 </div>
               )}
+
+              {/* =================================================
+                  ERROR MESSAGE
+              ================================================= */}
 
               {errorMessage && (
                 <div className="alert alert-danger">
@@ -126,8 +199,16 @@ const Contact = () => {
                 </div>
               )}
 
+              {/* =================================================
+                  CONTACT FORM
+              ================================================= */}
+
               <form onSubmit={handleSubmit}>
-                {/* CUSTOMER NAME */}
+
+                {/* =================================================
+                    CUSTOMER NAME
+                ================================================= */}
+
                 <div className="form-group mb-3">
                   <label htmlFor="customerName">
                     Full Name
@@ -142,10 +223,14 @@ const Contact = () => {
                     value={formData.customerName}
                     onChange={handleChange}
                     required
+                    disabled={loading}
                   />
                 </div>
 
-                {/* CUSTOMER EMAIL */}
+                {/* =================================================
+                    CUSTOMER EMAIL
+                ================================================= */}
+
                 <div className="form-group mb-3">
                   <label htmlFor="customerEmail">
                     Email Address
@@ -160,13 +245,18 @@ const Contact = () => {
                     value={formData.customerEmail}
                     onChange={handleChange}
                     required
+                    disabled={loading}
                   />
                 </div>
 
-                {/* ORDER ID */}
+                {/* =================================================
+                    ORDER ID
+                ================================================= */}
+
                 <div className="form-group mb-3">
                   <label htmlFor="orderId">
                     Order ID
+
                     <span className="text-muted">
                       {" "}
                       (Optional)
@@ -181,10 +271,14 @@ const Contact = () => {
                     placeholder="Enter order ID if applicable"
                     value={formData.orderId}
                     onChange={handleChange}
+                    disabled={loading}
                   />
                 </div>
 
-                {/* MESSAGE */}
+                {/* =================================================
+                    MESSAGE
+                ================================================= */}
+
                 <div className="form-group mb-4">
                   <label htmlFor="message">
                     Your Message
@@ -199,10 +293,14 @@ const Contact = () => {
                     value={formData.message}
                     onChange={handleChange}
                     required
+                    disabled={loading}
                   />
                 </div>
 
-                {/* SUBMIT BUTTON */}
+                {/* =================================================
+                    SUBMIT BUTTON
+                ================================================= */}
+
                 <div className="text-center">
                   <Button
                     type="submit"
@@ -214,6 +312,7 @@ const Contact = () => {
                       : "Send Message"}
                   </Button>
                 </div>
+
               </form>
             </div>
           </div>

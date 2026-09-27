@@ -1,20 +1,53 @@
-
 import React, { useEffect, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
-import ProductItem from "../../Components/ProductItem";
-import Button from "@mui/material/Button";
-import { FaArrowLeft, FaSearch } from "react-icons/fa";
 
-const API_URL = "http://localhost:4000/api";
+import ProductItem from "../../Components/ProductItem";
+
+import Button from "@mui/material/Button";
+
+import {
+  FaArrowLeft,
+  FaSearch,
+} from "react-icons/fa";
+
+// =====================================================
+// API URL
+// =====================================================
+
+const API_URL =
+  "https://ecommerce-hsm4.onrender.com/api";
+
+// =====================================================
+// SEARCH RESULTS COMPONENT
+// =====================================================
 
 const SearchResults = () => {
-  const [searchParams] = useSearchParams();
+  // ===================================================
+  // SEARCH PARAMS
+  // ===================================================
 
-  const searchQuery = searchParams.get("query") || "";
+  const [searchParams] =
+    useSearchParams();
 
-  const [products, setProducts] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
+  const searchQuery =
+    searchParams.get("query") || "";
+
+  // ===================================================
+  // STATES
+  // ===================================================
+
+  const [products, setProducts] =
+    useState([]);
+
+  const [loading, setLoading] =
+    useState(true);
+
+  const [error, setError] =
+    useState("");
+
+  // ===================================================
+  // FETCH PRODUCTS
+  // ===================================================
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -22,17 +55,29 @@ const SearchResults = () => {
         setLoading(true);
         setError("");
 
-        const response = await fetch(`${API_URL}/products`);
+        const response = await fetch(
+          `${API_URL}/products`
+        );
 
         if (!response.ok) {
-          throw new Error("Failed to fetch products.");
+          throw new Error(
+            "Failed to fetch products."
+          );
         }
 
-        const data = await response.json();
+        const data =
+          await response.json();
 
-        setProducts(Array.isArray(data) ? data : []);
+        setProducts(
+          Array.isArray(data)
+            ? data
+            : []
+        );
       } catch (fetchError) {
-        console.error("Search product error:", fetchError);
+        console.error(
+          "Search product error:",
+          fetchError
+        );
 
         setError(
           "Unable to load products. Please try again."
@@ -45,37 +90,103 @@ const SearchResults = () => {
     fetchProducts();
   }, []);
 
-  const normalizedQuery = searchQuery.trim().toLowerCase();
+  // ===================================================
+  // NORMALIZE SEARCH QUERY
+  // ===================================================
 
-  const filteredProducts = products.filter((product) => {
-    const name = String(product.name || "").toLowerCase();
+  const normalizedQuery =
+    searchQuery
+      .trim()
+      .toLowerCase();
 
-    const brand = String(product.brand || "").toLowerCase();
+  // ===================================================
+  // FILTER PRODUCTS
+  // ===================================================
 
-    const description = String(
-      product.description || ""
-    ).toLowerCase();
+  const filteredProducts =
+    products.filter((product) => {
+      // Product name
+      const name =
+        String(
+          product.name || ""
+        ).toLowerCase();
 
-    return (
-      name.includes(normalizedQuery) ||
-      brand.includes(normalizedQuery) ||
-      description.includes(normalizedQuery)
-    );
-  });
+      // Product brand
+      const brand =
+        typeof product.brand ===
+          "object" &&
+        product.brand !== null
+          ? String(
+              product.brand.name ||
+                product.brand._id ||
+                ""
+            ).toLowerCase()
+          : String(
+              product.brand || ""
+            ).toLowerCase();
+
+      // Product description
+      const description =
+        String(
+          product.description || ""
+        ).toLowerCase();
+
+      // Category
+      const category =
+        typeof product.category ===
+          "object" &&
+        product.category !== null
+          ? String(
+              product.category.name ||
+                product.category._id ||
+                ""
+            ).toLowerCase()
+          : String(
+              product.category || ""
+            ).toLowerCase();
+
+      return (
+        name.includes(
+          normalizedQuery
+        ) ||
+        brand.includes(
+          normalizedQuery
+        ) ||
+        description.includes(
+          normalizedQuery
+        ) ||
+        category.includes(
+          normalizedQuery
+        )
+      );
+    });
+
+  // ===================================================
+  // RETURN UI
+  // ===================================================
 
   return (
     <div className="container py-4">
-      {/* Page Header */}
+
+      {/* =================================================
+          PAGE HEADER
+      ================================================= */}
+
       <div className="d-flex justify-content-between align-items-center flex-wrap mb-4">
+
         <div>
+
           <h2 className="font-weight-bold mb-1">
             Search Results
           </h2>
 
           <p className="text-muted mb-0">
             Results for:{" "}
-            <strong>{searchQuery}</strong>
+            <strong>
+              {searchQuery || "All Products"}
+            </strong>
           </p>
+
         </div>
 
         <Link
@@ -85,58 +196,56 @@ const SearchResults = () => {
           <FaArrowLeft className="mr-2" />
           Back to Home
         </Link>
+
       </div>
 
-      {/* Loading */}
+      {/* =================================================
+          LOADING
+      ================================================= */}
+
       {loading && (
         <div className="text-center py-5">
-          <p>Loading products...</p>
+
+          <p>
+            Loading products...
+          </p>
+
         </div>
       )}
 
-      {/* Error */}
+      {/* =================================================
+          ERROR
+      ================================================= */}
+
       {!loading && error && (
         <div className="alert alert-danger">
           {error}
         </div>
       )}
 
-      {/* Empty Search */}
+      {/* =================================================
+          EMPTY SEARCH
+      ================================================= */}
+
       {!loading &&
         !error &&
         normalizedQuery === "" && (
           <div className="text-center py-5">
-            <FaSearch size={50} color="#bdbdbd" />
+
+            <FaSearch
+              size={50}
+              color="#bdbdbd"
+            />
 
             <h4 className="mt-3">
-              Enter a product name to search
-            </h4>
-
-            <Link to="/">
-              <Button
-                variant="contained"
-                className="btn-blue mt-3"
-              >
-                Continue Shopping
-              </Button>
-            </Link>
-          </div>
-        )}
-
-      {/* No Results */}
-      {!loading &&
-        !error &&
-        normalizedQuery !== "" &&
-        filteredProducts.length === 0 && (
-          <div className="text-center py-5">
-            <FaSearch size={50} color="#bdbdbd" />
-
-            <h4 className="mt-3">
-              No products found
+              Enter a product name
+              to search
             </h4>
 
             <p className="text-muted">
-              Try searching with another product name.
+              Search for products,
+              brands, categories or
+              descriptions.
             </p>
 
             <Link to="/">
@@ -147,36 +256,104 @@ const SearchResults = () => {
                 Continue Shopping
               </Button>
             </Link>
+
           </div>
         )}
 
-      {/* Search Results */}
+      {/* =================================================
+          NO RESULTS
+      ================================================= */}
+
       {!loading &&
         !error &&
+        normalizedQuery !== "" &&
+        filteredProducts.length === 0 && (
+          <div className="text-center py-5">
+
+            <FaSearch
+              size={50}
+              color="#bdbdbd"
+            />
+
+            <h4 className="mt-3">
+              No products found
+            </h4>
+
+            <p className="text-muted">
+              No products match{" "}
+              <strong>
+                "{searchQuery}"
+              </strong>
+              . Try another product
+              name, brand or category.
+            </p>
+
+            <Link to="/">
+              <Button
+                variant="contained"
+                className="btn-blue mt-3"
+              >
+                Continue Shopping
+              </Button>
+            </Link>
+
+          </div>
+        )}
+
+      {/* =================================================
+          SEARCH RESULTS
+      ================================================= */}
+
+      {!loading &&
+        !error &&
+        normalizedQuery !== "" &&
         filteredProducts.length > 0 && (
           <>
+
+            {/* RESULT COUNT */}
+
             <div className="mb-3">
+
               <strong>
                 {filteredProducts.length}{" "}
-                {filteredProducts.length === 1
+
+                {filteredProducts.length ===
+                1
                   ? "product"
                   : "products"}{" "}
+
                 found
               </strong>
+
             </div>
 
+            {/* PRODUCT GRID */}
+
             <div className="row">
-              {filteredProducts.map((product) => (
-                <div
-                  className="col-12 col-sm-6 col-md-4 col-lg-3 mb-4"
-                  key={product._id}
-                >
-                  <ProductItem product={product} />
-                </div>
-              ))}
+
+              {filteredProducts.map(
+                (product) => (
+                  <div
+                    className="col-12 col-sm-6 col-md-4 col-lg-3 mb-4"
+                    key={
+                      product._id ||
+                      product.id
+                    }
+                  >
+
+                    <ProductItem
+                      product={product}
+                    />
+
+                  </div>
+                )
+              )}
+
             </div>
+
           </>
         )}
+
     </div>
   );
 };

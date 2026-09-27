@@ -1,4 +1,3 @@
-
 import ProductZoom from "../../Components/ProductZoom";
 import Rating from "@mui/material/Rating";
 import QuantityBox from "../../Components/QuantityBox";
@@ -33,11 +32,12 @@ import { MyContext } from "../../App";
 // API URLS
 // =====================================================
 
-const PRODUCT_API_URL =
-  "http://localhost:4000/api/products";
+const API_BASE_URL =
+  "https://ecommerce-hsm4.onrender.com/api";
 
-const REVIEW_API_URL =
-  "http://localhost:4000/api/reviews";
+const PRODUCT_API_URL = `${API_BASE_URL}/products`;
+
+const REVIEW_API_URL = `${API_BASE_URL}/reviews`;
 
 // =====================================================
 // CUSTOMER INITIAL HELPER
@@ -59,6 +59,7 @@ const getUserInitial = (name) => {
 
 const ProductDetails = () => {
   const { id } = useParams();
+
   const navigate = useNavigate();
 
   // =====================================================
@@ -72,13 +73,15 @@ const ProductDetails = () => {
   } = useContext(MyContext);
 
   // =====================================================
-  // PRODUCT AND REVIEW STATES
+  // PRODUCT STATES
   // =====================================================
 
   const [product, setProduct] = useState(null);
+
   const [reviews, setReviews] = useState([]);
 
   const [totalReviews, setTotalReviews] = useState(0);
+
   const [averageRating, setAverageRating] = useState(0);
 
   // =====================================================
@@ -86,31 +89,44 @@ const ProductDetails = () => {
   // =====================================================
 
   const [activeSize, setActiveSize] = useState(null);
+
   const [activeTabs, setActiveTabs] = useState(0);
-  const [selectedQuantity, setSelectedQuantity] = useState(1);
+
+  const [selectedQuantity, setSelectedQuantity] =
+    useState(1);
 
   // =====================================================
   // REVIEW FORM STATES
   // =====================================================
 
-  const [reviewMessage, setReviewMessage] = useState("");
+  const [reviewMessage, setReviewMessage] =
+    useState("");
+
   const [rating, setRating] = useState(0);
 
   // =====================================================
   // LOADING STATES
   // =====================================================
 
-  const [loadingProduct, setLoadingProduct] = useState(true);
-  const [loadingReviews, setLoadingReviews] = useState(false);
-  const [submittingReview, setSubmittingReview] = useState(false);
+  const [loadingProduct, setLoadingProduct] =
+    useState(true);
+
+  const [loadingReviews, setLoadingReviews] =
+    useState(false);
+
+  const [submittingReview, setSubmittingReview] =
+    useState(false);
 
   // =====================================================
   // ERROR STATES
   // =====================================================
 
   const [error, setError] = useState("");
+
   const [reviewError, setReviewError] = useState("");
-  const [reviewSuccess, setReviewSuccess] = useState("");
+
+  const [reviewSuccess, setReviewSuccess] =
+    useState("");
 
   // =====================================================
   // FETCH PRODUCT
@@ -150,6 +166,11 @@ const ProductDetails = () => {
           ? JSON.parse(responseText)
           : {};
       } catch (parseError) {
+        console.error(
+          "Product JSON parse error:",
+          parseError
+        );
+
         throw new Error(
           "Invalid response from product server."
         );
@@ -169,7 +190,8 @@ const ProductDetails = () => {
 
       if (
         !productData ||
-        (!productData._id && !productData.id)
+        (!productData._id &&
+          !productData.id)
       ) {
         throw new Error(
           "Invalid product data received."
@@ -187,6 +209,8 @@ const ProductDetails = () => {
         fetchError.message ||
           "Failed to load product."
       );
+
+      setProduct(null);
     } finally {
       setLoadingProduct(false);
     }
@@ -228,6 +252,11 @@ const ProductDetails = () => {
           ? JSON.parse(responseText)
           : {};
       } catch (parseError) {
+        console.error(
+          "Review JSON parse error:",
+          parseError
+        );
+
         throw new Error(
           "Invalid response from reviews server."
         );
@@ -248,17 +277,19 @@ const ProductDetails = () => {
         data.data ||
         [];
 
-      setReviews(
-        Array.isArray(reviewList)
-          ? reviewList
-          : []
-      );
+      const safeReviews = Array.isArray(
+        reviewList
+      )
+        ? reviewList
+        : [];
+
+      setReviews(safeReviews);
 
       setTotalReviews(
         Number(
           data.totalReviews ??
             data.total ??
-            reviewList.length
+            safeReviews.length
         )
       );
 
@@ -279,6 +310,8 @@ const ProductDetails = () => {
         fetchError.message ||
           "Failed to load reviews."
       );
+
+      setReviews([]);
     } finally {
       setLoadingReviews(false);
     }
@@ -301,7 +334,9 @@ const ProductDetails = () => {
     return (
       <section className="section">
         <div className="container">
-          <h3>Loading product...</h3>
+          <div className="text-center py-5">
+            <h3>Loading product...</h3>
+          </div>
         </div>
       </section>
     );
@@ -315,17 +350,19 @@ const ProductDetails = () => {
     return (
       <section className="section">
         <div className="container">
-          <h3>
-            {error || "Product not found."}
-          </h3>
+          <div className="text-center py-5">
+            <h3 className="text-danger">
+              {error || "Product not found."}
+            </h3>
 
-          <Button
-            variant="contained"
-            onClick={() => navigate("/")}
-            className="mt-3"
-          >
-            Go to Home
-          </Button>
+            <Button
+              variant="contained"
+              onClick={() => navigate("/")}
+              className="mt-3"
+            >
+              Go to Home
+            </Button>
+          </div>
         </div>
       </section>
     );
@@ -343,53 +380,97 @@ const ProductDetails = () => {
     "No description available.";
 
   const productBrand =
-    typeof product.brand === "object"
+    typeof product.brand === "object" &&
+    product.brand !== null
       ? product.brand?.name ||
         "Not specified"
       : product.brand ||
         "Not specified";
 
   const productPrice = Number(
-    product.price ?? 0
+    product.price ??
+      product.newPrice ??
+      product.salePrice ??
+      0
   );
 
   const productRegularPrice = Number(
-    product.regularPrice ?? productPrice
+    product.regularPrice ??
+      product.oldPrice ??
+      product.originalPrice ??
+      productPrice
   );
 
   const productRating = Number(
     product.rating || 0
   );
 
-  const productStock = Number(
-    product.countInStock || 0
-  );
+  // =====================================================
+  // STOCK SUPPORT
+  // =====================================================
 
-  const isInStock = productStock > 0;
+  let productStock = 0;
+
+  if (
+    typeof product.countInStock ===
+    "number"
+  ) {
+    productStock = product.countInStock;
+  } else if (
+    typeof product.stock === "number"
+  ) {
+    productStock = product.stock;
+  } else if (
+    typeof product.quantity === "number"
+  ) {
+    productStock = product.quantity;
+  }
+
+  const isInStock =
+    product.inStock === false ||
+    product.isAvailable === false
+      ? false
+      : productStock > 0;
+
+  // =====================================================
+  // DISPLAY RATING
+  // =====================================================
 
   const displayRating =
     totalReviews > 0
       ? averageRating
       : productRating;
 
+  // =====================================================
+  // CATEGORY
+  // =====================================================
+
   const categoryName =
-    typeof product.category === "object"
+    typeof product.category === "object" &&
+    product.category !== null
       ? product.category?.name ||
         "Not specified"
       : product.category ||
         "Not specified";
 
   // =====================================================
-  // WISHLIST STATUS
+  // PRODUCT ID
   // =====================================================
 
   const productId = String(
-    product._id || product.id || ""
+    product._id ||
+      product.id ||
+      ""
   );
 
-  const productInWishlist = isInWishlist(
-    productId
-  );
+  // =====================================================
+  // WISHLIST STATUS
+  // =====================================================
+
+  const productInWishlist =
+    typeof isInWishlist === "function"
+      ? isInWishlist(productId)
+      : false;
 
   // =====================================================
   // ADD TO CART
@@ -416,7 +497,10 @@ const ProductDetails = () => {
       selectedQuantity < 1 ||
       selectedQuantity > productStock
     ) {
-      alert("Please select a valid quantity.");
+      alert(
+        "Please select a valid quantity."
+      );
+
       return;
     }
 
@@ -455,7 +539,10 @@ const ProductDetails = () => {
       selectedQuantity < 1 ||
       selectedQuantity > productStock
     ) {
-      alert("Please select a valid quantity.");
+      alert(
+        "Please select a valid quantity."
+      );
+
       return;
     }
 
@@ -471,7 +558,9 @@ const ProductDetails = () => {
   // WISHLIST TOGGLE
   // =====================================================
 
-  const handleWishlistToggle = (event) => {
+  const handleWishlistToggle = (
+    event
+  ) => {
     event?.stopPropagation();
 
     if (!product) {
@@ -494,25 +583,32 @@ const ProductDetails = () => {
       return;
     }
 
-    console.log(
-      "Heart button clicked. Product ID:",
-      currentProductId
-    );
-
-    toggleWishlist(product);
+    if (
+      typeof toggleWishlist ===
+      "function"
+    ) {
+      toggleWishlist(product);
+    }
   };
 
   // =====================================================
   // SUBMIT REVIEW
   // =====================================================
 
-  const handleSubmitReview = async (event) => {
+  const handleSubmitReview = async (
+    event
+  ) => {
     event.preventDefault();
 
     setReviewError("");
     setReviewSuccess("");
 
-    const token = localStorage.getItem("token");
+    const token =
+      localStorage.getItem("token");
+
+    // ===================================================
+    // LOGIN CHECK
+    // ===================================================
 
     if (!token) {
       setReviewError(
@@ -520,8 +616,13 @@ const ProductDetails = () => {
       );
 
       navigate("/signIn");
+
       return;
     }
+
+    // ===================================================
+    // REVIEW VALIDATION
+    // ===================================================
 
     const trimmedReviewMessage =
       reviewMessage.trim();
@@ -534,7 +635,9 @@ const ProductDetails = () => {
       return;
     }
 
-    if (trimmedReviewMessage.length < 3) {
+    if (
+      trimmedReviewMessage.length < 3
+    ) {
       setReviewError(
         "Review must contain at least 3 characters."
       );
@@ -542,7 +645,9 @@ const ProductDetails = () => {
       return;
     }
 
-    if (trimmedReviewMessage.length > 1000) {
+    if (
+      trimmedReviewMessage.length > 1000
+    ) {
       setReviewError(
         "Review cannot exceed 1000 characters."
       );
@@ -551,7 +656,9 @@ const ProductDetails = () => {
     }
 
     if (
-      !Number.isInteger(Number(rating)) ||
+      !Number.isInteger(
+        Number(rating)
+      ) ||
       Number(rating) < 1 ||
       Number(rating) > 5
     ) {
@@ -570,13 +677,18 @@ const ProductDetails = () => {
       return;
     }
 
+    // ===================================================
+    // SUBMIT REVIEW
+    // ===================================================
+
     try {
       setSubmittingReview(true);
 
       const requestBody = {
         productId: id,
         rating: Number(rating),
-        reviewText: trimmedReviewMessage,
+        reviewText:
+          trimmedReviewMessage,
       };
 
       const response = await fetch(
@@ -585,15 +697,21 @@ const ProductDetails = () => {
           method: "POST",
 
           headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
+            "Content-Type":
+              "application/json",
+
+            Authorization:
+              `Bearer ${token}`,
           },
 
-          body: JSON.stringify(requestBody),
+          body: JSON.stringify(
+            requestBody
+          ),
         }
       );
 
-      const responseText = await response.text();
+      const responseText =
+        await response.text();
 
       let data = {};
 
@@ -602,32 +720,54 @@ const ProductDetails = () => {
           ? JSON.parse(responseText)
           : {};
       } catch (parseError) {
+        console.error(
+          "Review submit JSON error:",
+          parseError
+        );
+
         throw new Error(
           "Server returned an invalid response."
         );
       }
 
+      // =================================================
+      // AUTH ERROR
+      // =================================================
+
+      if (response.status === 401) {
+        localStorage.removeItem(
+          "token"
+        );
+
+        localStorage.removeItem(
+          "user"
+        );
+
+        setReviewError(
+          data.message ||
+            "Your session has expired. Please log in again."
+        );
+
+        return;
+      }
+
+      // =================================================
+      // OTHER API ERRORS
+      // =================================================
+
       if (
         !response.ok ||
         data.success === false
       ) {
-        if (response.status === 401) {
-          localStorage.removeItem("token");
-          localStorage.removeItem("user");
-
-          setReviewError(
-            data.message ||
-              "Your session has expired. Please log in again."
-          );
-
-          return;
-        }
-
         throw new Error(
           data.message ||
             `Review submission failed. Status: ${response.status}`
         );
       }
+
+      // =================================================
+      // SUCCESS
+      // =================================================
 
       setReviewSuccess(
         data.message ||
@@ -635,41 +775,62 @@ const ProductDetails = () => {
       );
 
       setReviewMessage("");
+
       setRating(0);
 
+      // =================================================
+      // UPDATE RATING
+      // =================================================
+
       if (
-        data.averageRating !== undefined
+        data.averageRating !==
+        undefined
       ) {
         setAverageRating(
-          Number(data.averageRating)
+          Number(
+            data.averageRating
+          )
         );
       }
 
       if (
-        data.totalReviews !== undefined
+        data.totalReviews !==
+        undefined
       ) {
         setTotalReviews(
-          Number(data.totalReviews)
+          Number(
+            data.totalReviews
+          )
         );
       }
 
-      setProduct((previousProduct) => {
-        if (!previousProduct) {
-          return previousProduct;
+      // =================================================
+      // UPDATE PRODUCT
+      // =================================================
+
+      setProduct(
+        (previousProduct) => {
+          if (!previousProduct) {
+            return previousProduct;
+          }
+
+          return {
+            ...previousProduct,
+
+            rating:
+              data.averageRating ??
+              previousProduct.rating,
+
+            numReviews:
+              data.totalReviews ??
+              previousProduct.numReviews,
+          };
         }
+      );
 
-        return {
-          ...previousProduct,
-
-          rating:
-            data.averageRating ??
-            previousProduct.rating,
-
-          numReviews:
-            data.totalReviews ??
-            previousProduct.numReviews,
-        };
-      });
+      // =================================================
+      // RELOAD REVIEWS
+      // =================================================
 
       await fetchReviews();
     } catch (submitError) {
@@ -695,11 +856,15 @@ const ProductDetails = () => {
     <section className="productDetails section">
       <div className="container">
 
-        {/* PRODUCT SECTION */}
+        {/* =================================================
+            PRODUCT SECTION
+        ================================================= */}
 
         <div className="row">
 
-          {/* PRODUCT IMAGES */}
+          {/* =================================================
+              PRODUCT IMAGES
+          ================================================= */}
 
           <div className="col-md-4 pl-5">
             <ProductZoom
@@ -707,18 +872,27 @@ const ProductDetails = () => {
             />
           </div>
 
-          {/* PRODUCT INFORMATION */}
+          {/* =================================================
+              PRODUCT INFORMATION
+          ================================================= */}
 
           <div className="col-md-7 pl-5 pr-5">
+
+            {/* PRODUCT NAME */}
 
             <h2 className="hd text-capitalize">
               {productName}
             </h2>
 
+            {/* BRAND + RATING */}
+
             <ul className="list list-inline d-flex align-items-center">
+
+              {/* BRAND */}
 
               <li className="list-inline-item">
                 <div className="d-flex align-items-center">
+
                   <span className="text-light mr-2">
                     Brand:
                   </span>
@@ -726,8 +900,11 @@ const ProductDetails = () => {
                   <span>
                     {productBrand}
                   </span>
+
                 </div>
               </li>
+
+              {/* RATING */}
 
               <li className="list-inline-item">
                 <div className="d-flex align-items-center">
@@ -735,7 +912,10 @@ const ProductDetails = () => {
                   <Rating
                     name="product-rating"
                     value={Math.min(
-                      Math.max(displayRating, 0),
+                      Math.max(
+                        displayRating,
+                        0
+                      ),
                       5
                     )}
                     precision={0.5}
@@ -752,11 +932,14 @@ const ProductDetails = () => {
 
             </ul>
 
-            {/* PRICE */}
+            {/* =================================================
+                PRICE
+            ================================================= */}
 
             <div className="d-flex info mb-3">
 
-              {productRegularPrice > productPrice && (
+              {productRegularPrice >
+                productPrice && (
                 <span className="oldPrice">
                   ₹
                   {productRegularPrice.toLocaleString(
@@ -774,7 +957,9 @@ const ProductDetails = () => {
 
             </div>
 
-            {/* STOCK */}
+            {/* =================================================
+                STOCK
+            ================================================= */}
 
             <span
               className={`badge ${
@@ -788,17 +973,23 @@ const ProductDetails = () => {
                 : "OUT OF STOCK"}
             </span>
 
-            {/* DESCRIPTION */}
+            {/* =================================================
+                DESCRIPTION
+            ================================================= */}
 
             <p className="mt-3">
               {productDescription}
             </p>
 
-            {/* SIZE */}
+            {/* =================================================
+                SIZE
+            ================================================= */}
 
             <div className="productSize d-flex align-items-center">
 
-              <span>Size/Weight:</span>
+              <span>
+                Size/Weight:
+              </span>
 
               <ul className="list list-inline mb-0 pl-4">
 
@@ -808,40 +999,54 @@ const ProductDetails = () => {
                   "200g",
                   "300g",
                   "500g",
-                ].map((size, index) => (
-                  <li
-                    className="list-inline-item"
-                    key={size}
-                  >
-                    <button
-                      type="button"
-                      className={`tag ${
-                        activeSize === index
-                          ? "active"
-                          : ""
-                      }`}
-                      onClick={() =>
-                        setActiveSize(index)
-                      }
+                ].map(
+                  (
+                    size,
+                    index
+                  ) => (
+                    <li
+                      className="list-inline-item"
+                      key={size}
                     >
-                      {size}
-                    </button>
-                  </li>
-                ))}
+                      <button
+                        type="button"
+                        className={`tag ${
+                          activeSize ===
+                          index
+                            ? "active"
+                            : ""
+                        }`}
+                        onClick={() =>
+                          setActiveSize(
+                            index
+                          )
+                        }
+                      >
+                        {size}
+                      </button>
+                    </li>
+                  )
+                )}
 
               </ul>
 
             </div>
 
-            {/* CART CONTROLS */}
+            {/* =================================================
+                CART CONTROLS
+            ================================================= */}
 
             <div className="d-flex align-items-center mt-3 flex-wrap">
 
               {/* QUANTITY */}
 
               <QuantityBox
-                onChange={setSelectedQuantity}
-                maxQuantity={productStock}
+                onChange={
+                  setSelectedQuantity
+                }
+                maxQuantity={
+                  productStock
+                }
               />
 
               {/* ADD TO CART */}
@@ -850,9 +1055,12 @@ const ProductDetails = () => {
                 type="button"
                 className="btn-blue btn-lg btn-big btn-round ml-3"
                 disabled={!isInStock}
-                onClick={handleAddToCart}
+                onClick={
+                  handleAddToCart
+                }
               >
                 <FaShoppingCart />
+
                 &nbsp; Add to Cart
               </Button>
 
@@ -862,7 +1070,9 @@ const ProductDetails = () => {
                 type="button"
                 className="btn-success btn-lg btn-big btn-round ml-3"
                 disabled={!isInStock}
-                onClick={handleBuyNow}
+                onClick={
+                  handleBuyNow
+                }
               >
                 Buy Now
               </Button>
@@ -883,7 +1093,9 @@ const ProductDetails = () => {
                       ? "active"
                       : ""
                   }`}
-                  onClick={handleWishlistToggle}
+                  onClick={
+                    handleWishlistToggle
+                  }
                 >
                   {productInWishlist ? (
                     <FaHeart
@@ -915,15 +1127,22 @@ const ProductDetails = () => {
           </div>
         </div>
 
-        {/* TABS */}
+        {/* =================================================
+            TABS
+        ================================================= */}
 
         <div className="card mt-5 p-5 detailsPageTabs">
 
           <div className="customTabs">
 
+            {/* TAB BUTTONS */}
+
             <ul className="list list-inline">
 
+              {/* DESCRIPTION */}
+
               <li className="list-inline-item">
+
                 <Button
                   className={
                     activeTabs === 0
@@ -936,9 +1155,13 @@ const ProductDetails = () => {
                 >
                   Description
                 </Button>
+
               </li>
 
+              {/* ADDITIONAL INFO */}
+
               <li className="list-inline-item">
+
                 <Button
                   className={
                     activeTabs === 1
@@ -951,9 +1174,13 @@ const ProductDetails = () => {
                 >
                   Additional Info
                 </Button>
+
               </li>
 
+              {/* REVIEWS */}
+
               <li className="list-inline-item">
+
                 <Button
                   className={
                     activeTabs === 2
@@ -966,23 +1193,30 @@ const ProductDetails = () => {
                 >
                   Reviews
                 </Button>
+
               </li>
 
             </ul>
 
             <br />
 
-            {/* DESCRIPTION TAB */}
+            {/* =================================================
+                DESCRIPTION TAB
+            ================================================= */}
 
             {activeTabs === 0 && (
               <div className="tabContent">
+
                 <p>
                   {productDescription}
                 </p>
+
               </div>
             )}
 
-            {/* ADDITIONAL INFORMATION TAB */}
+            {/* =================================================
+                ADDITIONAL INFORMATION TAB
+            ================================================= */}
 
             {activeTabs === 1 && (
               <div className="tabContent">
@@ -990,51 +1224,74 @@ const ProductDetails = () => {
                 <div className="table-responsive">
 
                   <table className="table table-bordered">
+
                     <tbody>
 
                       <tr>
-                        <th>Brand</th>
+                        <th>
+                          Brand
+                        </th>
+
                         <td>
                           {productBrand}
                         </td>
                       </tr>
 
                       <tr>
-                        <th>Stock</th>
+                        <th>
+                          Stock
+                        </th>
+
                         <td>
                           {productStock}
                         </td>
                       </tr>
 
                       <tr>
-                        <th>Category</th>
+                        <th>
+                          Category
+                        </th>
+
                         <td>
                           {categoryName}
                         </td>
                       </tr>
 
                       <tr>
-                        <th>Rating</th>
+                        <th>
+                          Rating
+                        </th>
+
                         <td>
-                          {displayRating.toFixed(1)} / 5
+                          {displayRating.toFixed(
+                            1
+                          )}{" "}
+                          / 5
                         </td>
                       </tr>
 
                       <tr>
-                        <th>Total Reviews</th>
+                        <th>
+                          Total Reviews
+                        </th>
+
                         <td>
                           {totalReviews}
                         </td>
                       </tr>
 
                     </tbody>
+
                   </table>
 
                 </div>
+
               </div>
             )}
 
-            {/* REVIEWS TAB */}
+            {/* =================================================
+                REVIEWS TAB
+            ================================================= */}
 
             {activeTabs === 2 && (
               <div className="tabContent">
@@ -1043,15 +1300,22 @@ const ProductDetails = () => {
 
                   <div className="col-md-8">
 
-                    {/* REVIEW SUMMARY */}
+                    {/* =================================================
+                        REVIEW SUMMARY
+                    ================================================= */}
 
-                    <h3>Customer Reviews</h3>
+                    <h3>
+                      Customer Reviews
+                    </h3>
 
                     <div className="d-flex align-items-center mb-3">
 
                       <Rating
                         value={Math.min(
-                          Math.max(displayRating, 0),
+                          Math.max(
+                            displayRating,
+                            0
+                          ),
                           5
                         )}
                         precision={0.5}
@@ -1059,7 +1323,10 @@ const ProductDetails = () => {
                       />
 
                       <span className="ml-2">
-                        {displayRating.toFixed(1)} / 5
+                        {displayRating.toFixed(
+                          1
+                        )}{" "}
+                        / 5
                       </span>
 
                       <span className="ml-3 text-muted">
@@ -1068,7 +1335,9 @@ const ProductDetails = () => {
 
                     </div>
 
-                    {/* ERROR MESSAGE */}
+                    {/* =================================================
+                        ERROR MESSAGE
+                    ================================================= */}
 
                     {reviewError && (
                       <div className="alert alert-danger">
@@ -1076,7 +1345,9 @@ const ProductDetails = () => {
                       </div>
                     )}
 
-                    {/* SUCCESS MESSAGE */}
+                    {/* =================================================
+                        SUCCESS MESSAGE
+                    ================================================= */}
 
                     {reviewSuccess && (
                       <div className="alert alert-success">
@@ -1084,145 +1355,217 @@ const ProductDetails = () => {
                       </div>
                     )}
 
-                    {/* REVIEWS LIST */}
+                    {/* =================================================
+                        REVIEWS LIST
+                    ================================================= */}
 
                     {loadingReviews ? (
                       <div className="text-center py-4">
+
                         <p>
                           Loading reviews...
                         </p>
+
                       </div>
-                    ) : reviews.length === 0 ? (
+                    ) : reviews.length ===
+                      0 ? (
                       <div className="alert alert-light">
-                        No reviews yet. Be the first to review!
+
+                        No reviews yet.
+                        Be the first to
+                        review!
+
                       </div>
                     ) : (
-                      reviews.map((review) => {
+                      reviews.map(
+                        (review) => {
 
-                        const reviewer =
-                          review.user?.name ||
-                          review.user?.username ||
-                          review.user?.email ||
-                          review.userName ||
-                          "Customer";
+                          // ============================================
+                          // REVIEWER
+                          // ============================================
 
-                        const reviewText =
-                          review.reviewText ||
-                          review.comment ||
-                          review.review ||
-                          "";
+                          const reviewer =
+                            review.user
+                              ?.name ||
+                            review.user
+                              ?.username ||
+                            review.user
+                              ?.email ||
+                            review.userName ||
+                            "Customer";
 
-                        const reviewerInitial =
-                          getUserInitial(reviewer);
+                          // ============================================
+                          // REVIEW TEXT
+                          // ============================================
 
-                        return (
-                          <div
-                            className="card p-4 mb-3 reviewsCard"
-                            key={
-                              review._id ||
-                              review.id
-                            }
-                          >
+                          const reviewText =
+                            review.reviewText ||
+                            review.comment ||
+                            review.review ||
+                            "";
 
-                            <div className="d-flex align-items-center flex-wrap">
+                          // ============================================
+                          // INITIAL
+                          // ============================================
 
-                              {/* CUSTOMER AVATAR */}
+                          const reviewerInitial =
+                            getUserInitial(
+                              reviewer
+                            );
 
-                              <Avatar
-                                sx={{
-                                  width: 42,
-                                  height: 42,
-                                  marginRight: "12px",
-                                  backgroundColor: "#2874f0",
-                                  color: "#ffffff",
-                                  fontWeight: "bold",
-                                }}
-                              >
-                                {reviewerInitial}
-                              </Avatar>
+                          // ============================================
+                          // REVIEW ID
+                          // ============================================
 
-                              {/* CUSTOMER NAME */}
+                          const reviewId =
+                            review._id ||
+                            review.id ||
+                            `${reviewer}-${review.createdAt}`;
 
-                              <div>
-                                <h5 className="text-g mb-0">
-                                  {reviewer}
-                                </h5>
+                          return (
+                            <div
+                              className="card p-4 mb-3 reviewsCard"
+                              key={
+                                reviewId
+                              }
+                            >
 
-                                <small className="text-muted">
-                                  {review.createdAt
-                                    ? new Date(
-                                        review.createdAt
+                              {/* REVIEW HEADER */}
+
+                              <div className="d-flex align-items-center flex-wrap">
+
+                                {/* AVATAR */}
+
+                                <Avatar
+                                  sx={{
+                                    width: 42,
+                                    height: 42,
+                                    marginRight:
+                                      "12px",
+                                    backgroundColor:
+                                      "#2874f0",
+                                    color:
+                                      "#ffffff",
+                                    fontWeight:
+                                      "bold",
+                                  }}
+                                >
+                                  {
+                                    reviewerInitial
+                                  }
+                                </Avatar>
+
+                                {/* CUSTOMER NAME */}
+
+                                <div>
+
+                                  <h5 className="text-g mb-0">
+                                    {
+                                      reviewer
+                                    }
+                                  </h5>
+
+                                  <small className="text-muted">
+
+                                    {review.createdAt
+                                      ? new Date(
+                                          review.createdAt
+                                        ).toLocaleDateString(
+                                          "en-IN"
+                                        )
+                                      : ""}
+
+                                  </small>
+
+                                </div>
+
+                                {/* RATING */}
+
+                                <div className="ml-auto">
+
+                                  <Rating
+                                    value={Math.min(
+                                      Math.max(
+                                        Number(
+                                          review.rating ||
+                                            0
+                                        ),
+                                        0
+                                      ),
+                                      5
+                                    )}
+                                    precision={
+                                      0.5
+                                    }
+                                    readOnly
+                                  />
+
+                                </div>
+
+                              </div>
+
+                              {/* REVIEW TEXT */}
+
+                              <p className="mt-3 mb-0">
+                                {
+                                  reviewText
+                                }
+                              </p>
+
+                              {/* =================================================
+                                  ADMIN REPLY
+                              ================================================= */}
+
+                              {review.adminReply && (
+                                <div className="alert alert-info mt-3 mb-0">
+
+                                  <strong>
+                                    Admin Reply:
+                                  </strong>
+
+                                  <p className="mb-0 mt-1">
+                                    {
+                                      review.adminReply
+                                    }
+                                  </p>
+
+                                  {review.repliedAt && (
+                                    <small className="text-muted">
+
+                                      Replied on:{" "}
+
+                                      {new Date(
+                                        review.repliedAt
                                       ).toLocaleDateString(
                                         "en-IN"
-                                      )
-                                    : ""}
-                                </small>
-                              </div>
+                                      )}
 
-                              <div className="ml-auto">
-
-                                <Rating
-                                  value={Math.min(
-                                    Math.max(
-                                      Number(
-                                        review.rating || 0
-                                      ),
-                                      0
-                                    ),
-                                    5
+                                    </small>
                                   )}
-                                  precision={0.5}
-                                  readOnly
-                                />
 
-                              </div>
+                                </div>
+                              )}
 
                             </div>
-
-                            <p className="mt-3 mb-0">
-                              {reviewText}
-                            </p>
-
-                            {/* ADMIN REPLY */}
-
-                            {review.adminReply && (
-                              <div className="alert alert-info mt-3 mb-0">
-
-                                <strong>
-                                  Admin Reply:
-                                </strong>
-
-                                <p className="mb-0 mt-1">
-                                  {review.adminReply}
-                                </p>
-
-                                {review.repliedAt && (
-                                  <small className="text-muted">
-                                    Replied on:{" "}
-                                    {new Date(
-                                      review.repliedAt
-                                    ).toLocaleDateString(
-                                      "en-IN"
-                                    )}
-                                  </small>
-                                )}
-
-                              </div>
-                            )}
-
-                          </div>
-                        );
-                      })
+                          );
+                        }
+                      )
                     )}
 
-                    {/* REVIEW FORM */}
+                    {/* =================================================
+                        REVIEW FORM
+                    ================================================= */}
 
                     <form
                       className="reviewForm mt-4"
-                      onSubmit={handleSubmitReview}
+                      onSubmit={
+                        handleSubmitReview
+                      }
                     >
 
-                      <h4>Add a Review</h4>
+                      <h4>
+                        Add a Review
+                      </h4>
 
                       <p className="text-muted">
                         You must be logged in to submit a review.
@@ -1239,19 +1582,30 @@ const ProductDetails = () => {
                         <textarea
                           className="form-control"
                           placeholder="Write your review..."
-                          value={reviewMessage}
-                          onChange={(event) =>
+                          value={
+                            reviewMessage
+                          }
+                          onChange={(
+                            event
+                          ) =>
                             setReviewMessage(
-                              event.target.value
+                              event
+                                .target
+                                .value
                             )
                           }
                           rows={4}
-                          maxLength={1000}
+                          maxLength={
+                            1000
+                          }
                           required
                         />
 
                         <small className="text-muted">
-                          {reviewMessage.length}/1000 characters
+                          {
+                            reviewMessage.length
+                          }
+                          /1000 characters
                         </small>
 
                       </div>
@@ -1268,23 +1622,33 @@ const ProductDetails = () => {
 
                         <Rating
                           name="review-rating"
-                          value={rating}
+                          value={
+                            rating
+                          }
                           precision={1}
-                          onChange={(event, newValue) =>
-                            setRating(newValue || 0)
+                          onChange={(
+                            event,
+                            newValue
+                          ) =>
+                            setRating(
+                              newValue ||
+                                0
+                            )
                           }
                         />
 
                       </div>
 
-                      {/* SUBMIT BUTTON */}
+                      {/* SUBMIT */}
 
                       <div className="form-group mt-3">
 
                         <Button
                           type="submit"
                           className="btn-blue btn-lg btn-big btn-round"
-                          disabled={submittingReview}
+                          disabled={
+                            submittingReview
+                          }
                         >
                           {submittingReview
                             ? "Submitting..."
@@ -1297,6 +1661,7 @@ const ProductDetails = () => {
 
                   </div>
                 </div>
+
               </div>
             )}
 
@@ -1305,11 +1670,17 @@ const ProductDetails = () => {
 
         <br />
 
-        {/* RELATED PRODUCTS */}
+        {/* =================================================
+            RELATED PRODUCTS
+        ================================================= */}
 
         <RelatedProducts
           title="RELATED PRODUCTS"
         />
+
+        {/* =================================================
+            RECENTLY VIEWED
+        ================================================= */}
 
         <RelatedProducts
           title="RECENTLY VIEWED PRODUCTS"

@@ -1,18 +1,27 @@
-
 import { useCallback, useEffect, useState } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
 
-const API_URL = "http://localhost:4000/api/orders";
+// =====================================================
+// BACKEND API URL
+// =====================================================
+
+const API_URL =
+  process.env.REACT_APP_API_URL ||
+  "https://ecommerce-hsm4.onrender.com/api/orders";
+
+// =====================================================
+// RECENT ORDERS COMPONENT
+// =====================================================
 
 const RecentOrders = () => {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
-  // =========================
+  // ===================================================
   // FETCH RECENT ORDERS
-  // =========================
+  // ===================================================
 
   const fetchRecentOrders = useCallback(async () => {
     try {
@@ -67,17 +76,17 @@ const RecentOrders = () => {
     }
   }, []);
 
-  // =========================
+  // ===================================================
   // LOAD ORDERS
-  // =========================
+  // ===================================================
 
   useEffect(() => {
     fetchRecentOrders();
   }, [fetchRecentOrders]);
 
-  // =========================
+  // ===================================================
   // FORMAT DATE
-  // =========================
+  // ===================================================
 
   const formatDate = (date) => {
     if (!date) {
@@ -97,9 +106,9 @@ const RecentOrders = () => {
     });
   };
 
-  // =========================
+  // ===================================================
   // GET CUSTOMER NAME
-  // =========================
+  // ===================================================
 
   const getCustomerName = (order) => {
     return (
@@ -115,9 +124,9 @@ const RecentOrders = () => {
     );
   };
 
-  // =========================
+  // ===================================================
   // GET ORDER TOTAL
-  // =========================
+  // ===================================================
 
   const getOrderTotal = (order) => {
     const total =
@@ -134,9 +143,9 @@ const RecentOrders = () => {
       : 0;
   };
 
-  // =========================
+  // ===================================================
   // STATUS CLASS
-  // =========================
+  // ===================================================
 
   const getStatusClass = (status) => {
     switch (String(status || "").toUpperCase()) {
@@ -164,12 +173,14 @@ const RecentOrders = () => {
     }
   };
 
-  // =========================
+  // ===================================================
   // RENDER
-  // =========================
+  // ===================================================
 
   return (
     <div className="card shadow border-0 p-3 mt-4">
+
+      {/* HEADER */}
       <div className="d-flex align-items-center justify-content-between mb-3">
         <h3 className="hd mb-0">
           Recent Orders
@@ -183,18 +194,21 @@ const RecentOrders = () => {
         </Link>
       </div>
 
+      {/* LOADING */}
       {loading && (
         <p className="text-muted mb-0">
           Loading recent orders...
         </p>
       )}
 
+      {/* ERROR */}
       {error && (
         <div className="alert alert-danger">
           {error}
         </div>
       )}
 
+      {/* NO ORDERS */}
       {!loading &&
         !error &&
         orders.length === 0 && (
@@ -203,11 +217,13 @@ const RecentOrders = () => {
           </p>
         )}
 
+      {/* ORDERS TABLE */}
       {!loading &&
         !error &&
         orders.length > 0 && (
           <div className="table-responsive">
             <table className="table table-bordered table-hover align-middle mb-0">
+
               <thead className="table-light">
                 <tr>
                   <th>#</th>
@@ -229,8 +245,13 @@ const RecentOrders = () => {
                       index
                     }
                   >
-                    <td>{index + 1}</td>
 
+                    {/* NUMBER */}
+                    <td>
+                      {index + 1}
+                    </td>
+
+                    {/* ORDER ID */}
                     <td>
                       <strong>
                         {order.orderId || "N/A"}
@@ -281,9 +302,11 @@ const RecentOrders = () => {
                         View
                       </Link>
                     </td>
+
                   </tr>
                 ))}
               </tbody>
+
             </table>
           </div>
         )}

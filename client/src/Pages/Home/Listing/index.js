@@ -1,4 +1,3 @@
-
 import Sidebar from "../../../Components/Sidebar";
 
 import Button from "@mui/material/Button";
@@ -17,35 +16,25 @@ import axios from "axios";
 
 import ProductItem from "../../../Components/ProductItem";
 
+const API_BASE_URL = "https://ecommerce-hsm4.onrender.com";
+
 const Listing = () => {
-  // Get category ID from URL
   const { id } = useParams();
 
-  // Products
   const [products, setProducts] = useState([]);
-
-  // Category details
   const [category, setCategory] = useState(null);
 
-  // Loading and error
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
-  // Product view
   const [productView, setProductView] = useState("four");
-
-  // Products per page
   const [productsPerPage, setProductsPerPage] = useState(9);
 
-  // Dropdown
   const [anchorEl, setAnchorEl] = useState(null);
-
   const openDropdown = Boolean(anchorEl);
 
-  // Pagination
   const [currentPage, setCurrentPage] = useState(1);
 
-  // Sidebar filters
   const [filters, setFilters] = useState({
     minPrice: 100,
     maxPrice: 60000,
@@ -55,9 +44,9 @@ const Listing = () => {
     onSale: false,
   });
 
-  // =========================
+  // ==========================================
   // GET CATEGORY AND PRODUCTS
-  // =========================
+  // ==========================================
 
   useEffect(() => {
     const fetchCategoryProducts = async () => {
@@ -66,28 +55,29 @@ const Listing = () => {
         setError("");
         setCurrentPage(1);
 
-        // Get selected category
+        // Get category details
         const categoryResponse = await axios.get(
-          `http://localhost:4000/api/category/${id}`
+          `${API_BASE_URL}/api/category/${id}`
         );
 
         setCategory(categoryResponse.data);
 
         // Get all products
         const productsResponse = await axios.get(
-          "http://localhost:4000/api/products"
+          `${API_BASE_URL}/api/products`
         );
 
         const allProducts = Array.isArray(productsResponse.data)
           ? productsResponse.data
           : [];
 
-        // Filter products by URL category ID
+        // Filter products by category ID
         const filteredProducts = allProducts.filter((product) => {
           const productCategory = product.category;
 
           const productCategoryId =
-            typeof productCategory === "object"
+            typeof productCategory === "object" &&
+            productCategory !== null
               ? productCategory?._id || productCategory?.id
               : productCategory;
 
@@ -116,18 +106,18 @@ const Listing = () => {
     }
   }, [id]);
 
-  // =========================
+  // ==========================================
   // RECEIVE SIDEBAR FILTERS
-  // =========================
+  // ==========================================
 
   const handleFilterChange = useCallback((newFilters) => {
     setFilters(newFilters);
     setCurrentPage(1);
   }, []);
 
-  // =========================
-  // DROPDOWN FUNCTIONS
-  // =========================
+  // ==========================================
+  // DROPDOWN
+  // ==========================================
 
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -143,18 +133,18 @@ const Listing = () => {
     handleClose();
   };
 
-  // =========================
+  // ==========================================
   // CATEGORY NAME
-  // =========================
+  // ==========================================
 
   const categoryName = category?.name
     ? category.name.charAt(0).toUpperCase() +
       category.name.slice(1)
     : "Products";
 
-  // =========================
-  // HELPER FUNCTIONS
-  // =========================
+  // ==========================================
+  // GET PRODUCT PRICE
+  // ==========================================
 
   const getProductPrice = (product) => {
     return Number(
@@ -165,15 +155,30 @@ const Listing = () => {
     );
   };
 
+  // ==========================================
+  // GET PRODUCT BRAND
+  // ==========================================
+
   const getProductBrand = (product) => {
     const brand = product.brand;
 
-    if (typeof brand === "object" && brand !== null) {
-      return String(brand.name || brand._id || "");
+    if (
+      typeof brand === "object" &&
+      brand !== null
+    ) {
+      return String(
+        brand.name ||
+          brand._id ||
+          ""
+      );
     }
 
     return String(brand || "");
   };
+
+  // ==========================================
+  // GET PRODUCT CATEGORY ID
+  // ==========================================
 
   const getProductCategoryId = (product) => {
     const productCategory = product.category;
@@ -183,15 +188,20 @@ const Listing = () => {
       productCategory !== null
     ) {
       return String(
-        productCategory._id || productCategory.id || ""
+        productCategory._id ||
+          productCategory.id ||
+          ""
       );
     }
 
     return String(productCategory || "");
   };
 
+  // ==========================================
+  // CHECK STOCK
+  // ==========================================
+
   const checkProductInStock = (product) => {
-    // Supports common stock field names
     if (typeof product.inStock === "boolean") {
       return product.inStock;
     }
@@ -212,99 +222,128 @@ const Listing = () => {
       return product.quantity > 0;
     }
 
-    // If the backend does not provide stock information,
-    // do not hide products by default.
+    // If backend does not provide stock information,
+    // do not hide products.
     return true;
   };
 
+  // ==========================================
+  // CHECK SALE
+  // ==========================================
+
   const checkProductOnSale = (product) => {
-    // Supports an explicit sale field
-    if (product.onSale === true || product.isSale === true) {
+    if (
+      product.onSale === true ||
+      product.isSale === true
+    ) {
       return true;
     }
 
-    // Supports a discount field
     if (Number(product.discount || 0) > 0) {
       return true;
     }
 
-    // Supports oldPrice compared with current price
     const currentPrice = Number(
-      product.price || product.newPrice || 0
+      product.price ||
+        product.newPrice ||
+        0
     );
 
     const oldPrice = Number(
-      product.oldPrice || product.originalPrice || 0
+      product.oldPrice ||
+        product.originalPrice ||
+        0
     );
-
-    return oldPrice > currentPrice && currentPrice > 0;
-  };
-
-  // =========================
-  // APPLY ALL FILTERS
-  // =========================
-
-  const filteredProducts = products.filter((product) => {
-    const productPrice = getProductPrice(product);
-    const productBrand = getProductBrand(product);
-    const productCategoryId = getProductCategoryId(product);
-
-    // Price filter
-    const matchesPrice =
-      productPrice >= filters.minPrice &&
-      productPrice <= filters.maxPrice;
-
-    // Category filter
-    const matchesCategory =
-      filters.categories.length === 0 ||
-      filters.categories.includes(productCategoryId);
-
-    // Brand filter
-    const matchesBrand =
-      filters.brands.length === 0 ||
-      filters.brands.includes(productBrand);
-
-    // Stock filter
-    const matchesStock =
-      !filters.inStock || checkProductInStock(product);
-
-    // Sale filter
-    const matchesSale =
-      !filters.onSale || checkProductOnSale(product);
 
     return (
-      matchesPrice &&
-      matchesCategory &&
-      matchesBrand &&
-      matchesStock &&
-      matchesSale
+      oldPrice > currentPrice &&
+      currentPrice > 0
     );
-  });
+  };
 
-  // =========================
+  // ==========================================
+  // APPLY ALL FILTERS
+  // ==========================================
+
+  const filteredProducts = products.filter(
+    (product) => {
+      const productPrice =
+        getProductPrice(product);
+
+      const productBrand =
+        getProductBrand(product);
+
+      const productCategoryId =
+        getProductCategoryId(product);
+
+      // Price
+      const matchesPrice =
+        productPrice >= filters.minPrice &&
+        productPrice <= filters.maxPrice;
+
+      // Category
+      const matchesCategory =
+        filters.categories.length === 0 ||
+        filters.categories.includes(
+          productCategoryId
+        );
+
+      // Brand
+      const matchesBrand =
+        filters.brands.length === 0 ||
+        filters.brands.includes(
+          productBrand
+        );
+
+      // Stock
+      const matchesStock =
+        !filters.inStock ||
+        checkProductInStock(product);
+
+      // Sale
+      const matchesSale =
+        !filters.onSale ||
+        checkProductOnSale(product);
+
+      return (
+        matchesPrice &&
+        matchesCategory &&
+        matchesBrand &&
+        matchesStock &&
+        matchesSale
+      );
+    }
+  );
+
+  // ==========================================
   // PAGINATION
-  // =========================
+  // ==========================================
 
   const totalPages = Math.ceil(
-    filteredProducts.length / productsPerPage
+    filteredProducts.length /
+      productsPerPage
   );
 
   const startIndex =
-    (currentPage - 1) * productsPerPage;
+    (currentPage - 1) *
+    productsPerPage;
 
-  const currentProducts = filteredProducts.slice(
-    startIndex,
-    startIndex + productsPerPage
-  );
+  const currentProducts =
+    filteredProducts.slice(
+      startIndex,
+      startIndex + productsPerPage
+    );
 
-  // =========================
-  // RETURN UI
-  // =========================
+  // ==========================================
+  // UI
+  // ==========================================
 
   return (
     <section className="product_Listing_Page">
       <div className="container">
+
         {/* PAGE TITLE */}
+
         <div className="mb-3">
           <h2 className="font-weight-bold">
             {categoryName}
@@ -316,15 +355,20 @@ const Listing = () => {
         </div>
 
         <div className="productListing d-flex">
+
           {/* SIDEBAR */}
+
           <Sidebar
             products={products}
             onFilterChange={handleFilterChange}
           />
 
           {/* RIGHT CONTENT */}
+
           <div className="content_right">
+
             {/* BANNER */}
+
             <img
               src="https://i.pinimg.com/1200x/01/0e/24/010e248c281d83e130d9315d31d21377.jpg"
               alt={`${categoryName} banner`}
@@ -337,38 +381,62 @@ const Listing = () => {
             />
 
             {/* VIEW AND FILTER */}
+
             <div className="showBy mt-3 mb-3 d-flex align-items-center">
+
               <div className="d-flex btnWrapper">
+
+                {/* ONE COLUMN */}
+
                 <Button
                   className={
-                    productView === "one" ? "act" : ""
+                    productView === "one"
+                      ? "act"
+                      : ""
                   }
-                  onClick={() => setProductView("one")}
+                  onClick={() =>
+                    setProductView("one")
+                  }
                 >
                   <IoMdMenu />
                 </Button>
 
+                {/* THREE COLUMN */}
+
                 <Button
                   className={
-                    productView === "three" ? "act" : ""
+                    productView === "three"
+                      ? "act"
+                      : ""
                   }
-                  onClick={() => setProductView("three")}
+                  onClick={() =>
+                    setProductView("three")
+                  }
                 >
                   <CgMenuGridR />
                 </Button>
 
+                {/* FOUR COLUMN */}
+
                 <Button
                   className={
-                    productView === "four" ? "act" : ""
+                    productView === "four"
+                      ? "act"
+                      : ""
                   }
-                  onClick={() => setProductView("four")}
+                  onClick={() =>
+                    setProductView("four")
+                  }
                 >
                   <IoGridOutline />
                 </Button>
+
               </div>
 
               {/* PRODUCTS PER PAGE */}
+
               <div className="ml-auto showByFilter">
+
                 <Button onClick={handleClick}>
                   Show {productsPerPage}
                   <FaAngleDown />
@@ -385,7 +453,9 @@ const Listing = () => {
                       <MenuItem
                         key={count}
                         onClick={() =>
-                          changeProductsPerPage(count)
+                          changeProductsPerPage(
+                            count
+                          )
                         }
                       >
                         {count}
@@ -393,13 +463,17 @@ const Listing = () => {
                     )
                   )}
                 </Menu>
+
               </div>
             </div>
 
             {/* PRODUCT LIST */}
+
             {loading ? (
               <div className="text-center py-5">
-                <h5>Loading products...</h5>
+                <h5>
+                  Loading products...
+                </h5>
               </div>
             ) : error ? (
               <div className="text-center py-5">
@@ -410,40 +484,57 @@ const Listing = () => {
             ) : currentProducts.length === 0 ? (
               <div className="text-center py-5">
                 <h5>
-                  No products found with the selected filters.
+                  No products found with
+                  the selected filters.
                 </h5>
               </div>
             ) : (
               <div className="productListing">
-                {currentProducts.map((product) => (
-                  <ProductItem
-                    key={product._id || product.id}
-                    product={product}
-                    itemView={productView}
-                  />
-                ))}
+
+                {currentProducts.map(
+                  (product) => (
+                    <ProductItem
+                      key={
+                        product._id ||
+                        product.id
+                      }
+                      product={product}
+                      itemView={
+                        productView
+                      }
+                    />
+                  )
+                )}
+
               </div>
             )}
 
             {/* PAGINATION */}
+
             {!loading &&
               !error &&
               totalPages > 1 && (
                 <div className="d-flex align-items-center justify-content-center mt-5">
+
                   <Pagination
                     count={totalPages}
                     page={Math.min(
                       currentPage,
                       totalPages
                     )}
-                    onChange={(event, page) =>
+                    onChange={(
+                      event,
+                      page
+                    ) =>
                       setCurrentPage(page)
                     }
                     color="primary"
                     size="large"
                   />
+
                 </div>
               )}
+
           </div>
         </div>
       </div>

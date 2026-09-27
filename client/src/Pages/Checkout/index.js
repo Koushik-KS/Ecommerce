@@ -1,11 +1,21 @@
-
 import React, { useContext, useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import Button from "@mui/material/Button";
 import axios from "axios";
 import { MyContext } from "../../App";
 
-const API_URL = "http://localhost:4000";
+// =====================================================
+// API URL
+// =====================================================
+
+const API_BASE_URL = `${process.env.REACT_APP_API_URL}/api`;
+
+const SETTINGS_API_URL = `${API_BASE_URL}/settings`;
+const ORDERS_API_URL = `${API_BASE_URL}/orders`;
+
+// =====================================================
+// DEFAULT SETTINGS
+// =====================================================
 
 const defaultSettings = {
   delivery: {
@@ -16,6 +26,7 @@ const defaultSettings = {
     deliveryEnabled: true,
     freeDeliveryEnabled: true,
   },
+
   order: {
     acceptOrders: true,
     defaultStatus: "PENDING",
@@ -24,11 +35,23 @@ const defaultSettings = {
   },
 };
 
+// =====================================================
+// CHECKOUT COMPONENT
+// =====================================================
+
 const Checkout = () => {
   const context = useContext(MyContext);
   const navigate = useNavigate();
 
+  // =====================================================
+  // CART
+  // =====================================================
+
   const cartItems = context.cartItems || [];
+
+  // =====================================================
+  // CUSTOMER FORM
+  // =====================================================
 
   const [formData, setFormData] = useState({
     fullName: "",
@@ -40,16 +63,31 @@ const Checkout = () => {
     pincode: "",
   });
 
-  const [settings, setSettings] = useState(defaultSettings);
-  const [isLoadingSettings, setIsLoadingSettings] = useState(true);
-  const [settingsError, setSettingsError] = useState("");
+  // =====================================================
+  // SETTINGS
+  // =====================================================
+
+  const [settings, setSettings] =
+    useState(defaultSettings);
+
+  const [isLoadingSettings, setIsLoadingSettings] =
+    useState(true);
+
+  const [settingsError, setSettingsError] =
+    useState("");
+
+  // =====================================================
+  // FORM STATES
+  // =====================================================
 
   const [errors, setErrors] = useState({});
-  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // ==========================================
+  const [isSubmitting, setIsSubmitting] =
+    useState(false);
+
+  // =====================================================
   // LOAD ADMIN SETTINGS
-  // ==========================================
+  // =====================================================
 
   useEffect(() => {
     const fetchSettings = async () => {
@@ -57,16 +95,23 @@ const Checkout = () => {
         setIsLoadingSettings(true);
         setSettingsError("");
 
-        const response = await axios.get(`${API_URL}/api/settings`);
+        const response = await axios.get(
+          SETTINGS_API_URL
+        );
 
-        if (response.data.success && response.data.settings) {
-          const backendSettings = response.data.settings;
+        if (
+          response.data?.success &&
+          response.data?.settings
+        ) {
+          const backendSettings =
+            response.data.settings;
 
           setSettings({
             delivery: {
               ...defaultSettings.delivery,
               ...(backendSettings.delivery || {}),
             },
+
             order: {
               ...defaultSettings.order,
               ...(backendSettings.order || {}),
@@ -74,7 +119,10 @@ const Checkout = () => {
           });
         }
       } catch (error) {
-        console.error("Fetch settings error:", error);
+        console.error(
+          "Fetch settings error:",
+          error
+        );
 
         setSettingsError(
           "Unable to load store settings. Please try again."
@@ -87,29 +135,46 @@ const Checkout = () => {
     fetchSettings();
   }, []);
 
-  // ==========================================
+  // =====================================================
   // CALCULATE SUBTOTAL
-  // ==========================================
+  // =====================================================
 
-  const subtotal = cartItems.reduce((total, item) => {
-    const price = Number(
-      item.price || item.salePrice || item.product?.price || 0
-    );
+  const subtotal = cartItems.reduce(
+    (total, item) => {
+      const price = Number(
+        item.price ||
+          item.salePrice ||
+          item.product?.price ||
+          0
+      );
 
-    const quantity = Number(item.quantity || 1);
+      const quantity = Number(
+        item.quantity || 1
+      );
 
-    return total + price * quantity;
-  }, 0);
+      return total + price * quantity;
+    },
+    0
+  );
 
-  // ==========================================
+  // =====================================================
+  // SETTINGS
+  // =====================================================
+
+  const deliverySettings =
+    settings.delivery ||
+    defaultSettings.delivery;
+
+  const orderSettings =
+    settings.order ||
+    defaultSettings.order;
+
+  // =====================================================
   // DELIVERY SETTINGS
-  // ==========================================
+  // =====================================================
 
-  const deliverySettings = settings.delivery || defaultSettings.delivery;
-
-  const orderSettings = settings.order || defaultSettings.order;
-
-  const deliveryEnabled = deliverySettings.deliveryEnabled !== false;
+  const deliveryEnabled =
+    deliverySettings.deliveryEnabled !== false;
 
   const freeDeliveryEnabled =
     deliverySettings.freeDeliveryEnabled !== false;
@@ -127,35 +192,48 @@ const Checkout = () => {
   );
 
   const estimatedDeliveryTime =
-    deliverySettings.estimatedDeliveryTime || "30-45 minutes";
+    deliverySettings.estimatedDeliveryTime ||
+    "30-45 minutes";
 
-  const acceptOrders = orderSettings.acceptOrders !== false;
+  // =====================================================
+  // ORDER SETTINGS
+  // =====================================================
 
-  const cashOnDelivery = orderSettings.cashOnDelivery !== false;
+  const acceptOrders =
+    orderSettings.acceptOrders !== false;
 
-  // ==========================================
-  // CALCULATE DELIVERY CHARGE
-  // ==========================================
+  const cashOnDelivery =
+    orderSettings.cashOnDelivery !== false;
+
+  // =====================================================
+  // FREE DELIVERY
+  // =====================================================
 
   const isEligibleForFreeDelivery =
     freeDeliveryEnabled &&
     freeDeliveryAbove > 0 &&
     subtotal >= freeDeliveryAbove;
 
+  // =====================================================
+  // DELIVERY CHARGE
+  // =====================================================
+
   const deliveryCharge =
-    !deliveryEnabled || isEligibleForFreeDelivery
+    !deliveryEnabled ||
+    isEligibleForFreeDelivery
       ? 0
       : deliveryChargeAmount;
 
-  // ==========================================
-  // CALCULATE TOTAL
-  // ==========================================
+  // =====================================================
+  // TOTAL
+  // =====================================================
 
-  const total = subtotal + deliveryCharge;
+  const total =
+    subtotal + deliveryCharge;
 
-  // ==========================================
-  // HANDLE INPUT CHANGES
-  // ==========================================
+  // =====================================================
+  // HANDLE INPUT CHANGE
+  // =====================================================
 
   const handleChange = (event) => {
     const { name, value } = event.target;
@@ -171,49 +249,77 @@ const Checkout = () => {
     }));
   };
 
-  // ==========================================
-  // VALIDATE CUSTOMER FORM
-  // ==========================================
+  // =====================================================
+  // VALIDATE FORM
+  // =====================================================
 
   const validateForm = () => {
     const newErrors = {};
 
+    // Full Name
     if (!formData.fullName.trim()) {
-      newErrors.fullName = "Full name is required";
+      newErrors.fullName =
+        "Full name is required";
     }
 
-    if (!/^[6-9]\d{9}$/.test(formData.mobile)) {
-      newErrors.mobile = "Enter a valid 10-digit mobile number";
+    // Mobile
+    if (
+      !/^[6-9]\d{9}$/.test(
+        formData.mobile
+      )
+    ) {
+      newErrors.mobile =
+        "Enter a valid 10-digit mobile number";
     }
 
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
-      newErrors.email = "Enter a valid email address";
+    // Email
+    if (
+      !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(
+        formData.email
+      )
+    ) {
+      newErrors.email =
+        "Enter a valid email address";
     }
 
+    // Address
     if (!formData.address.trim()) {
-      newErrors.address = "Address is required";
+      newErrors.address =
+        "Address is required";
     }
 
+    // City
     if (!formData.city.trim()) {
-      newErrors.city = "City is required";
+      newErrors.city =
+        "City is required";
     }
 
+    // State
     if (!formData.state.trim()) {
-      newErrors.state = "State is required";
+      newErrors.state =
+        "State is required";
     }
 
-    if (!/^\d{6}$/.test(formData.pincode)) {
-      newErrors.pincode = "Enter a valid 6-digit pincode";
+    // Pincode
+    if (
+      !/^\d{6}$/.test(
+        formData.pincode
+      )
+    ) {
+      newErrors.pincode =
+        "Enter a valid 6-digit pincode";
     }
 
     setErrors(newErrors);
 
-    return Object.keys(newErrors).length === 0;
+    return (
+      Object.keys(newErrors).length === 0
+    );
   };
 
-  // ==========================================
+  // =====================================================
   // GET PRODUCT ID
-  // ==========================================
+  // =====================================================
 
   const getProductId = (item) => {
     return (
@@ -226,29 +332,37 @@ const Checkout = () => {
     );
   };
 
-  // ==========================================
+  // =====================================================
   // PLACE ORDER
-  // ==========================================
+  // =====================================================
 
   const placeOrder = async (event) => {
     event.preventDefault();
 
+    // Empty cart
     if (cartItems.length === 0) {
       alert("Your cart is empty!");
       navigate("/cart");
       return;
     }
 
+    // Settings loading
     if (isLoadingSettings) {
-      alert("Please wait while store settings are loading.");
+      alert(
+        "Please wait while store settings are loading."
+      );
       return;
     }
 
+    // Settings error
     if (settingsError) {
-      alert("Store settings could not be loaded. Please try again.");
+      alert(
+        "Store settings could not be loaded. Please try again."
+      );
       return;
     }
 
+    // Orders disabled
     if (!acceptOrders) {
       alert(
         "Sorry, orders are currently unavailable. Please try again later."
@@ -256,6 +370,7 @@ const Checkout = () => {
       return;
     }
 
+    // Delivery disabled
     if (!deliveryEnabled) {
       alert(
         "Delivery is currently unavailable. Please try again later."
@@ -263,13 +378,19 @@ const Checkout = () => {
       return;
     }
 
-    if (subtotal < minimumOrderAmount) {
+    // Minimum order
+    if (
+      subtotal < minimumOrderAmount
+    ) {
       alert(
-        `Minimum order amount is ₹${minimumOrderAmount}. Your current subtotal is ₹${subtotal}.`
+        `Minimum order amount is ₹${minimumOrderAmount}. Your current subtotal is ₹${subtotal.toFixed(
+          2
+        )}.`
       );
       return;
     }
 
+    // COD disabled
     if (!cashOnDelivery) {
       alert(
         "Cash on Delivery is currently unavailable. Please try again later."
@@ -277,6 +398,7 @@ const Checkout = () => {
       return;
     }
 
+    // Form validation
     if (!validateForm()) {
       return;
     }
@@ -284,97 +406,130 @@ const Checkout = () => {
     setIsSubmitting(true);
 
     try {
-      // ==========================================
-      // CONVERT CART ITEMS INTO ORDER ITEMS
-      // ==========================================
+      // =================================================
+      // CREATE ORDER ITEMS
+      // =================================================
 
-      const orderItems = cartItems.map((item, index) => {
-        const productId = getProductId(item);
+      const orderItems =
+        cartItems.map(
+          (item, index) => {
+            const productId =
+              getProductId(item);
 
-        if (!productId) {
-          throw new Error(
-            `Product ID is missing for item ${
-              index + 1
-            }. Please remove this product and add it again.`
-          );
-        }
+            if (!productId) {
+              throw new Error(
+                `Product ID is missing for item ${
+                  index + 1
+                }. Please remove this product and add it again.`
+              );
+            }
 
-        return {
-          productId: String(productId),
+            return {
+              productId:
+                String(productId),
 
-          name:
-            item.name ||
-            item.product?.name ||
-            "Product",
+              name:
+                item.name ||
+                item.product?.name ||
+                "Product",
 
-          brand:
-            item.brand ||
-            item.product?.brand ||
-            "",
+              brand:
+                item.brand ||
+                item.product?.brand ||
+                "",
 
-          image:
-            item.image ||
-            item.product?.image ||
-            "",
+              image:
+                item.image ||
+                item.product?.image ||
+                "",
 
-          price: Number(
-            item.price ||
-              item.salePrice ||
-              item.product?.price ||
-              0
-          ),
+              price: Number(
+                item.price ||
+                  item.salePrice ||
+                  item.product?.price ||
+                  0
+              ),
 
-          quantity: Number(item.quantity || 1),
-        };
-      });
+              quantity: Number(
+                item.quantity || 1
+              ),
+            };
+          }
+        );
 
-      // ==========================================
-      // PREPARE ORDER DATA
-      // ==========================================
+      // =================================================
+      // ORDER DETAILS
+      // =================================================
 
       const orderDetails = {
         customer: formData,
 
         items: orderItems,
 
-        subtotal: Number(subtotal.toFixed(2)),
+        subtotal: Number(
+          subtotal.toFixed(2)
+        ),
 
-        deliveryCharge: Number(deliveryCharge.toFixed(2)),
+        deliveryCharge: Number(
+          deliveryCharge.toFixed(2)
+        ),
 
-        total: Number(total.toFixed(2)),
+        total: Number(
+          total.toFixed(2)
+        ),
       };
 
-      console.log("Order details being sent:", orderDetails);
-
-      // ==========================================
-      // SEND ORDER TO BACKEND
-      // ==========================================
-
-      const response = await axios.post(
-        `${API_URL}/api/orders`,
+      console.log(
+        "Order details being sent:",
         orderDetails
       );
 
-      if (response.data.success) {
-        const savedOrder = response.data.order;
+      // =================================================
+      // SEND ORDER
+      // =================================================
 
-        // Clear cart after successful order
-        context.setCartItems([]);
+      const response =
+        await axios.post(
+          ORDERS_API_URL,
+          orderDetails
+        );
 
-        // Navigate to order success page
-        navigate("/order-success", {
-          state: {
-            order: savedOrder,
-          },
-        });
+      // =================================================
+      // SUCCESS
+      // =================================================
+
+      if (response.data?.success) {
+        const savedOrder =
+          response.data.order;
+
+        // Clear cart
+        if (
+          typeof context.setCartItems ===
+          "function"
+        ) {
+          context.setCartItems([]);
+        }
+
+        // Navigate to success page
+        navigate(
+          "/order-success",
+          {
+            state: {
+              order: savedOrder,
+            },
+          }
+        );
       } else {
         alert(
-          response.data.message ||
-            "Failed to place order"
+          response.data?.message ||
+            "Failed to place order."
         );
       }
     } catch (error) {
-      console.error("Place order error:", error);
+      console.error(
+        "Place order error:",
+        error
+      );
 
       const errorMessage =
         error.response?.data?.message ||
@@ -387,17 +542,20 @@ const Checkout = () => {
     }
   };
 
-  // ==========================================
-  // EMPTY CART PAGE
-  // ==========================================
+  // =====================================================
+  // EMPTY CART
+  // =====================================================
 
   if (cartItems.length === 0) {
     return (
       <div className="container text-center py-5">
-        <h2>Your cart is empty 🛒</h2>
+        <h2>
+          Your cart is empty 🛒
+        </h2>
 
         <p className="text-muted mt-3">
-          Add products before proceeding to checkout.
+          Add products before proceeding
+          to checkout.
         </p>
 
         <Link to="/">
@@ -412,14 +570,17 @@ const Checkout = () => {
     );
   }
 
-  // ==========================================
+  // =====================================================
   // LOADING SETTINGS
-  // ==========================================
+  // =====================================================
 
   if (isLoadingSettings) {
     return (
       <div className="container text-center py-5">
-        <h4>Loading checkout settings...</h4>
+        <h4>
+          Loading checkout settings...
+        </h4>
+
         <p className="text-muted">
           Please wait.
         </p>
@@ -427,9 +588,9 @@ const Checkout = () => {
     );
   }
 
-  // ==========================================
+  // =====================================================
   // SETTINGS ERROR
-  // ==========================================
+  // =====================================================
 
   if (settingsError) {
     return (
@@ -441,7 +602,9 @@ const Checkout = () => {
         <Button
           variant="contained"
           className="btn-blue"
-          onClick={() => window.location.reload()}
+          onClick={() =>
+            window.location.reload()
+          }
         >
           Try Again
         </Button>
@@ -449,15 +612,18 @@ const Checkout = () => {
     );
   }
 
-  // ==========================================
+  // =====================================================
   // CHECKOUT PAGE
-  // ==========================================
+  // =====================================================
 
   return (
     <div className="container py-4">
+
       <h2 className="font-weight-bold mb-4">
         Checkout
       </h2>
+
+      {/* ORDERS DISABLED */}
 
       {!acceptOrders && (
         <div className="alert alert-warning">
@@ -466,6 +632,8 @@ const Checkout = () => {
         </div>
       )}
 
+      {/* DELIVERY DISABLED */}
+
       {!deliveryEnabled && (
         <div className="alert alert-warning">
           Delivery is currently unavailable.
@@ -473,49 +641,79 @@ const Checkout = () => {
         </div>
       )}
 
+      {/* MINIMUM ORDER */}
+
       {subtotal < minimumOrderAmount && (
         <div className="alert alert-info">
-          Minimum order amount is ₹{minimumOrderAmount}.
-          Add ₹{minimumOrderAmount - subtotal} more
-          to place your order.
+          Minimum order amount is ₹
+          {minimumOrderAmount}.
+          Add ₹
+          {(
+            minimumOrderAmount -
+            subtotal
+          ).toFixed(2)}{" "}
+          more to place your order.
         </div>
       )}
 
+      {/* =================================================
+          CHECKOUT FORM
+      ================================================= */}
+
       <form onSubmit={placeOrder}>
+
         <div className="row">
-          {/* Delivery Details */}
+
+          {/* =================================================
+              DELIVERY DETAILS
+          ================================================= */}
 
           <div className="col-md-7">
+
             <div className="card p-4 mb-4">
+
               <h4 className="font-weight-bold mb-4">
                 Delivery Details
               </h4>
 
-              {/* Full Name */}
+              {/* FULL NAME */}
 
               <div className="form-group mb-3">
-                <label>Full Name</label>
+
+                <label>
+                  Full Name
+                </label>
 
                 <input
                   type="text"
                   name="fullName"
                   className="form-control"
                   placeholder="Enter your full name"
-                  value={formData.fullName}
-                  onChange={handleChange}
+                  value={
+                    formData.fullName
+                  }
+                  onChange={
+                    handleChange
+                  }
                 />
 
                 {errors.fullName && (
                   <small className="text-danger">
-                    {errors.fullName}
+                    {
+                      errors.fullName
+                    }
                   </small>
                 )}
+
               </div>
 
-              {/* Mobile Number */}
+              {/* MOBILE */}
 
               <div className="form-group mb-3">
-                <label>Mobile Number</label>
+
+                <label>
+                  Mobile Number
+                </label>
 
                 <input
                   type="tel"
@@ -523,8 +721,12 @@ const Checkout = () => {
                   className="form-control"
                   placeholder="Enter 10-digit mobile number"
                   maxLength="10"
-                  value={formData.mobile}
-                  onChange={handleChange}
+                  value={
+                    formData.mobile
+                  }
+                  onChange={
+                    handleChange
+                  }
                 />
 
                 {errors.mobile && (
@@ -532,20 +734,28 @@ const Checkout = () => {
                     {errors.mobile}
                   </small>
                 )}
+
               </div>
 
-              {/* Email */}
+              {/* EMAIL */}
 
               <div className="form-group mb-3">
-                <label>Email Address</label>
+
+                <label>
+                  Email Address
+                </label>
 
                 <input
                   type="email"
                   name="email"
                   className="form-control"
                   placeholder="Enter your email"
-                  value={formData.email}
-                  onChange={handleChange}
+                  value={
+                    formData.email
+                  }
+                  onChange={
+                    handleChange
+                  }
                 />
 
                 {errors.email && (
@@ -553,43 +763,63 @@ const Checkout = () => {
                     {errors.email}
                   </small>
                 )}
+
               </div>
 
-              {/* Address */}
+              {/* ADDRESS */}
 
               <div className="form-group mb-3">
-                <label>Complete Address</label>
+
+                <label>
+                  Complete Address
+                </label>
 
                 <textarea
                   name="address"
                   className="form-control"
                   rows="3"
                   placeholder="House number, street, area"
-                  value={formData.address}
-                  onChange={handleChange}
+                  value={
+                    formData.address
+                  }
+                  onChange={
+                    handleChange
+                  }
                 />
 
                 {errors.address && (
                   <small className="text-danger">
-                    {errors.address}
+                    {
+                      errors.address
+                    }
                   </small>
                 )}
+
               </div>
 
-              {/* City and State */}
+              {/* CITY + STATE */}
 
               <div className="row">
+
                 <div className="col-md-6">
+
                   <div className="form-group mb-3">
-                    <label>City</label>
+
+                    <label>
+                      City
+                    </label>
 
                     <input
                       type="text"
                       name="city"
                       className="form-control"
                       placeholder="City"
-                      value={formData.city}
-                      onChange={handleChange}
+                      value={
+                        formData.city
+                      }
+                      onChange={
+                        handleChange
+                      }
                     />
 
                     {errors.city && (
@@ -597,35 +827,53 @@ const Checkout = () => {
                         {errors.city}
                       </small>
                     )}
+
                   </div>
+
                 </div>
 
                 <div className="col-md-6">
+
                   <div className="form-group mb-3">
-                    <label>State</label>
+
+                    <label>
+                      State
+                    </label>
 
                     <input
                       type="text"
                       name="state"
                       className="form-control"
                       placeholder="State"
-                      value={formData.state}
-                      onChange={handleChange}
+                      value={
+                        formData.state
+                      }
+                      onChange={
+                        handleChange
+                      }
                     />
 
                     {errors.state && (
                       <small className="text-danger">
-                        {errors.state}
+                        {
+                          errors.state
+                        }
                       </small>
                     )}
+
                   </div>
+
                 </div>
+
               </div>
 
-              {/* Pincode */}
+              {/* PINCODE */}
 
               <div className="form-group mb-3">
-                <label>Pincode</label>
+
+                <label>
+                  Pincode
+                </label>
 
                 <input
                   type="text"
@@ -633,131 +881,202 @@ const Checkout = () => {
                   className="form-control"
                   placeholder="Enter 6-digit pincode"
                   maxLength="6"
-                  value={formData.pincode}
-                  onChange={handleChange}
+                  value={
+                    formData.pincode
+                  }
+                  onChange={
+                    handleChange
+                  }
                 />
 
                 {errors.pincode && (
                   <small className="text-danger">
-                    {errors.pincode}
+                    {
+                      errors.pincode
+                    }
                   </small>
                 )}
+
               </div>
+
             </div>
+
           </div>
 
-          {/* Order Summary */}
+          {/* =================================================
+              ORDER SUMMARY
+          ================================================= */}
 
           <div className="col-md-5">
+
             <div className="card p-4">
+
               <h4 className="font-weight-bold mb-4">
                 Order Summary
               </h4>
 
-              {cartItems.map((item, index) => {
-                const itemPrice = Number(
-                  item.price ||
-                    item.salePrice ||
-                    item.product?.price ||
-                    0
-                );
+              {/* CART ITEMS */}
 
-                const itemQuantity = Number(
-                  item.quantity || 1
-                );
+              {cartItems.map(
+                (item, index) => {
+                  const itemPrice =
+                    Number(
+                      item.price ||
+                        item.salePrice ||
+                        item.product?.price ||
+                        0
+                    );
 
-                return (
-                  <div
-                    key={
-                      item.productId ||
-                      item._id ||
-                      item.id ||
-                      index
-                    }
-                    className="d-flex justify-content-between mb-3"
-                  >
-                    <div>
-                      <p className="mb-1">
-                        {item.name ||
-                          item.product?.name ||
-                          "Product"}
-                      </p>
+                  const itemQuantity =
+                    Number(
+                      item.quantity || 1
+                    );
 
-                      <small className="text-muted">
-                        Quantity: {itemQuantity}
-                      </small>
+                  return (
+                    <div
+                      key={
+                        item.productId ||
+                        item._id ||
+                        item.id ||
+                        index
+                      }
+                      className="d-flex justify-content-between mb-3"
+                    >
+
+                      <div>
+
+                        <p className="mb-1">
+                          {item.name ||
+                            item.product
+                              ?.name ||
+                            "Product"}
+                        </p>
+
+                        <small className="text-muted">
+                          Quantity:{" "}
+                          {
+                            itemQuantity
+                          }
+                        </small>
+
+                      </div>
+
+                      <strong>
+                        ₹
+                        {(
+                          itemPrice *
+                          itemQuantity
+                        ).toFixed(2)}
+                      </strong>
+
                     </div>
-
-                    <strong>
-                      ₹
-                      {(
-                        itemPrice * itemQuantity
-                      ).toFixed(2)}
-                    </strong>
-                  </div>
-                );
-              })}
+                  );
+                }
+              )}
 
               <hr />
 
+              {/* SUBTOTAL */}
+
               <div className="d-flex justify-content-between mb-3">
-                <span>Subtotal</span>
+
+                <span>
+                  Subtotal
+                </span>
 
                 <strong>
-                  ₹{subtotal.toFixed(2)}
+                  ₹
+                  {subtotal.toFixed(
+                    2
+                  )}
                 </strong>
+
               </div>
 
-              <div className="d-flex justify-content-between mb-3">
-                <span>Delivery</span>
+              {/* DELIVERY */}
 
-                {deliveryCharge === 0 ? (
+              <div className="d-flex justify-content-between mb-3">
+
+                <span>
+                  Delivery
+                </span>
+
+                {deliveryCharge ===
+                0 ? (
                   <strong className="text-success">
                     Free
                   </strong>
                 ) : (
                   <strong>
-                    ₹{deliveryCharge.toFixed(2)}
+                    ₹
+                    {deliveryCharge.toFixed(
+                      2
+                    )}
                   </strong>
                 )}
+
               </div>
 
+              {/* FREE DELIVERY MESSAGE */}
+
               {isEligibleForFreeDelivery && (
-                <small className="text-success mb-3">
+                <small className="text-success mb-3 d-block">
                   Free delivery applied!
                 </small>
               )}
 
+              {/* ESTIMATED DELIVERY */}
+
               <div className="d-flex justify-content-between mb-3">
-                <span>Estimated Delivery</span>
+
+                <span>
+                  Estimated Delivery
+                </span>
 
                 <strong>
-                  {estimatedDeliveryTime}
+                  {
+                    estimatedDeliveryTime
+                  }
                 </strong>
+
               </div>
 
               <hr />
 
+              {/* TOTAL */}
+
               <div className="d-flex justify-content-between mb-4">
-                <h5>Total</h5>
+
+                <h5>
+                  Total
+                </h5>
 
                 <h5 className="text-danger">
-                  ₹{total.toFixed(2)}
+                  ₹
+                  {total.toFixed(
+                    2
+                  )}
                 </h5>
+
               </div>
 
-              {/* Payment Information */}
+              {/* PAYMENT */}
 
               <div className="alert alert-info">
-                <strong>Payment Method:</strong>
+
+                <strong>
+                  Payment Method:
+                </strong>
+
                 <br />
 
                 {cashOnDelivery
                   ? "Cash on Delivery"
                   : "Cash on Delivery unavailable"}
+
               </div>
 
-              {/* Place Order Button */}
+              {/* PLACE ORDER */}
 
               <Button
                 type="submit"
@@ -769,7 +1088,8 @@ const Checkout = () => {
                   !acceptOrders ||
                   !deliveryEnabled ||
                   !cashOnDelivery ||
-                  subtotal < minimumOrderAmount
+                  subtotal <
+                    minimumOrderAmount
                 }
               >
                 {isSubmitting
@@ -777,7 +1097,7 @@ const Checkout = () => {
                   : "Place Order"}
               </Button>
 
-              {/* Return to Cart */}
+              {/* RETURN CART */}
 
               <Link
                 to="/cart"
@@ -785,10 +1105,15 @@ const Checkout = () => {
               >
                 Return to Cart
               </Link>
+
             </div>
+
           </div>
+
         </div>
+
       </form>
+
     </div>
   );
 };

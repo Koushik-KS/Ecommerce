@@ -21,30 +21,67 @@ import {
 
 import axios from "axios";
 
-import { Visibility, VisibilityOff } from "@mui/icons-material";
+import {
+  Visibility,
+  VisibilityOff,
+} from "@mui/icons-material";
 
 import { MyContext } from "../../App";
 
-const API_URL = "http://localhost:4000";
+// =====================================================
+// API URL
+// =====================================================
+
+const API_URL =
+  "https://ecommerce-hsm4.onrender.com";
+
+// =====================================================
+// SIGN IN COMPONENT
+// =====================================================
 
 function SignIn() {
+  // ===================================================
+  // CONTEXT
+  // ===================================================
+
   const {
     setisHeaderFooterShow,
     setIsLogin,
     setUser,
   } = useContext(MyContext);
 
+  // ===================================================
+  // NAVIGATION
+  // ===================================================
+
   const navigate = useNavigate();
 
-  const [formData, setFormData] = useState({
-    email: "",
-    password: "",
-  });
+  // ===================================================
+  // FORM DATA
+  // ===================================================
 
-  const [loading, setLoading] = useState(false);
-  const [errorMessage, setErrorMessage] = useState("");
+  const [formData, setFormData] =
+    useState({
+      email: "",
+      password: "",
+    });
 
-  const [showPassword, setShowPassword] = useState(false);
+  // ===================================================
+  // UI STATES
+  // ===================================================
+
+  const [loading, setLoading] =
+    useState(false);
+
+  const [errorMessage, setErrorMessage] =
+    useState("");
+
+  const [showPassword, setShowPassword] =
+    useState(false);
+
+  // ===================================================
+  // HIDE HEADER AND FOOTER
+  // ===================================================
 
   useEffect(() => {
     setisHeaderFooterShow(false);
@@ -54,32 +91,49 @@ function SignIn() {
     };
   }, [setisHeaderFooterShow]);
 
-  // =========================
-  // HANDLE INPUT
-  // =========================
+  // ===================================================
+  // HANDLE INPUT CHANGE
+  // ===================================================
 
   const handleChange = (event) => {
-    const { name, value } = event.target;
+    const {
+      name,
+      value,
+    } = event.target;
 
-    setFormData((previousData) => ({
-      ...previousData,
-      [name]: value,
-    }));
+    setFormData(
+      (previousData) => ({
+        ...previousData,
+        [name]: value,
+      })
+    );
+
+    // Clear previous error
+    if (errorMessage) {
+      setErrorMessage("");
+    }
   };
 
-  // =========================
+  // ===================================================
   // HANDLE LOGIN
-  // =========================
+  // ===================================================
 
   const handleSubmit = async (event) => {
     event.preventDefault();
 
     setErrorMessage("");
 
-    const {
-      email,
-      password,
-    } = formData;
+    const email =
+      formData.email
+        .trim()
+        .toLowerCase();
+
+    const password =
+      formData.password;
+
+    // =================================================
+    // VALIDATION
+    // =================================================
 
     if (!email || !password) {
       setErrorMessage(
@@ -92,13 +146,22 @@ function SignIn() {
     try {
       setLoading(true);
 
-      const response = await axios.post(
-        `${API_URL}/api/auth/login`,
-        {
-          email: email.trim(),
-          password,
-        }
-      );
+      // =================================================
+      // LOGIN REQUEST
+      // =================================================
+
+      const response =
+        await axios.post(
+          `${API_URL}/api/auth/login`,
+          {
+            email,
+            password,
+          }
+        );
+
+      // =================================================
+      // LOGIN SUCCESS
+      // =================================================
 
       if (response.data.success) {
         const {
@@ -106,61 +169,112 @@ function SignIn() {
           user,
         } = response.data;
 
-        // =========================
-        // SAVE LOGIN DETAILS
-        // =========================
+        // =================================================
+        // SAVE TOKEN
+        // =================================================
 
         localStorage.setItem(
           "token",
           token
         );
 
+        // =================================================
+        // SAVE USER
+        // =================================================
+
         localStorage.setItem(
           "user",
           JSON.stringify(user)
         );
 
-        // =========================
+        // =================================================
         // UPDATE GLOBAL CONTEXT
-        // =========================
+        // =================================================
 
         setUser(user);
         setIsLogin(true);
 
-        // =========================
+        // =================================================
         // GO TO HOME
-        // =========================
+        // =================================================
 
         navigate("/");
+      } else {
+        setErrorMessage(
+          response.data.message ||
+            "Login failed. Please check your details."
+        );
       }
     } catch (error) {
-      const message =
-        error.response?.data?.message ||
-        "Login failed. Please check your details.";
+      console.error(
+        "Login error:",
+        error
+      );
 
-      setErrorMessage(message);
+      // =================================================
+      // BACKEND ERROR
+      // =================================================
+
+      const backendMessage =
+        error.response?.data?.message;
+
+      // =================================================
+      // NETWORK ERROR
+      // =================================================
+
+      if (
+        error.code ===
+        "ERR_NETWORK"
+      ) {
+        setErrorMessage(
+          "Unable to connect to the server. Please try again later."
+        );
+
+        return;
+      }
+
+      // =================================================
+      // ERROR MESSAGE
+      // =================================================
+
+      setErrorMessage(
+        backendMessage ||
+          "Login failed. Please check your email and password."
+      );
     } finally {
       setLoading(false);
     }
   };
 
-  // =========================
+  // ===================================================
   // TOGGLE PASSWORD
-  // =========================
+  // ===================================================
 
   const handleTogglePassword = () => {
-    setShowPassword((previous) => !previous);
+    setShowPassword(
+      (previous) => !previous
+    );
   };
+
+  // ===================================================
+  // RETURN UI
+  // ===================================================
 
   return (
     <Box
       sx={{
         minHeight: "100vh",
+
         display: "flex",
+
         justifyContent: "center",
+
         alignItems: "center",
+
         padding: 3,
-        backgroundColor: "#f5f5f5",
+
+        backgroundColor:
+          "#f5f5f5",
       }}
     >
       <Box
@@ -168,16 +282,23 @@ function SignIn() {
         onSubmit={handleSubmit}
         sx={{
           width: "100%",
+
           maxWidth: 450,
-          backgroundColor: "#ffffff",
+
+          backgroundColor:
+            "#ffffff",
+
           padding: 4,
+
           borderRadius: 3,
+
           boxShadow: 3,
         }}
       >
-        {/* =========================
+
+        {/* =================================================
             TITLE
-        ========================= */}
+        ================================================= */}
 
         <Typography
           variant="h4"
@@ -188,9 +309,9 @@ function SignIn() {
           Welcome Back
         </Typography>
 
-        {/* =========================
+        {/* =================================================
             ERROR MESSAGE
-        ========================= */}
+        ================================================= */}
 
         {errorMessage && (
           <Alert
@@ -201,9 +322,9 @@ function SignIn() {
           </Alert>
         )}
 
-        {/* =========================
+        {/* =================================================
             EMAIL
-        ========================= */}
+        ================================================= */}
 
         <TextField
           fullWidth
@@ -214,11 +335,13 @@ function SignIn() {
           onChange={handleChange}
           margin="normal"
           required
+          disabled={loading}
+          autoComplete="email"
         />
 
-        {/* =========================
+        {/* =================================================
             PASSWORD
-        ========================= */}
+        ================================================= */}
 
         <TextField
           fullWidth
@@ -229,18 +352,30 @@ function SignIn() {
               ? "text"
               : "password"
           }
-          value={formData.password}
+          value={
+            formData.password
+          }
           onChange={handleChange}
           margin="normal"
           required
+          disabled={loading}
+          autoComplete="current-password"
           InputProps={{
             endAdornment: (
-              <InputAdornment position="end">
+              <InputAdornment
+                position="end"
+              >
                 <IconButton
                   onClick={
                     handleTogglePassword
                   }
                   edge="end"
+                  disabled={loading}
+                  aria-label={
+                    showPassword
+                      ? "Hide password"
+                      : "Show password"
+                  }
                 >
                   {showPassword ? (
                     <VisibilityOff />
@@ -253,23 +388,30 @@ function SignIn() {
           }}
         />
 
-        {/* =========================
+        {/* =================================================
             FORGOT PASSWORD
-        ========================= */}
+        ================================================= */}
 
         <Box
           sx={{
             display: "flex",
-            justifyContent: "flex-end",
+
+            justifyContent:
+              "flex-end",
+
             mt: 1,
           }}
         >
           <Link
             to="/forgot-password"
             style={{
-              textDecoration: "none",
+              textDecoration:
+                "none",
+
               color: "#1976d2",
+
               fontSize: "14px",
+
               fontWeight: 500,
             }}
           >
@@ -277,9 +419,9 @@ function SignIn() {
           </Link>
         </Box>
 
-        {/* =========================
+        {/* =================================================
             SIGN IN BUTTON
-        ========================= */}
+        ================================================= */}
 
         <Button
           fullWidth
@@ -289,10 +431,16 @@ function SignIn() {
           disabled={loading}
           sx={{
             mt: 3,
+
             mb: 2,
+
             height: 48,
-            textTransform: "none",
+
+            textTransform:
+              "none",
+
             fontSize: "16px",
+
             fontWeight: 600,
           }}
         >
@@ -301,16 +449,30 @@ function SignIn() {
             : "Sign In"}
         </Button>
 
-        {/* =========================
+        {/* =================================================
             SIGN UP
-        ========================= */}
+        ================================================= */}
 
-        <Typography textAlign="center">
+        <Typography
+          textAlign="center"
+        >
           Don't have an account?{" "}
-          <Link to="/signUp">
+
+          <Link
+            to="/signUp"
+            style={{
+              textDecoration:
+                "none",
+
+              color: "#1976d2",
+
+              fontWeight: 500,
+            }}
+          >
             Create Account
           </Link>
         </Typography>
+
       </Box>
     </Box>
   );

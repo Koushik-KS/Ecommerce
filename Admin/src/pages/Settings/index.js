@@ -18,7 +18,7 @@ import {
   FiShield,
 } from "react-icons/fi";
 
-const API_URL = "http://localhost:4000";
+const API_URL = "https://ecommerce-hsm4.onrender.com";
 
 const defaultSettings = {
   general: {

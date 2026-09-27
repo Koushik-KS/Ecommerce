@@ -29,7 +29,16 @@ import {
 
 import { MyContext } from "../../App";
 
-const API_URL = "http://localhost:4000";
+// =====================================================
+// API URL
+// =====================================================
+
+const API_URL =
+  "https://ecommerce-hsm4.onrender.com";
+
+// =====================================================
+// RESET PASSWORD COMPONENT
+// =====================================================
 
 function ResetPassword() {
   const {
@@ -49,7 +58,7 @@ function ResetPassword() {
     searchParams.get("email");
 
   // =====================================================
-  // FORM
+  // FORM DATA
   // =====================================================
 
   const [formData, setFormData] =
@@ -59,6 +68,10 @@ function ResetPassword() {
       confirmPassword: "",
     });
 
+  // =====================================================
+  // PASSWORD VISIBILITY
+  // =====================================================
+
   const [showPassword, setShowPassword] =
     useState(false);
 
@@ -66,6 +79,10 @@ function ResetPassword() {
     showConfirmPassword,
     setShowConfirmPassword,
   ] = useState(false);
+
+  // =====================================================
+  // UI STATES
+  // =====================================================
 
   const [loading, setLoading] =
     useState(false);
@@ -93,12 +110,10 @@ function ResetPassword() {
   }, [setisHeaderFooterShow]);
 
   // =====================================================
-  // HANDLE INPUT
+  // HANDLE INPUT CHANGE
   // =====================================================
 
-  const handleChange = (
-    event
-  ) => {
+  const handleChange = (event) => {
     const {
       name,
       value,
@@ -118,31 +133,27 @@ function ResetPassword() {
   // TOGGLE PASSWORD
   // =====================================================
 
-  const handleTogglePassword =
-    () => {
-      setShowPassword(
-        (previous) => !previous
-      );
-    };
+  const handleTogglePassword = () => {
+    setShowPassword(
+      (previous) => !previous
+    );
+  };
 
   // =====================================================
   // TOGGLE CONFIRM PASSWORD
   // =====================================================
 
-  const handleToggleConfirmPassword =
-    () => {
-      setShowConfirmPassword(
-        (previous) => !previous
-      );
-    };
+  const handleToggleConfirmPassword = () => {
+    setShowConfirmPassword(
+      (previous) => !previous
+    );
+  };
 
   // =====================================================
   // HANDLE RESET PASSWORD
   // =====================================================
 
-  const handleSubmit = async (
-    event
-  ) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
 
     setErrorMessage("");
@@ -170,7 +181,9 @@ function ResetPassword() {
     // CHECK OTP
     // ===================================================
 
-    if (!otp) {
+    const trimmedOtp = otp.trim();
+
+    if (!trimmedOtp) {
       setErrorMessage(
         "Please enter the OTP sent to your email."
       );
@@ -178,11 +191,7 @@ function ResetPassword() {
       return;
     }
 
-    if (
-      !/^\d{6}$/.test(
-        otp.trim()
-      )
-    ) {
+    if (!/^\d{6}$/.test(trimmedOtp)) {
       setErrorMessage(
         "OTP must contain exactly 6 digits."
       );
@@ -194,10 +203,7 @@ function ResetPassword() {
     // CHECK PASSWORD
     // ===================================================
 
-    if (
-      !password ||
-      !confirmPassword
-    ) {
+    if (!password || !confirmPassword) {
       setErrorMessage(
         "Please enter your new password and confirm it."
       );
@@ -213,10 +219,7 @@ function ResetPassword() {
       return;
     }
 
-    if (
-      password !==
-      confirmPassword
-    ) {
+    if (password !== confirmPassword) {
       setErrorMessage(
         "Passwords do not match."
       );
@@ -224,32 +227,27 @@ function ResetPassword() {
       return;
     }
 
+    // ===================================================
+    // RESET PASSWORD
+    // ===================================================
+
     try {
       setLoading(true);
-
-      // =================================================
-      // RESET PASSWORD
-      // =================================================
 
       const response =
         await axios.post(
           `${API_URL}/api/auth/reset-password`,
           {
             email:
-              email
-                .trim()
-                .toLowerCase(),
+              email.trim().toLowerCase(),
 
-            otp:
-              otp.trim(),
+            otp: trimmedOtp,
 
-            newPassword:
-              password,
+            newPassword: password,
           }
         );
 
       if (response.data.success) {
-
         setSuccessMessage(
           response.data.message ||
             "Password reset successful."
@@ -262,12 +260,17 @@ function ResetPassword() {
         });
 
         // ===============================================
-        // GO TO SIGN IN
+        // REDIRECT TO SIGN IN
         // ===============================================
 
         setTimeout(() => {
           navigate("/signIn");
         }, 2000);
+      } else {
+        setErrorMessage(
+          response.data.message ||
+            "Unable to reset your password."
+        );
       }
     } catch (error) {
       console.error(
@@ -276,8 +279,7 @@ function ResetPassword() {
       );
 
       const backendMessage =
-        error.response?.data
-          ?.message;
+        error.response?.data?.message;
 
       setErrorMessage(
         backendMessage ||
@@ -287,6 +289,10 @@ function ResetPassword() {
       setLoading(false);
     }
   };
+
+  // =====================================================
+  // UI
+  // =====================================================
 
   return (
     <Box
@@ -301,8 +307,7 @@ function ResetPassword() {
 
         padding: 3,
 
-        backgroundColor:
-          "#f5f5f5",
+        backgroundColor: "#f5f5f5",
       }}
     >
       <Box
@@ -313,8 +318,7 @@ function ResetPassword() {
 
           maxWidth: 450,
 
-          backgroundColor:
-            "#ffffff",
+          backgroundColor: "#ffffff",
 
           padding: 4,
 
@@ -323,8 +327,9 @@ function ResetPassword() {
           boxShadow: 3,
         }}
       >
-
-        {/* TITLE */}
+        {/* =================================================
+            TITLE
+        ================================================= */}
 
         <Typography
           variant="h4"
@@ -335,7 +340,9 @@ function ResetPassword() {
           Reset Password
         </Typography>
 
-        {/* DESCRIPTION */}
+        {/* =================================================
+            DESCRIPTION
+        ================================================= */}
 
         <Typography
           textAlign="center"
@@ -346,12 +353,14 @@ function ResetPassword() {
             lineHeight: 1.6,
           }}
         >
-          Enter the OTP sent to
-          your email and create
-          your new password.
+          Enter the OTP sent to your
+          email and create your new
+          password.
         </Typography>
 
-        {/* EMAIL */}
+        {/* =================================================
+            EMAIL
+        ================================================= */}
 
         {email && (
           <Alert
@@ -359,13 +368,13 @@ function ResetPassword() {
             sx={{ mb: 2 }}
           >
             OTP sent to:{" "}
-            <strong>
-              {email}
-            </strong>
+            <strong>{email}</strong>
           </Alert>
         )}
 
-        {/* SUCCESS */}
+        {/* =================================================
+            SUCCESS MESSAGE
+        ================================================= */}
 
         {successMessage && (
           <Alert
@@ -376,7 +385,9 @@ function ResetPassword() {
           </Alert>
         )}
 
-        {/* ERROR */}
+        {/* =================================================
+            ERROR MESSAGE
+        ================================================= */}
 
         {errorMessage && (
           <Alert
@@ -387,7 +398,9 @@ function ResetPassword() {
           </Alert>
         )}
 
-        {/* OTP */}
+        {/* =================================================
+            OTP
+        ================================================= */}
 
         <TextField
           fullWidth
@@ -401,12 +414,13 @@ function ResetPassword() {
           disabled={loading}
           inputProps={{
             maxLength: 6,
-            inputMode:
-              "numeric",
+            inputMode: "numeric",
           }}
         />
 
-        {/* NEW PASSWORD */}
+        {/* =================================================
+            NEW PASSWORD
+        ================================================= */}
 
         <TextField
           fullWidth
@@ -417,9 +431,7 @@ function ResetPassword() {
               ? "text"
               : "password"
           }
-          value={
-            formData.password
-          }
+          value={formData.password}
           onChange={handleChange}
           margin="normal"
           required
@@ -433,9 +445,7 @@ function ResetPassword() {
                     handleTogglePassword
                   }
                   edge="end"
-                  disabled={
-                    loading
-                  }
+                  disabled={loading}
                 >
                   {showPassword ? (
                     <VisibilityOff />
@@ -448,7 +458,9 @@ function ResetPassword() {
           }}
         />
 
-        {/* CONFIRM PASSWORD */}
+        {/* =================================================
+            CONFIRM PASSWORD
+        ================================================= */}
 
         <TextField
           fullWidth
@@ -475,9 +487,7 @@ function ResetPassword() {
                     handleToggleConfirmPassword
                   }
                   edge="end"
-                  disabled={
-                    loading
-                  }
+                  disabled={loading}
                 >
                   {showConfirmPassword ? (
                     <VisibilityOff />
@@ -490,7 +500,9 @@ function ResetPassword() {
           }}
         />
 
-        {/* RESET BUTTON */}
+        {/* =================================================
+            RESET BUTTON
+        ================================================= */}
 
         <Button
           fullWidth
@@ -507,8 +519,7 @@ function ResetPassword() {
 
             height: 48,
 
-            textTransform:
-              "none",
+            textTransform: "none",
 
             fontSize: "16px",
 
@@ -520,7 +531,9 @@ function ResetPassword() {
             : "Reset Password"}
         </Button>
 
-        {/* SIGN IN */}
+        {/* =================================================
+            SIGN IN
+        ================================================= */}
 
         <Typography
           textAlign="center"
@@ -530,8 +543,7 @@ function ResetPassword() {
           <Link
             to="/signIn"
             style={{
-              textDecoration:
-                "none",
+              textDecoration: "none",
 
               color: "#1976d2",
 
@@ -541,7 +553,6 @@ function ResetPassword() {
             Sign In
           </Link>
         </Typography>
-
       </Box>
     </Box>
   );

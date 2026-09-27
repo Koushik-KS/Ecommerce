@@ -1,4 +1,3 @@
-
 import {
   useEffect,
   useState,
@@ -29,6 +28,7 @@ import {
 // =====================================================
 
 const API_URL =
+  process.env.REACT_APP_API_URL ||
   "http://localhost:4000/api/messages";
 
 // =====================================================
@@ -41,9 +41,7 @@ function Messages() {
   // =====================================================
 
   const [messages, setMessages] = useState([]);
-
   const [loading, setLoading] = useState(true);
-
   const [error, setError] = useState("");
 
   const [selectedMessage, setSelectedMessage] =
@@ -346,6 +344,7 @@ function Messages() {
 
   return (
     <div className="messages-page">
+
       {/* =================================================
           PAGE HEADER
       ================================================= */}
@@ -361,8 +360,6 @@ function Messages() {
           </p>
         </div>
 
-        {/* Refresh button below heading */}
-
         <Button
           variant="primary"
           onClick={fetchMessages}
@@ -377,6 +374,7 @@ function Messages() {
       ================================================= */}
 
       <Row className="g-3 mb-4">
+
         <Col md={4}>
           <Card className="message-summary-card shadow-sm border-0">
             <Card.Body>
@@ -428,6 +426,7 @@ function Messages() {
             </Card.Body>
           </Card>
         </Col>
+
       </Row>
 
       {/* =================================================
@@ -446,6 +445,7 @@ function Messages() {
 
       <Card className="messages-table-card shadow-sm border-0">
         <Card.Body>
+
           <div className="d-flex align-items-center mb-3">
             <FaEnvelope className="me-2" />
 
@@ -455,6 +455,7 @@ function Messages() {
           </div>
 
           {messages.length === 0 ? (
+
             <div className="text-center py-5">
               <h5>
                 No messages found
@@ -465,13 +466,17 @@ function Messages() {
                 appear here.
               </p>
             </div>
+
           ) : (
+
             <div className="table-responsive">
+
               <Table
                 bordered
                 hover
                 className="messages-table align-middle"
               >
+
                 <thead>
                   <tr>
                     <th>#</th>
@@ -485,8 +490,10 @@ function Messages() {
                 </thead>
 
                 <tbody>
+
                   {messages.map(
                     (message, index) => (
+
                       <tr
                         key={message._id}
                         className={
@@ -495,6 +502,7 @@ function Messages() {
                             : ""
                         }
                       >
+
                         <td>
                           {index + 1}
                         </td>
@@ -544,7 +552,9 @@ function Messages() {
                         </td>
 
                         <td>
+
                           <div className="message-actions d-flex gap-2">
+
                             <Button
                               variant="outline-primary"
                               size="sm"
@@ -583,15 +593,24 @@ function Messages() {
                             >
                               <FaTrash />
                             </Button>
+
                           </div>
+
                         </td>
+
                       </tr>
+
                     )
                   )}
+
                 </tbody>
+
               </Table>
+
             </div>
+
           )}
+
         </Card.Body>
       </Card>
 
@@ -604,6 +623,7 @@ function Messages() {
         onHide={() => setShowViewModal(false)}
         centered
       >
+
         <Modal.Header closeButton>
           <Modal.Title>
             Message Details
@@ -611,6 +631,7 @@ function Messages() {
         </Modal.Header>
 
         <Modal.Body>
+
           {selectedMessage && (
             <>
               <p>
@@ -672,12 +693,16 @@ function Messages() {
               )}
             </>
           )}
+
         </Modal.Body>
 
         <Modal.Footer>
+
           <Button
             variant="secondary"
-            onClick={() => setShowViewModal(false)}
+            onClick={() =>
+              setShowViewModal(false)
+            }
           >
             Close
           </Button>
@@ -697,7 +722,9 @@ function Messages() {
               Reply
             </Button>
           )}
+
         </Modal.Footer>
+
       </Modal>
 
       {/* =================================================
@@ -709,6 +736,7 @@ function Messages() {
         onHide={() => setShowReplyModal(false)}
         centered
       >
+
         <Modal.Header closeButton>
           <Modal.Title>
             Reply to Customer
@@ -716,7 +744,9 @@ function Messages() {
         </Modal.Header>
 
         <Form onSubmit={handleReply}>
+
           <Modal.Body>
+
             {selectedMessage && (
               <>
                 <p>
@@ -753,9 +783,11 @@ function Messages() {
                 </Form.Group>
               </>
             )}
+
           </Modal.Body>
 
           <Modal.Footer>
+
             <Button
               variant="secondary"
               onClick={() =>
@@ -771,6 +803,7 @@ function Messages() {
               type="submit"
               disabled={replyLoading}
             >
+
               {replyLoading ? (
                 <>
                   <Spinner
@@ -786,10 +819,15 @@ function Messages() {
                   Save Reply
                 </>
               )}
+
             </Button>
+
           </Modal.Footer>
+
         </Form>
+
       </Modal>
+
     </div>
   );
 }
