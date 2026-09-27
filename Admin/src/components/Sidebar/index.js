@@ -1,4 +1,3 @@
-
 import Button from "@mui/material/Button";
 
 import { RiDashboardFill } from "react-icons/ri";
@@ -16,14 +15,19 @@ import {
   useNavigate,
 } from "react-router-dom";
 
-import { useState } from "react";
+import { useContext, useState } from "react";
+
+import { MyContext } from "../../App";
 
 const Sidebar = () => {
   const location = useLocation();
   const navigate = useNavigate();
 
+  const context = useContext(MyContext);
+
   const [activeTab, setActiveTab] = useState(0);
-  const [isToggleSubmenu, setIsToggleSubmenu] = useState(false);
+  const [isToggleSubmenu, setIsToggleSubmenu] =
+    useState(false);
 
   // =====================================================
   // OPEN / CLOSE SUBMENU
@@ -49,7 +53,6 @@ const Sidebar = () => {
 
   // =====================================================
   // PRODUCT VIEW
-  // Opens the last product selected through Eye button
   // =====================================================
 
   const handleProductView = (event) => {
@@ -58,9 +61,8 @@ const Sidebar = () => {
     setActiveTab(1);
     setIsToggleSubmenu(true);
 
-    const lastViewedProductId = localStorage.getItem(
-      "lastViewedProductId"
-    );
+    const lastViewedProductId =
+      localStorage.getItem("lastViewedProductId");
 
     if (lastViewedProductId) {
       navigate(
@@ -75,9 +77,37 @@ const Sidebar = () => {
     }
   };
 
+  // =====================================================
+  // LOGOUT
+  // =====================================================
+
+  const handleLogout = () => {
+    // Remove admin login session
+    localStorage.removeItem("adminLoggedIn");
+    localStorage.removeItem("adminEmail");
+
+    // Update React login state
+    if (context.setIsLogin) {
+      context.setIsLogin(false);
+    }
+
+    // Hide Header and Sidebar
+    if (context.setisHideSidebarAndHeader) {
+      context.setisHideSidebarAndHeader(true);
+    }
+
+    // Go to login page
+    navigate("/login");
+  };
+
+  // =====================================================
+  // RETURN SIDEBAR
+  // =====================================================
+
   return (
     <div className="sidebar">
       <ul>
+
         {/* =====================================================
             DASHBOARD
         ===================================================== */}
@@ -137,16 +167,16 @@ const Sidebar = () => {
 
           <div
             className={`submenuWrapper ${
-              (activeTab === 1 && isToggleSubmenu) ||
+              (activeTab === 1 &&
+                isToggleSubmenu) ||
               isProductRoute
                 ? "colapse"
                 : "colapsed"
             }`}
           >
             <ul className="submenu">
-              {/* =====================================================
-                  PRODUCT LIST
-              ===================================================== */}
+
+              {/* PRODUCT LIST */}
 
               <li>
                 <Link
@@ -160,10 +190,7 @@ const Sidebar = () => {
                 </Link>
               </li>
 
-              {/* =====================================================
-                  PRODUCT VIEW
-                  Opens the same Product Details page as Eye button
-              ===================================================== */}
+              {/* PRODUCT VIEW */}
 
               <li>
                 <a
@@ -174,9 +201,7 @@ const Sidebar = () => {
                 </a>
               </li>
 
-              {/* =====================================================
-                  PRODUCT UPLOAD
-              ===================================================== */}
+              {/* PRODUCT UPLOAD */}
 
               <li>
                 <Link
@@ -190,9 +215,7 @@ const Sidebar = () => {
                 </Link>
               </li>
 
-              {/* =====================================================
-                  CATEGORY CREATE
-              ===================================================== */}
+              {/* CATEGORY CREATE */}
 
               <li>
                 <Link
@@ -205,6 +228,7 @@ const Sidebar = () => {
                   Category Create
                 </Link>
               </li>
+
             </ul>
           </div>
         </li>
@@ -247,7 +271,9 @@ const Sidebar = () => {
           <Link to="/messages">
             <Button
               className={`w-100 ${
-                location.pathname.startsWith("/messages")
+                location.pathname.startsWith(
+                  "/messages"
+                )
                   ? "active"
                   : ""
               }`}
@@ -309,7 +335,9 @@ const Sidebar = () => {
           <Link to="/settings">
             <Button
               className={`w-100 ${
-                location.pathname.startsWith("/settings")
+                location.pathname.startsWith(
+                  "/settings"
+                )
                   ? "active"
                   : ""
               }`}
@@ -330,20 +358,26 @@ const Sidebar = () => {
             </Button>
           </Link>
         </li>
-      </ul>
 
-      <br />
+      </ul>
 
       {/* =====================================================
           LOGOUT
       ===================================================== */}
 
+      <br />
+
       <div className="logoutWrapper">
         <div className="logoutBox">
-          <Button variant="contained">
+          <Button
+            variant="contained"
+            onClick={handleLogout}
+          >
             <AiOutlineLogout />
 
-            Logout
+            <span style={{ marginLeft: "8px" }}>
+              Logout
+            </span>
           </Button>
         </div>
       </div>

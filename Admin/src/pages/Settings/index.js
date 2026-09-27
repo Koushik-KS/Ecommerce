@@ -22,7 +22,7 @@ const API_URL = "http://localhost:4000";
 
 const defaultSettings = {
   general: {
-    storeName: "Sparsha Kitchen",
+    storeName: "My E-Commerce Store",
     description: "",
     email: "",
     phone: "",
@@ -553,9 +553,9 @@ function Settings() {
       <div className="settings-header">
         <h2>Settings</h2>
 
-        <p>
-          Manage your Sparsha Kitchen store settings from one place.
-        </p>
+       <p>
+  Manage your e-commerce store settings from one place.
+</p>
       </div>
 
       {error && (

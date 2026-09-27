@@ -1,106 +1,339 @@
+import { useContext, useEffect, useState } from "react";
 
-import { useContext, useEffect, useState } from 'react';
-import logo from '../../assets/images/logo.jpg';
-import pattern from '../../assets/images/pattern.jpg'
-import { MyContext } from '../../App';
+import logo from "../../assets/images/logo.jpg";
+import pattern from "../../assets/images/pattern.jpg";
+
+import { MyContext } from "../../App";
+
 import { MdOutlineMail } from "react-icons/md";
 import { RiLockPasswordFill } from "react-icons/ri";
 import { TiEye } from "react-icons/ti";
 import { IoEyeOffSharp } from "react-icons/io5";
 
-import Button from '@mui/material/Button';
-import { Link } from 'react-router-dom';
-import gooleIcon from '../../assets/images/googleIcon.png'
-const Login=()=>{
+import Button from "@mui/material/Button";
 
-  const [inputIndex, setInputIndex]=useState(null);
-  const [isShowPassword, setisShowPassword]=useState(false);
+import { useNavigate } from "react-router-dom";
 
-    const context =useContext(MyContext)
+const Login = () => {
+  // =====================================================
+  // CONTEXT
+  // =====================================================
 
-    useEffect(()=>{
-        context.setisHideSidebarAndHeader(true);
+  const context = useContext(MyContext);
 
-    },[]);
+  const navigate = useNavigate();
 
-    const focusInput=(index)=>{
-      setInputIndex(index);
+  // =====================================================
+  // LOGIN INPUT STATES
+  // =====================================================
+
+  const [inputIndex, setInputIndex] = useState(null);
+
+  const [isShowPassword, setIsShowPassword] =
+    useState(false);
+
+  const [email, setEmail] = useState("");
+
+  const [password, setPassword] = useState("");
+
+  const [error, setError] = useState("");
+
+  const [isLoading, setIsLoading] = useState(false);
+
+  // =====================================================
+  // PERMANENT ADMIN LOGIN
+  // ===========================================
+const ADMIN_EMAIL = "koushikshetty102@gmail.com";
+
+const ADMIN_PASSWORD = "Admin@123";
+ 
+
+  // =====================================================
+  // HIDE HEADER AND SIDEBAR ON LOGIN PAGE
+  // =====================================================
+
+  useEffect(() => {
+    context.setisHideSidebarAndHeader(true);
+
+    return () => {
+      context.setisHideSidebarAndHeader(false);
+    };
+  }, [context]);
+
+  // =====================================================
+  // INPUT FOCUS
+  // =====================================================
+
+  const focusInput = (index) => {
+    setInputIndex(index);
+    setError("");
+  };
+
+  // =====================================================
+  // LOGIN FUNCTION
+  // =====================================================
+
+  const handleLogin = (event) => {
+    event.preventDefault();
+
+    setError("");
+
+    // Remove extra spaces from email
+    const enteredEmail = email.trim();
+
+    // ===================================================
+    // VALIDATION
+    // ===================================================
+
+    if (!enteredEmail) {
+      setError("Please enter your email.");
+      return;
     }
-    return(
 
-       <>
-       <img src={pattern} className='loginPattern'/>
-        <section className="loginSection">
-  <div className="loginBox">
-    <div className="logo text-center">
-      <img src={logo} width="90" alt="Logo" />
-      <h5 className="fw-bold">Login to Admin</h5>
-    </div>
+    if (!password) {
+      setError("Please enter your password.");
+      return;
+    }
 
-    <div className='wrapper mt-3 card border '>
-      <form>
-      <div className={`form-group  position-relative ${inputIndex===0 && 'focus'}`}>
-        <span className='icon'><MdOutlineMail /> </span>
-        <input type='text' className='form-control' 
-        placeholder= 'Enter your Email' onFocus={()=>focusInput(0)} onBlur={()=>setInputIndex(null)} autoFocus/>
-       
-      </div>
+    // ===================================================
+    // CHECK PERMANENT ADMIN CREDENTIALS
+    // ===================================================
 
-       <div className={`form-group  position-relative ${inputIndex===1 && 'focus'}`}>
-        <span className='icon'><RiLockPasswordFill /> </span>
-        <input type={`${ isShowPassword===true ? 'text' : 'password'}`} 
-        className='form-control' 
-        placeholder= 'Enter your password' onFocus={()=>focusInput(1)} onBlur={() =>setInputIndex(null)}/>
-       
-       <span className='toggleShowPassword' onClick={()=>setisShowPassword(!isShowPassword)}>
-        {
-          isShowPassword===true ? <IoEyeOffSharp /> :  <TiEye />
-        }
-       
+    if (
+      enteredEmail === ADMIN_EMAIL &&
+      password === ADMIN_PASSWORD
+    ) {
+      setIsLoading(true);
 
-       </span>
-      </div>
+      // =================================================
+      // SAVE LOGIN SESSION
+      // =================================================
 
-      <div className='form-group'>
-        <Button className="btn-blue btn-lg w-100 btn-big">Sign In</Button>
-      </div>
+      localStorage.setItem(
+        "adminLoggedIn",
+        "true"
+      );
 
-      <div className='form-group text-center mb-0'>
-        <Link to={'/forget-password'} className='link'>FORGET PASSWORD</Link>
-      </div>
-      <div className='d-flex align-items-center justify-content-center or mt-3 mb-3'>
-        <span className='line'></span>
-         <span className='txt'>or</span>
-          <span className='line'></span>
-      </div>
+      localStorage.setItem(
+        "adminEmail",
+        ADMIN_EMAIL
+      );
 
-      <Button variant="outlined"  className='w-100
-      btn-lg btn-big loginWithGoogle' >
-        <img src={gooleIcon} width="25px"/> &nbsp;
-  Sign In with Google
-</Button>
+      // =================================================
+      // UPDATE GLOBAL LOGIN STATE
+      // =================================================
 
+      if (context.setIsLogin) {
+        context.setIsLogin(true);
+      }
 
-      </form> 
+      // =================================================
+      // SHOW HEADER + SIDEBAR
+      // =================================================
 
-    </div>
+      if (context.setisHideSidebarAndHeader) {
+        context.setisHideSidebarAndHeader(false);
+      }
 
-    <div  className='wrapper mt-3 card border footer p-3'>
-      <span className='text-center'>
-        Don't have an account?
-        <Link to={'/signUp'} className='link color ml-2'> Register</Link>
-      </span>
-      </div>
-    
+      // =================================================
+      // GO TO DASHBOARD
+      // =================================================
 
+      setTimeout(() => {
+        navigate("/dashboard");
+      }, 300);
+    } else {
+      // =================================================
+      // WRONG LOGIN
+      // =================================================
 
+      setError(
+        "Invalid email or password. Please try again."
+      );
+    }
+  };
 
-  </div>
-</section>
-       </>
-    )
-    
+  // =====================================================
+  // RETURN UI
+  // =====================================================
 
+  return (
+    <>
+      {/* =================================================
+          BACKGROUND PATTERN
+      ================================================= */}
 
-}
+      <img
+        src={pattern}
+        className="loginPattern"
+        alt="Login Background"
+      />
+
+      {/* =================================================
+          LOGIN SECTION
+      ================================================= */}
+
+      <section className="loginSection">
+        <div className="loginBox">
+
+          {/* =================================================
+              LOGO
+          ================================================= */}
+
+          <div className="logo text-center">
+            <img
+              src={logo}
+              width="90"
+              alt="Admin Logo"
+            />
+
+            <h5 className="fw-bold">
+              Login to Admin
+            </h5>
+          </div>
+
+          {/* =================================================
+              LOGIN CARD
+          ================================================= */}
+
+          <div className="wrapper mt-3 card border">
+            <form onSubmit={handleLogin}>
+
+              {/* =================================================
+                  EMAIL
+              ================================================= */}
+
+              <div
+                className={`form-group position-relative ${
+                  inputIndex === 0
+                    ? "focus"
+                    : ""
+                }`}
+              >
+                <span className="icon">
+                  <MdOutlineMail />
+                </span>
+
+                <input
+                  type="email"
+                  className="form-control"
+                  placeholder="Enter your Email"
+                  value={email}
+                  onChange={(event) =>
+                    setEmail(event.target.value)
+                  }
+                  onFocus={() =>
+                    focusInput(0)
+                  }
+                  onBlur={() =>
+                    setInputIndex(null)
+                  }
+                  autoFocus
+                />
+              </div>
+
+              {/* =================================================
+                  PASSWORD
+              ================================================= */}
+
+              <div
+                className={`form-group position-relative ${
+                  inputIndex === 1
+                    ? "focus"
+                    : ""
+                }`}
+              >
+                <span className="icon">
+                  <RiLockPasswordFill />
+                </span>
+
+                <input
+                  type={
+                    isShowPassword
+                      ? "text"
+                      : "password"
+                  }
+                  className="form-control"
+                  placeholder="Enter your password"
+                  value={password}
+                  onChange={(event) =>
+                    setPassword(event.target.value)
+                  }
+                  onFocus={() =>
+                    focusInput(1)
+                  }
+                  onBlur={() =>
+                    setInputIndex(null)
+                  }
+                />
+
+                {/* =================================================
+                    SHOW / HIDE PASSWORD
+                ================================================= */}
+
+                <span
+                  className="toggleShowPassword"
+                  onClick={() =>
+                    setIsShowPassword(
+                      !isShowPassword
+                    )
+                  }
+                  style={{
+                    cursor: "pointer",
+                  }}
+                >
+                  {isShowPassword ? (
+                    <IoEyeOffSharp />
+                  ) : (
+                    <TiEye />
+                  )}
+                </span>
+              </div>
+
+              {/* =================================================
+                  ERROR MESSAGE
+              ================================================= */}
+
+              {error && (
+                <div
+                  style={{
+                    color: "#d32f2f",
+                    backgroundColor: "#ffebee",
+                    border: "1px solid #ffcdd2",
+                    borderRadius: "6px",
+                    padding: "10px",
+                    marginBottom: "15px",
+                    textAlign: "center",
+                    fontSize: "14px",
+                  }}
+                >
+                  {error}
+                </div>
+              )}
+
+              {/* =================================================
+                  SIGN IN BUTTON
+              ================================================= */}
+
+              <div className="form-group">
+                <Button
+                  type="submit"
+                  className="btn-blue btn-lg w-100 btn-big"
+                  disabled={isLoading}
+                >
+                  {isLoading
+                    ? "Signing In..."
+                    : "Sign In"}
+                </Button>
+              </div>
+
+            </form>
+          </div>
+
+        </div>
+      </section>
+    </>
+  );
+};
+
 export default Login;

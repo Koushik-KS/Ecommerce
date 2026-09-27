@@ -1,4 +1,3 @@
-
 import React, {
   useContext,
   useEffect,
@@ -25,9 +24,6 @@ import { MdDoneAll } from "react-icons/md";
 import { MdDeleteOutline } from "react-icons/md";
 
 import PersonAdd from "@mui/icons-material/PersonAdd";
-import Logout from "@mui/icons-material/Logout";
-
-import { BsShieldFillExclamation } from "react-icons/bs";
 
 import SearchBox from "../SearchBox";
 import { MyContext } from "../../App";
@@ -140,9 +136,13 @@ const Header = () => {
         );
       }
 
-      setNotifications(data.notifications || []);
+      setNotifications(
+        data.notifications || []
+      );
 
-      setUnreadCount(data.unreadCount || 0);
+      setUnreadCount(
+        data.unreadCount || 0
+      );
     } catch (error) {
       console.error(
         "Fetch notifications error:",
@@ -176,7 +176,9 @@ const Header = () => {
         );
       }
 
-      setUnreadCount(data.unreadCount || 0);
+      setUnreadCount(
+        data.unreadCount || 0
+      );
     } catch (error) {
       console.error(
         "Fetch unread count error:",
@@ -216,7 +218,8 @@ const Header = () => {
         (previousNotifications) =>
           previousNotifications.map(
             (notification) =>
-              notification._id === notificationId
+              notification._id ===
+              notificationId
                 ? {
                     ...notification,
                     isRead: true,
@@ -225,8 +228,9 @@ const Header = () => {
           )
       );
 
-      setUnreadCount((previousCount) =>
-        Math.max(0, previousCount - 1)
+      setUnreadCount(
+        (previousCount) =>
+          Math.max(0, previousCount - 1)
       );
     } catch (error) {
       console.error(
@@ -291,7 +295,8 @@ const Header = () => {
       const notificationToDelete =
         notifications.find(
           (notification) =>
-            notification._id === notificationId
+            notification._id ===
+            notificationId
         );
 
       const response = await fetch(
@@ -314,7 +319,8 @@ const Header = () => {
         (previousNotifications) =>
           previousNotifications.filter(
             (notification) =>
-              notification._id !== notificationId
+              notification._id !==
+              notificationId
           )
       );
 
@@ -322,8 +328,9 @@ const Header = () => {
         notificationToDelete &&
         !notificationToDelete.isRead
       ) {
-        setUnreadCount((previousCount) =>
-          Math.max(0, previousCount - 1)
+        setUnreadCount(
+          (previousCount) =>
+            Math.max(0, previousCount - 1)
         );
       }
     } catch (error) {
@@ -338,14 +345,15 @@ const Header = () => {
   // FORMAT NOTIFICATION TIME
   // ===================================================
 
-  const formatNotificationTime = (createdAt) => {
+  const formatNotificationTime = (
+    createdAt
+  ) => {
     if (!createdAt) {
       return "";
     }
 
-    const notificationDate = new Date(
-      createdAt
-    );
+    const notificationDate =
+      new Date(createdAt);
 
     return notificationDate.toLocaleString(
       "en-IN",
@@ -381,21 +389,21 @@ const Header = () => {
   };
 
   // ===================================================
-  // LOAD NOTIFICATIONS ON COMPONENT LOAD
+  // LOAD NOTIFICATIONS
   // ===================================================
 
   useEffect(() => {
     fetchNotifications();
 
-    const notificationInterval = setInterval(
-      () => {
+    const notificationInterval =
+      setInterval(() => {
         fetchUnreadCount();
-      },
-      30000
-    );
+      }, 30000);
 
     return () => {
-      clearInterval(notificationInterval);
+      clearInterval(
+        notificationInterval
+      );
     };
   }, []);
 
@@ -408,7 +416,9 @@ const Header = () => {
       <div className="container-fluid w-100">
         <div className="row d-flex align-items-center w-100">
 
-          {/* LOGO */}
+          {/* =================================================
+              LOGO
+          ================================================= */}
 
           <div className="col-sm-2 part1">
             <Link
@@ -434,9 +444,12 @@ const Header = () => {
             </Link>
           </div>
 
-          {/* MENU AND SEARCH */}
+          {/* =================================================
+              MENU AND SEARCH
+          ================================================= */}
 
           <div className="col-sm-4 d-flex align-items-center part2">
+
             <Button
               className="rounded-circle"
               onClick={() =>
@@ -445,7 +458,8 @@ const Header = () => {
                 )
               }
             >
-              {context.isToggleSidebar === false ? (
+              {context.isToggleSidebar ===
+              false ? (
                 <MdMenuOpen />
               ) : (
                 <IoMenu />
@@ -453,9 +467,12 @@ const Header = () => {
             </Button>
 
             <SearchBox />
+
           </div>
 
-          {/* RIGHT SECTION */}
+          {/* =================================================
+              RIGHT SECTION
+          ================================================= */}
 
           <div
             className="col-sm-6 d-flex align-items-center justify-content-end part3"
@@ -464,7 +481,9 @@ const Header = () => {
             }}
           >
 
-            {/* THEME BUTTON */}
+            {/* =================================================
+                THEME BUTTON
+            ================================================= */}
 
             <Button
               className="rounded-circle"
@@ -477,19 +496,25 @@ const Header = () => {
               <CiLight />
             </Button>
 
-            {/* CART BUTTON */}
+            {/* =================================================
+                CART BUTTON
+            ================================================= */}
 
             <Button className="rounded-circle">
               <IoIosCart />
             </Button>
 
-            {/* EMAIL BUTTON */}
+            {/* =================================================
+                EMAIL BUTTON
+            ================================================= */}
 
             <Button className="rounded-circle">
               <MdOutlineMailOutline />
             </Button>
 
-            {/* NOTIFICATION BUTTON */}
+            {/* =================================================
+                NOTIFICATION BUTTON
+            ================================================= */}
 
             <div
               className="dropdownWrapper position-relative"
@@ -529,10 +554,14 @@ const Header = () => {
                 )}
               </Button>
 
-              {/* NOTIFICATION MENU */}
+              {/* =================================================
+                  NOTIFICATION MENU
+              ================================================= */}
 
               <Menu
-                anchorEl={notificationAnchorEl}
+                anchorEl={
+                  notificationAnchorEl
+                }
                 id="notifications"
                 open={openNotifications}
                 onClose={
@@ -589,7 +618,9 @@ const Header = () => {
 
                 <Divider />
 
-                {/* NOTIFICATION LIST */}
+                {/* =================================================
+                    NOTIFICATION LIST
+                ================================================= */}
 
                 <div
                   style={{
@@ -597,6 +628,7 @@ const Header = () => {
                     overflowY: "auto",
                   }}
                 >
+
                   {isLoadingNotifications ? (
                     <div
                       className="p-3 text-center"
@@ -616,7 +648,8 @@ const Header = () => {
                     >
                       {notificationError}
                     </div>
-                  ) : notifications.length === 0 ? (
+                  ) : notifications.length ===
+                    0 ? (
                     <div
                       className="p-3 text-center"
                       style={{
@@ -629,10 +662,13 @@ const Header = () => {
                     notifications.map(
                       (notification) => (
                         <MenuItem
-                          key={notification._id}
+                          key={
+                            notification._id
+                          }
                           style={{
                             whiteSpace: "normal",
-                            alignItems: "flex-start",
+                            alignItems:
+                              "flex-start",
                             backgroundColor:
                               notification.isRead
                                 ? "transparent"
@@ -657,7 +693,7 @@ const Header = () => {
                             }}
                           >
 
-                            {/* NOTIFICATION ICON */}
+                            {/* ICON */}
 
                             <div
                               style={{
@@ -670,7 +706,7 @@ const Header = () => {
                               )}
                             </div>
 
-                            {/* NOTIFICATION DETAILS */}
+                            {/* DETAILS */}
 
                             <div
                               style={{
@@ -685,21 +721,27 @@ const Header = () => {
                                     notification.isRead
                                       ? "500"
                                       : "700",
-                                  margin: "0 0 5px",
+                                  margin:
+                                    "0 0 5px",
                                 }}
                               >
-                                {notification.title}
+                                {
+                                  notification.title
+                                }
                               </h4>
 
                               <p
                                 style={{
                                   fontSize: "13px",
-                                  margin: "0 0 5px",
+                                  margin:
+                                    "0 0 5px",
                                   overflowWrap:
                                     "anywhere",
                                 }}
                               >
-                                {notification.message}
+                                {
+                                  notification.message
+                                }
                               </p>
 
                               <p
@@ -715,7 +757,7 @@ const Header = () => {
                               </p>
                             </div>
 
-                            {/* DELETE BUTTON */}
+                            {/* DELETE */}
 
                             <Button
                               size="small"
@@ -734,11 +776,13 @@ const Header = () => {
                             >
                               <MdDeleteOutline />
                             </Button>
+
                           </div>
                         </MenuItem>
                       )
                     )
                   )}
+
                 </div>
 
                 <Divider />
@@ -757,23 +801,33 @@ const Header = () => {
                     Refresh Notifications
                   </Button>
                 </div>
+
               </Menu>
             </div>
 
-            {/* SIGN IN OR ADMIN ACCOUNT */}
+            {/* =================================================
+                ADMIN ACCOUNT
+            ================================================= */}
 
             {context.isLogin !== true ? (
+
               <Link to="/login">
                 <Button className="btn-blue btn-round">
                   Sign In
                 </Button>
               </Link>
+
             ) : (
+
               <div className="myAccWrapper">
+
                 <Button
                   className="myAcc d-flex align-items-center"
-                  onClick={handleOpenMyAccDrop}
+                  onClick={
+                    handleOpenMyAccDrop
+                  }
                 >
+
                   <div>
                     <UserAvatarImgComponent
                       img="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSTx3SRpQ8G8mKf3SUHnnn5mzgz7jx2WnePnA&s"
@@ -781,22 +835,32 @@ const Header = () => {
                   </div>
 
                   <div className="userInfo">
-                    <h4>Koushik Shetty</h4>
+                    <h4>
+                      Koushik Shetty
+                    </h4>
 
                     <p className="mb-0">
                       @koushikshetty
                     </p>
                   </div>
+
                 </Button>
 
-                {/* ACCOUNT MENU */}
+                {/* =================================================
+                    ACCOUNT MENU
+                    ONLY MY ACCOUNT
+                ================================================= */}
 
                 <Menu
                   anchorEl={anchorEl}
                   id="account-menu"
                   open={openMyAcc}
-                  onClose={handleCloseMyAccDrop}
-                  onClick={handleCloseMyAccDrop}
+                  onClose={
+                    handleCloseMyAccDrop
+                  }
+                  onClick={
+                    handleCloseMyAccDrop
+                  }
                   transformOrigin={{
                     horizontal: "right",
                     vertical: "top",
@@ -806,8 +870,17 @@ const Header = () => {
                     vertical: "bottom",
                   }}
                 >
+
+                  {/* =================================================
+                      MY ACCOUNT
+                  ================================================= */}
+
                   <MenuItem
-                    onClick={handleCloseMyAccDrop}
+                    component={Link}
+                    to="/my-account"
+                    onClick={
+                      handleCloseMyAccDrop
+                    }
                   >
                     <ListItemIcon>
                       <PersonAdd fontSize="small" />
@@ -816,28 +889,12 @@ const Header = () => {
                     My Account
                   </MenuItem>
 
-                  <MenuItem
-                    onClick={handleCloseMyAccDrop}
-                  >
-                    <ListItemIcon>
-                      <BsShieldFillExclamation />
-                    </ListItemIcon>
-
-                    Reset Password
-                  </MenuItem>
-
-                  <MenuItem
-                    onClick={handleCloseMyAccDrop}
-                  >
-                    <ListItemIcon>
-                      <Logout fontSize="small" />
-                    </ListItemIcon>
-
-                    Logout
-                  </MenuItem>
                 </Menu>
+
               </div>
+
             )}
+
           </div>
         </div>
       </div>

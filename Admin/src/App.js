@@ -27,7 +27,6 @@ import Sidebar from "./components/Sidebar";
 
 import Dashboard from "./pages/Dashboard";
 import Login from "./pages/Login";
-import SignUp from "./pages/SignUp";
 import Products from "./pages/Products";
 import ProductDetails from "./pages/ProductDetails";
 import ProductUpload from "./pages/ProductUpload";
@@ -37,6 +36,7 @@ import Category from "./pages/Category";
 import Messages from "./pages/Messages";
 import Notifications from "./pages/Notifications";
 import Settings from "./pages/Settings";
+import AdminProfile from "./pages/AdminProfile";
 
 // =====================================================
 // CONTEXT
@@ -61,8 +61,12 @@ function App() {
   // =====================================================
   // LOGIN STATE
   // =====================================================
+  // Check localStorage when application starts.
+  // =====================================================
 
-  const [isLogin, setIsLogin] = useState(true);
+  const [isLogin, setIsLogin] = useState(
+    localStorage.getItem("adminLoggedIn") === "true"
+  );
 
   // =====================================================
   // HEADER AND SIDEBAR VISIBILITY
@@ -106,6 +110,18 @@ function App() {
   }, [themeMode]);
 
   // =====================================================
+  // LOGIN / LOGOUT VISIBILITY
+  // =====================================================
+
+  useEffect(() => {
+    if (isLogin === true) {
+      setisHideSidebarAndHeader(false);
+    } else {
+      setisHideSidebarAndHeader(true);
+    }
+  }, [isLogin]);
+
+  // =====================================================
   // CONTEXT VALUES
   // =====================================================
 
@@ -124,6 +140,23 @@ function App() {
   };
 
   // =====================================================
+  // PROTECTED ROUTE
+  // =====================================================
+
+  const ProtectedRoute = ({ children }) => {
+    if (isLogin !== true) {
+      return (
+        <Navigate
+          to="/login"
+          replace
+        />
+      );
+    }
+
+    return children;
+  };
+
+  // =====================================================
   // RENDER
   // =====================================================
 
@@ -131,25 +164,25 @@ function App() {
     <BrowserRouter>
       <MyContext.Provider value={values}>
 
-        {/* =====================================================
+        {/* =================================================
             HEADER
-        ===================================================== */}
+        ================================================= */}
 
-        {isHideSidebarAndHeader !== true && (
+        {isLogin === true && (
           <Header />
         )}
 
-        {/* =====================================================
+        {/* =================================================
             MAIN LAYOUT
-        ===================================================== */}
+        ================================================= */}
 
         <div className="main d-flex">
 
-          {/* =====================================================
+          {/* =================================================
               SIDEBAR
-          ===================================================== */}
+          ================================================= */}
 
-          {isHideSidebarAndHeader !== true && (
+          {isLogin === true && (
             <div
               className={`sidebarWrapper ${
                 isToggleSidebar === true
@@ -161,13 +194,13 @@ function App() {
             </div>
           )}
 
-          {/* =====================================================
+          {/* =================================================
               MAIN CONTENT
-          ===================================================== */}
+          ================================================= */}
 
           <div
             className={`content ${
-              isHideSidebarAndHeader === true
+              isLogin !== true
                 ? "full"
                 : ""
             } ${
@@ -176,7 +209,26 @@ function App() {
                 : ""
             }`}
           >
+
             <Routes>
+
+              {/* =================================================
+                  LOGIN
+              ================================================= */}
+
+              <Route
+                path="/login"
+                element={
+                  isLogin === true ? (
+                    <Navigate
+                      to="/dashboard"
+                      replace
+                    />
+                  ) : (
+                    <Login />
+                  )
+                }
+              />
 
               {/* =================================================
                   DEFAULT ROUTE
@@ -186,7 +238,11 @@ function App() {
                 path="/"
                 element={
                   <Navigate
-                    to="/dashboard"
+                    to={
+                      isLogin === true
+                        ? "/dashboard"
+                        : "/login"
+                    }
                     replace
                   />
                 }
@@ -198,21 +254,11 @@ function App() {
 
               <Route
                 path="/dashboard"
-                element={<Dashboard />}
-              />
-
-              {/* =================================================
-                  AUTHENTICATION
-              ================================================= */}
-
-              <Route
-                path="/login"
-                element={<Login />}
-              />
-
-              <Route
-                path="/signUp"
-                element={<SignUp />}
+                element={
+                  <ProtectedRoute>
+                    <Dashboard />
+                  </ProtectedRoute>
+                }
               />
 
               {/* =================================================
@@ -221,7 +267,11 @@ function App() {
 
               <Route
                 path="/products"
-                element={<Products />}
+                element={
+                  <ProtectedRoute>
+                    <Products />
+                  </ProtectedRoute>
+                }
               />
 
               {/* =================================================
@@ -230,24 +280,36 @@ function App() {
 
               <Route
                 path="/product/details/:id"
-                element={<ProductDetails />}
+                element={
+                  <ProtectedRoute>
+                    <ProductDetails />
+                  </ProtectedRoute>
+                }
               />
 
               <Route
                 path="/product/details"
                 element={
-                  <Navigate
-                    to="/products"
-                    replace
-                  />
+                  <ProtectedRoute>
+                    <Navigate
+                      to="/products"
+                      replace
+                    />
+                  </ProtectedRoute>
                 }
               />
 
-              {/* Product Upload */}
+              {/* =================================================
+                  PRODUCT UPLOAD
+              ================================================= */}
 
               <Route
                 path="/product/upload"
-                element={<ProductUpload />}
+                element={
+                  <ProtectedRoute>
+                    <ProductUpload />
+                  </ProtectedRoute>
+                }
               />
 
               {/* =================================================
@@ -256,12 +318,20 @@ function App() {
 
               <Route
                 path="/orders"
-                element={<Orders />}
+                element={
+                  <ProtectedRoute>
+                    <Orders />
+                  </ProtectedRoute>
+                }
               />
 
               <Route
                 path="/orders/:orderId"
-                element={<OrderDetails />}
+                element={
+                  <ProtectedRoute>
+                    <OrderDetails />
+                  </ProtectedRoute>
+                }
               />
 
               {/* =================================================
@@ -270,7 +340,11 @@ function App() {
 
               <Route
                 path="/category/create"
-                element={<Category />}
+                element={
+                  <ProtectedRoute>
+                    <Category />
+                  </ProtectedRoute>
+                }
               />
 
               {/* =================================================
@@ -279,7 +353,11 @@ function App() {
 
               <Route
                 path="/messages"
-                element={<Messages />}
+                element={
+                  <ProtectedRoute>
+                    <Messages />
+                  </ProtectedRoute>
+                }
               />
 
               {/* =================================================
@@ -288,7 +366,11 @@ function App() {
 
               <Route
                 path="/notifications"
-                element={<Notifications />}
+                element={
+                  <ProtectedRoute>
+                    <Notifications />
+                  </ProtectedRoute>
+                }
               />
 
               {/* =================================================
@@ -297,8 +379,32 @@ function App() {
 
               <Route
                 path="/settings"
-                element={<Settings />}
+                element={
+                  <ProtectedRoute>
+                    <Settings />
+                  </ProtectedRoute>
+                }
               />
+
+              {/* =================================================
+                  ADMIN PROFILE
+              ================================================= */}
+
+              <Route
+                path="/my-account"
+                element={
+                  <ProtectedRoute>
+                    <AdminProfile />
+                  </ProtectedRoute>
+                }
+              />
+
+              {/* =================================================
+                  SIGN UP REMOVED
+              ================================================= */}
+
+              {/* No /signUp route because you are using
+                  permanent admin credentials. */}
 
               {/* =================================================
                   UNKNOWN ROUTES
@@ -308,15 +414,21 @@ function App() {
                 path="*"
                 element={
                   <Navigate
-                    to="/dashboard"
+                    to={
+                      isLogin === true
+                        ? "/dashboard"
+                        : "/login"
+                    }
                     replace
                   />
                 }
               />
 
             </Routes>
+
           </div>
         </div>
+
       </MyContext.Provider>
     </BrowserRouter>
   );
