@@ -1,4 +1,3 @@
-
 import { useCallback, useEffect, useMemo, useState } from "react";
 import axios from "axios";
 
@@ -22,7 +21,7 @@ import Alert from "@mui/material/Alert";
 // API URL
 // =========================
 
-const API_URL = "http://localhost:4000/api/orders";
+const API_URL = `${process.env.REACT_APP_API_URL}/api/orders`;
 
 // =========================
 // DASHBOARD COMPONENT
@@ -315,6 +314,7 @@ const Dashboard = () => {
 
   return (
     <div className="right-content w-100">
+
       {/* Dashboard Header */}
 
       <div className="d-flex align-items-center justify-content-between mb-4">
@@ -346,8 +346,10 @@ const Dashboard = () => {
       {/* Dashboard Statistics */}
 
       <div className="row dashboardBoxWrapperRow">
+
         <div className="col-md-8">
           <div className="dashboardBoxWrapper d-flex flex-wrap">
+
             <DashboardBox
               title="Total Orders"
               value={totalOrders}
@@ -383,6 +385,7 @@ const Dashboard = () => {
               icon={<GiStarsStack />}
               grow={true}
             />
+
           </div>
         </div>
 
@@ -390,6 +393,7 @@ const Dashboard = () => {
 
         <div className="col-md-4 pl-0">
           <div className="box graphBox">
+
             <div className="d-flex align-items-center justify-content-between">
               <h6 className="text-white mb-0">
                 Order Statistics
@@ -403,23 +407,32 @@ const Dashboard = () => {
               width="100%"
               height="250px"
             />
+
           </div>
         </div>
+
       </div>
 
       {/* Best-Selling Products */}
 
       <div className="card shadow border-0 p-3 mt-4">
+
         <div className="d-flex align-items-center justify-content-between">
-          <h3 className="hd">Best Selling Products</h3>
+
+          <h3 className="hd">
+            Best Selling Products
+          </h3>
 
           <span className="badge bg-primary">
             {bestSellingProducts.length} Products
           </span>
+
         </div>
 
         <div className="table-responsive mt-3">
+
           <table className="table table-bordered v-align">
+
             <thead className="thead-dark">
               <tr>
                 <th>#</th>
@@ -430,41 +443,62 @@ const Dashboard = () => {
             </thead>
 
             <tbody>
+
               {bestSellingProducts.length === 0 ? (
                 <tr>
-                  <td colSpan="4" className="text-center">
+                  <td
+                    colSpan="4"
+                    className="text-center"
+                  >
                     No product sales available.
                   </td>
                 </tr>
               ) : (
                 bestSellingProducts.map((product, index) => (
                   <tr key={product.name}>
-                    <td>{index + 1}</td>
 
                     <td>
-                      <strong>{product.name}</strong>
+                      {index + 1}
                     </td>
 
-                    <td>{product.quantity}</td>
+                    <td>
+                      <strong>
+                        {product.name}
+                      </strong>
+                    </td>
+
+                    <td>
+                      {product.quantity}
+                    </td>
 
                     <td className="text-danger">
                       {formatCurrency(product.sales)}
                     </td>
+
                   </tr>
                 ))
               )}
+
             </tbody>
+
           </table>
+
         </div>
+
       </div>
 
       {/* Order Summary */}
 
       <div className="card shadow border-0 p-3 mt-4">
-        <h3 className="hd">Order Summary</h3>
+
+        <h3 className="hd">
+          Order Summary
+        </h3>
 
         <div className="table-responsive mt-3">
+
           <table className="table table-bordered">
+
             <thead className="thead-dark">
               <tr>
                 <th>STATUS</th>
@@ -473,6 +507,7 @@ const Dashboard = () => {
             </thead>
 
             <tbody>
+
               <tr>
                 <td>PENDING</td>
                 <td>{pendingOrders}</td>
@@ -502,15 +537,22 @@ const Dashboard = () => {
                 <td>CANCELLED</td>
                 <td>{cancelledOrders}</td>
               </tr>
+
             </tbody>
+
           </table>
+
         </div>
+
       </div>
 
       {/* Monthly Revenue Chart */}
 
       <div className="card shadow border-0 p-3 mt-4">
-        <h3 className="hd">Monthly Revenue</h3>
+
+        <h3 className="hd">
+          Monthly Revenue
+        </h3>
 
         {monthlyRevenueData.length > 1 ? (
           <Chart
@@ -525,11 +567,13 @@ const Dashboard = () => {
             Not enough data to display monthly revenue.
           </p>
         )}
+
       </div>
 
       {/* Recent Orders */}
 
       <RecentOrders />
+
     </div>
   );
 };

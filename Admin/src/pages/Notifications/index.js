@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from "react";
 
 import Button from "@mui/material/Button";
@@ -8,7 +7,15 @@ import { MdDoneAll } from "react-icons/md";
 import { MdDeleteOutline } from "react-icons/md";
 import { FaBell } from "react-icons/fa";
 
-const API_URL = "http://localhost:4000";
+// =====================================================
+// API URL
+// =====================================================
+
+const API_URL = process.env.REACT_APP_API_URL;
+
+// =====================================================
+// NOTIFICATIONS COMPONENT
+// =====================================================
 
 const Notifications = () => {
   const [notifications, setNotifications] = useState([]);
@@ -281,7 +288,9 @@ const Notifications = () => {
           gap: "15px",
         }}
       >
+
         <div>
+
           <h2
             style={{
               fontWeight: "700",
@@ -301,6 +310,7 @@ const Notifications = () => {
           >
             Manage all your store notifications
           </p>
+
         </div>
 
         <div
@@ -310,6 +320,7 @@ const Notifications = () => {
             flexWrap: "wrap",
           }}
         >
+
           <span
             style={{
               backgroundColor: "#e53935",
@@ -326,10 +337,13 @@ const Notifications = () => {
           <Button
             variant="contained"
             onClick={fetchNotifications}
+            disabled={isLoading}
           >
-            Refresh
+            {isLoading ? "Refreshing..." : "Refresh"}
           </Button>
+
         </div>
+
       </div>
 
       {/* ACTION BAR */}
@@ -341,6 +355,7 @@ const Notifications = () => {
           gap: "10px",
         }}
       >
+
         <h4
           style={{
             margin: 0,
@@ -366,6 +381,7 @@ const Notifications = () => {
             Mark all as read
           </Button>
         )}
+
       </div>
 
       {/* NOTIFICATION CONTAINER */}
@@ -380,7 +396,9 @@ const Notifications = () => {
           width: "100%",
         }}
       >
+
         {isLoading ? (
+
           <div
             className="p-5 text-center"
             style={{
@@ -389,7 +407,9 @@ const Notifications = () => {
           >
             Loading notifications...
           </div>
+
         ) : errorMessage ? (
+
           <div
             className="p-5 text-center"
             style={{
@@ -398,13 +418,16 @@ const Notifications = () => {
           >
             {errorMessage}
           </div>
+
         ) : notifications.length === 0 ? (
+
           <div
             className="p-5 text-center"
             style={{
               color: "#777",
             }}
           >
+
             <FaBell
               style={{
                 fontSize: "35px",
@@ -413,7 +436,9 @@ const Notifications = () => {
               }}
             />
 
-            <h5>No notifications available</h5>
+            <h5>
+              No notifications available
+            </h5>
 
             <p
               style={{
@@ -423,10 +448,17 @@ const Notifications = () => {
               New orders, reviews, and updates
               will appear here.
             </p>
+
           </div>
+
         ) : (
+
           notifications.map((notification) => (
-            <React.Fragment key={notification._id}>
+
+            <React.Fragment
+              key={notification._id}
+            >
+
               <div
                 className="d-flex align-items-start"
                 style={{
@@ -466,6 +498,7 @@ const Notifications = () => {
                     minWidth: 0,
                   }}
                 >
+
                   <div
                     className="d-flex align-items-center justify-content-between"
                     style={{
@@ -473,6 +506,7 @@ const Notifications = () => {
                       gap: "5px",
                     }}
                   >
+
                     <h5
                       style={{
                         fontSize: "16px",
@@ -501,6 +535,7 @@ const Notifications = () => {
                         NEW
                       </span>
                     )}
+
                   </div>
 
                   <p
@@ -535,6 +570,7 @@ const Notifications = () => {
                       flexWrap: "wrap",
                     }}
                   >
+
                     {!notification.isRead && (
                       <Button
                         variant="outlined"
@@ -573,15 +609,23 @@ const Notifications = () => {
 
                       Delete
                     </Button>
+
                   </div>
+
                 </div>
+
               </div>
 
               <Divider />
+
             </React.Fragment>
+
           ))
+
         )}
+
       </div>
+
     </div>
   );
 };
