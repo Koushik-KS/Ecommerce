@@ -1,4 +1,3 @@
-import FormGroup from "@mui/material/FormGroup";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import Checkbox from "@mui/material/Checkbox";
 
@@ -19,7 +18,6 @@ const Sidebar = ({
   products = [],
   onFilterChange,
 }) => {
-
   // =====================================================
   // PRICE
   // =====================================================
@@ -92,7 +90,6 @@ const Sidebar = ({
     ...new Set(
       products
         .map((product) => {
-
           // If brand is an object
           if (
             product.brand &&
@@ -157,7 +154,6 @@ const Sidebar = ({
   ) => {
     setSelectedCategories(
       (previous) => {
-
         if (
           previous.includes(categoryId)
         ) {
@@ -184,7 +180,6 @@ const Sidebar = ({
   ) => {
     setSelectedBrands(
       (previous) => {
-
         if (
           previous.includes(brand)
         ) {
@@ -207,7 +202,6 @@ const Sidebar = ({
   // =====================================================
 
   const resetFilters = () => {
-
     setPriceRange([
       100,
       60000,

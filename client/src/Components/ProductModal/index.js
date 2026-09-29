@@ -1,4 +1,3 @@
-
 import React, { useContext, useState } from "react";
 
 import Dialog from "@mui/material/Dialog";
@@ -90,15 +89,6 @@ const ProductModal = () => {
   const regularPrice = Number(
     product.regularPrice || 0
   );
-
-  // Calculate discount
-  const discount =
-    regularPrice > productPrice && productPrice > 0
-      ? Math.round(
-          ((regularPrice - productPrice) / regularPrice) *
-            100
-        )
-      : 0;
 
   // =========================
   // ADD TO CART
