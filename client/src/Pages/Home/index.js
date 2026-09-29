@@ -27,7 +27,7 @@ import "swiper/css/navigation";
 // ==========================================
 
 const API_BASE_URL =
-  "https://ecommerce-server-ecru.vercel.app";
+  "https://ecommerce-hsm4.onrender.com";
 
 // ==========================================
 // HOME COMPONENT

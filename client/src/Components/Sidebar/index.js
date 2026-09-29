@@ -12,7 +12,7 @@ import axios from "axios";
 // API BASE URL
 // =====================================================
 
-const API_BASE_URL = `${process.env.REACT_APP_API_URL}/api`;
+const API_BASE_URL = "https://ecommerce-hsm4.onrender.com/api";
 
 const Sidebar = ({
   products = [],
@@ -56,16 +56,30 @@ const Sidebar = ({
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const response = await axios.get(
-          `${API_BASE_URL}/category`
+        const url = `${API_BASE_URL}/category`;
+
+        console.log(
+          "Sidebar category API:",
+          url
+        );
+
+        const response = await axios.get(url);
+
+        console.log(
+          "Sidebar category response:",
+          response.data
         );
 
         if (Array.isArray(response.data)) {
           setCategories(response.data);
         } else if (
-          Array.isArray(response.data?.categories)
+          Array.isArray(
+            response.data?.categories
+          )
         ) {
-          setCategories(response.data.categories);
+          setCategories(
+            response.data.categories
+          );
         } else {
           setCategories([]);
         }
@@ -74,6 +88,23 @@ const Sidebar = ({
           "Error fetching categories:",
           error
         );
+
+        console.error(
+          "Category API URL:",
+          `${API_BASE_URL}/category`
+        );
+
+        if (error.response) {
+          console.error(
+            "Server status:",
+            error.response.status
+          );
+
+          console.error(
+            "Server response:",
+            error.response.data
+          );
+        }
 
         setCategories([]);
       }

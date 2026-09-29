@@ -8,7 +8,15 @@ import { Navigation } from "swiper/modules";
 import "swiper/css";
 import "swiper/css/navigation";
 
-const API_BASE_URL = `${process.env.REACT_APP_API_URL}/api`;
+// =====================================================
+// BACKEND API BASE URL
+// =====================================================
+
+const API_BASE_URL = "https://ecommerce-hsm4.onrender.com/api";
+
+// =====================================================
+// HOME CATEGORY COMPONENT
+// =====================================================
 
 const HomeCat = () => {
   const [categories, setCategories] = useState([]);
@@ -38,16 +46,16 @@ const HomeCat = () => {
       try {
         setLoading(true);
 
+        const apiUrl = `${API_BASE_URL}/category`;
+
+        console.log("Fetching categories from:", apiUrl);
+
+        const response = await axios.get(apiUrl);
+
         console.log(
-          "Fetching categories from:",
-          `${API_BASE_URL}/category`
+          "Category API response:",
+          response.data
         );
-
-        const response = await axios.get(
-          `${API_BASE_URL}/category`
-        );
-
-        console.log("Category API response:", response.data);
 
         if (Array.isArray(response.data)) {
           setCategories(response.data);
@@ -64,10 +72,27 @@ const HomeCat = () => {
           error
         );
 
-        console.error(
-          "API URL:",
-          `${API_BASE_URL}/category`
-        );
+        if (error.response) {
+          console.error(
+            "Server response:",
+            error.response.data
+          );
+
+          console.error(
+            "Status:",
+            error.response.status
+          );
+        } else if (error.request) {
+          console.error(
+            "No response received from server:",
+            error.request
+          );
+        } else {
+          console.error(
+            "Request error:",
+            error.message
+          );
+        }
 
         setCategories([]);
       } finally {
@@ -86,25 +111,38 @@ const HomeCat = () => {
     <section className="homeCat">
       <div className="container">
 
+        {/* =================================================
+            TITLE
+        ================================================= */}
+
         <h3 className="mb-3 hd">
           Featured Categories
         </h3>
 
-        {/* LOADING */}
+        {/* =================================================
+            LOADING
+        ================================================= */}
+
         {loading ? (
           <p className="text-muted">
             Loading categories...
           </p>
         ) : categories.length === 0 ? (
 
-          /* NO CATEGORIES */
+          /* =================================================
+             NO CATEGORIES
+          ================================================= */
+
           <p className="text-muted">
             No categories available.
           </p>
 
         ) : (
 
-          /* CATEGORY SLIDER */
+          /* =================================================
+             CATEGORY SLIDER
+          ================================================= */
+
           <Swiper
             slidesPerView={2}
             spaceBetween={10}
@@ -138,14 +176,29 @@ const HomeCat = () => {
 
             {categories.map((category, index) => {
 
+              // =================================================
+              // CATEGORY ID
+              // =================================================
+
               const categoryId =
                 category._id || category.id;
+
+              // =================================================
+              // CATEGORY IMAGE
+              // =================================================
 
               const categoryImage =
                 Array.isArray(category.images) &&
                 category.images.length > 0
                   ? category.images[0]
                   : "https://via.placeholder.com/150?text=Category";
+
+              // =================================================
+              // CATEGORY NAME
+              // =================================================
+
+              const categoryName =
+                category.name || "Category";
 
               return (
                 <SwiperSlide
@@ -169,15 +222,12 @@ const HomeCat = () => {
 
                       <img
                         src={categoryImage}
-                        alt={
-                          category.name ||
-                          "Category"
-                        }
+                        alt={categoryName}
                         loading="lazy"
                       />
 
                       <h6>
-                        {category.name}
+                        {categoryName}
                       </h6>
 
                     </div>

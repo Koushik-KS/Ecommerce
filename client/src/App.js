@@ -16,6 +16,17 @@ import {
 import axios from "axios";
 
 // =========================
+// RENDER API URL
+// =========================
+
+const API_BASE_URL =
+  process.env.REACT_APP_API_URL ||
+  "https://ecommerce-hsm4.onrender.com";
+
+// Set Axios base URL
+axios.defaults.baseURL = API_BASE_URL;
+
+// =========================
 // COMPONENTS
 // =========================
 
@@ -141,9 +152,7 @@ function App() {
   const [wishlistItems, setWishlistItems] =
     useState(() => {
       const savedWishlist =
-        localStorage.getItem(
-          "wishlistItems"
-        );
+        localStorage.getItem("wishlistItems");
 
       try {
         return savedWishlist
@@ -575,6 +584,8 @@ function App() {
   // =========================
 
   const values = {
+    API_BASE_URL,
+
     countryList,
     selectCountry,
     setSelectCountry,

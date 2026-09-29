@@ -16,7 +16,16 @@ import axios from "axios";
 
 import ProductItem from "../../../Components/ProductItem";
 
-const API_BASE_URL = "https://ecommerce-hsm4.onrender.com";
+// ==========================================
+// BACKEND API BASE URL
+// ==========================================
+
+const API_BASE_URL =
+  "https://ecommerce-hsm4.onrender.com";
+
+// ==========================================
+// LISTING COMPONENT
+// ==========================================
 
 const Listing = () => {
   const { id } = useParams();
@@ -67,22 +76,31 @@ const Listing = () => {
           `${API_BASE_URL}/api/products`
         );
 
-        const allProducts = Array.isArray(productsResponse.data)
+        const allProducts = Array.isArray(
+          productsResponse.data
+        )
           ? productsResponse.data
           : [];
 
         // Filter products by category ID
-        const filteredProducts = allProducts.filter((product) => {
-          const productCategory = product.category;
+        const filteredProducts = allProducts.filter(
+          (product) => {
+            const productCategory =
+              product.category;
 
-          const productCategoryId =
-            typeof productCategory === "object" &&
-            productCategory !== null
-              ? productCategory?._id || productCategory?.id
-              : productCategory;
+            const productCategoryId =
+              typeof productCategory === "object" &&
+              productCategory !== null
+                ? productCategory?._id ||
+                  productCategory?.id
+                : productCategory;
 
-          return String(productCategoryId) === String(id);
-        });
+            return (
+              String(productCategoryId) ===
+              String(id)
+            );
+          }
+        );
 
         setProducts(filteredProducts);
       } catch (err) {
@@ -110,10 +128,13 @@ const Listing = () => {
   // RECEIVE SIDEBAR FILTERS
   // ==========================================
 
-  const handleFilterChange = useCallback((newFilters) => {
-    setFilters(newFilters);
-    setCurrentPage(1);
-  }, []);
+  const handleFilterChange = useCallback(
+    (newFilters) => {
+      setFilters(newFilters);
+      setCurrentPage(1);
+    },
+    []
+  );
 
   // ==========================================
   // DROPDOWN
@@ -181,7 +202,8 @@ const Listing = () => {
   // ==========================================
 
   const getProductCategoryId = (product) => {
-    const productCategory = product.category;
+    const productCategory =
+      product.category;
 
     if (
       typeof productCategory === "object" &&
@@ -202,23 +224,33 @@ const Listing = () => {
   // ==========================================
 
   const checkProductInStock = (product) => {
-    if (typeof product.inStock === "boolean") {
+    if (
+      typeof product.inStock === "boolean"
+    ) {
       return product.inStock;
     }
 
-    if (typeof product.isAvailable === "boolean") {
+    if (
+      typeof product.isAvailable === "boolean"
+    ) {
       return product.isAvailable;
     }
 
-    if (typeof product.stock === "number") {
+    if (
+      typeof product.stock === "number"
+    ) {
       return product.stock > 0;
     }
 
-    if (typeof product.countInStock === "number") {
+    if (
+      typeof product.countInStock === "number"
+    ) {
       return product.countInStock > 0;
     }
 
-    if (typeof product.quantity === "number") {
+    if (
+      typeof product.quantity === "number"
+    ) {
       return product.quantity > 0;
     }
 
@@ -239,7 +271,9 @@ const Listing = () => {
       return true;
     }
 
-    if (Number(product.discount || 0) > 0) {
+    if (
+      Number(product.discount || 0) > 0
+    ) {
       return true;
     }
 
@@ -265,8 +299,8 @@ const Listing = () => {
   // APPLY ALL FILTERS
   // ==========================================
 
-  const filteredProducts = products.filter(
-    (product) => {
+  const filteredProducts =
+    products.filter((product) => {
       const productPrice =
         getProductPrice(product);
 
@@ -312,8 +346,7 @@ const Listing = () => {
         matchesStock &&
         matchesSale
       );
-    }
-  );
+    });
 
   // ==========================================
   // PAGINATION
@@ -360,7 +393,9 @@ const Listing = () => {
 
           <Sidebar
             products={products}
-            onFilterChange={handleFilterChange}
+            onFilterChange={
+              handleFilterChange
+            }
           />
 
           {/* RIGHT CONTENT */}
