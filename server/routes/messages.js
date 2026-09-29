@@ -1,10 +1,10 @@
-
 const express = require("express");
 const mongoose = require("mongoose");
 
 const Message = require("../models/message");
 
 const {
+  sendContactMessageToAdmin,
   sendAdminReplyEmail,
 } = require("../services/emailService");
 
@@ -38,9 +38,12 @@ router.post("/", async (req, res) => {
     }
 
     const trimmedName = customerName.trim();
+
     const trimmedEmail =
       customerEmail.trim().toLowerCase();
+
     const trimmedMessage = message.trim();
+
     const trimmedOrderId = orderId
       ? orderId.trim()
       : "";
@@ -63,6 +66,10 @@ router.post("/", async (req, res) => {
       ? "order"
       : "contact";
 
+    // =================================================
+    // SAVE MESSAGE TO MONGODB
+    // =================================================
+
     const newMessage = await Message.create({
       orderId: trimmedOrderId,
       customerName: trimmedName,
@@ -72,9 +79,55 @@ router.post("/", async (req, res) => {
       status: "unread",
     });
 
+    // =================================================
+    // SEND EMAIL TO ADMIN
+    // =================================================
+
+    let emailSent = false;
+    let emailError = null;
+
+    try {
+      await sendContactMessageToAdmin({
+        customerName: trimmedName,
+        customerEmail: trimmedEmail,
+        orderId: trimmedOrderId,
+        message: trimmedMessage,
+      });
+
+      emailSent = true;
+
+      console.log(
+        "Contact notification email sent successfully to admin."
+      );
+    } catch (emailErr) {
+      emailError = emailErr.message;
+
+      console.error(
+        "Message saved to MongoDB, but admin email failed:",
+        emailErr.message
+      );
+    }
+
+    // =================================================
+    // RESPONSE
+    // =================================================
+
+    if (emailSent) {
+      return res.status(201).json({
+        success: true,
+        message:
+          "Message sent successfully. Our team will contact you soon.",
+        emailSent: true,
+        data: newMessage,
+      });
+    }
+
     return res.status(201).json({
       success: true,
-      message: "Message sent successfully.",
+      message:
+        "Message saved successfully, but email notification could not be sent.",
+      emailSent: false,
+      emailError,
       data: newMessage,
     });
   } catch (error) {
@@ -127,8 +180,10 @@ router.post("/review", async (req, res) => {
     }
 
     const trimmedName = customerName.trim();
+
     const trimmedEmail =
       customerEmail.trim().toLowerCase();
+
     const trimmedMessage = message.trim();
 
     if (

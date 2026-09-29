@@ -19,6 +19,184 @@ const transporter = nodemailer.createTransport({
 });
 
 // =====================================================
+// SEND CUSTOMER CONTACT MESSAGE TO ADMIN
+// =====================================================
+
+const sendContactMessageToAdmin = async ({
+  customerName,
+  customerEmail,
+  orderId,
+  message,
+}) => {
+  if (!customerName) {
+    throw new Error("Customer name is missing.");
+  }
+
+  if (!customerEmail) {
+    throw new Error("Customer email is missing.");
+  }
+
+  if (!message) {
+    throw new Error("Customer message is missing.");
+  }
+
+  if (!process.env.EMAIL_USER) {
+    throw new Error("EMAIL_USER is missing in .env");
+  }
+
+  if (!process.env.EMAIL_PASSWORD) {
+    throw new Error("EMAIL_PASSWORD is missing in .env");
+  }
+
+  const adminEmail =
+    process.env.EMAIL_ADMIN ||
+    process.env.EMAIL_USER;
+
+  const mailOptions = {
+    from:
+      process.env.EMAIL_FROM ||
+      `"Ecommerce" <${process.env.EMAIL_USER}>`,
+
+    to: adminEmail,
+
+    replyTo: customerEmail,
+
+    subject: orderId
+      ? `New Customer Message - Order ${orderId}`
+      : "New Customer Contact Message",
+
+    text: `
+Hello Ecommerce Admin,
+
+You have received a new message from a customer.
+
+Customer Name:
+${customerName}
+
+Customer Email:
+${customerEmail}
+
+${orderId ? `Order ID:\n${orderId}\n\n` : ""}
+
+Customer Message:
+${message}
+
+Please log in to the Ecommerce Admin Dashboard to view and manage this message.
+
+Thank you,
+Ecommerce System
+`,
+
+    html: `
+      <div style="
+        font-family: Arial, sans-serif;
+        line-height: 1.6;
+        color: #333;
+        max-width: 650px;
+        margin: auto;
+        padding: 20px;
+      ">
+
+        <div style="
+          background: #2563eb;
+          color: white;
+          padding: 20px;
+          border-radius: 10px 10px 0 0;
+          text-align: center;
+        ">
+
+          <h2 style="margin: 0;">
+            Ecommerce
+          </h2>
+
+          <p style="margin: 5px 0 0;">
+            New Customer Message
+          </p>
+
+        </div>
+
+        <div style="
+          border: 1px solid #ddd;
+          border-top: none;
+          padding: 20px;
+          border-radius: 0 0 10px 10px;
+        ">
+
+          <h3 style="color: #2563eb;">
+            Customer Details
+          </h3>
+
+          <p>
+            <strong>Name:</strong>
+            ${customerName}
+          </p>
+
+          <p>
+            <strong>Email:</strong>
+            ${customerEmail}
+          </p>
+
+          ${
+            orderId
+              ? `
+                <p>
+                  <strong>Order ID:</strong>
+                  ${orderId}
+                </p>
+              `
+              : ""
+          }
+
+          <h3 style="color: #2563eb;">
+            Customer Message
+          </h3>
+
+          <div style="
+            background: #f5f5f5;
+            padding: 15px;
+            border-radius: 8px;
+            white-space: pre-wrap;
+            margin-bottom: 20px;
+          ">
+            ${message}
+          </div>
+
+          <p>
+            Please log in to the Ecommerce Admin Dashboard
+            to view and manage this message.
+          </p>
+
+          <p>
+            Thank you,<br />
+            <strong>Ecommerce System</strong>
+          </p>
+
+        </div>
+
+        <p style="
+          text-align: center;
+          color: #888;
+          font-size: 12px;
+          margin-top: 20px;
+        ">
+          This is an automated email from Ecommerce.
+        </p>
+
+      </div>
+    `,
+  };
+
+  const info = await transporter.sendMail(mailOptions);
+
+  console.log(
+    "Customer contact email sent to admin:",
+    info.messageId
+  );
+
+  return info;
+};
+
+// =====================================================
 // SEND ADMIN REPLY EMAIL
 // =====================================================
 
@@ -605,6 +783,7 @@ const verifyEmailConnection = async () => {
 // =====================================================
 
 module.exports = {
+  sendContactMessageToAdmin,
   sendAdminReplyEmail,
   sendOrderConfirmationEmail,
   sendPasswordResetOTPEmail,
