@@ -1,3 +1,4 @@
+import FormGroup from "@mui/material/FormGroup";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import Checkbox from "@mui/material/Checkbox";
 
@@ -123,17 +124,13 @@ const Sidebar = ({
         minPrice: priceRange[0],
         maxPrice: priceRange[1],
 
-        categories:
-          selectedCategories,
+        categories: selectedCategories,
 
-        brands:
-          selectedBrands,
+        brands: selectedBrands,
 
-        inStock:
-          inStock,
+        inStock: inStock,
 
-        onSale:
-          onSale,
+        onSale: onSale,
       });
     }
   }, [
@@ -149,52 +146,38 @@ const Sidebar = ({
   // CATEGORY CHECKBOX
   // =====================================================
 
-  const handleCategoryChange = (
-    categoryId
-  ) => {
-    setSelectedCategories(
-      (previous) => {
-        if (
-          previous.includes(categoryId)
-        ) {
-          return previous.filter(
-            (id) =>
-              id !== categoryId
-          );
-        }
-
-        return [
-          ...previous,
-          categoryId,
-        ];
+  const handleCategoryChange = (categoryId) => {
+    setSelectedCategories((previous) => {
+      if (previous.includes(categoryId)) {
+        return previous.filter(
+          (id) => id !== categoryId
+        );
       }
-    );
+
+      return [
+        ...previous,
+        categoryId,
+      ];
+    });
   };
 
   // =====================================================
   // BRAND CHECKBOX
   // =====================================================
 
-  const handleBrandChange = (
-    brand
-  ) => {
-    setSelectedBrands(
-      (previous) => {
-        if (
-          previous.includes(brand)
-        ) {
-          return previous.filter(
-            (item) =>
-              item !== brand
-          );
-        }
-
-        return [
-          ...previous,
-          brand,
-        ];
+  const handleBrandChange = (brand) => {
+    setSelectedBrands((previous) => {
+      if (previous.includes(brand)) {
+        return previous.filter(
+          (item) => item !== brand
+        );
       }
-    );
+
+      return [
+        ...previous,
+        brand,
+      ];
+    });
   };
 
   // =====================================================
@@ -239,46 +222,40 @@ const Sidebar = ({
 
             {categories.length > 0 ? (
 
-              categories.map(
-                (category) => {
+              categories.map((category) => {
 
-                  const categoryId =
-                    String(
-                      category._id ||
-                      category.id ||
-                      ""
-                    );
-
-                  return (
-                    <li
-                      key={
-                        categoryId
-                      }
-                    >
-
-                      <FormControlLabel
-                        className="w-100"
-                        control={
-                          <Checkbox
-                            checked={selectedCategories.includes(
-                              categoryId
-                            )}
-                            onChange={() =>
-                              handleCategoryChange(
-                                categoryId
-                              )
-                            }
-                          />
-                        }
-                        label={
-                          category.name
-                        }
-                      />
-
-                    </li>
+                const categoryId =
+                  String(
+                    category._id ||
+                    category.id ||
+                    ""
                   );
-                }
-              )
+
+                return (
+                  <li
+                    key={categoryId}
+                  >
+
+                    <FormControlLabel
+                      className="w-100"
+                      control={
+                        <Checkbox
+                          checked={selectedCategories.includes(
+                            categoryId
+                          )}
+                          onChange={() =>
+                            handleCategoryChange(
+                              categoryId
+                            )
+                          }
+                        />
+                      }
+                      label={category.name}
+                    />
+
+                  </li>
+                );
+              })
 
             ) : (
 
@@ -356,15 +333,10 @@ const Sidebar = ({
                 className="w-100"
                 control={
                   <Checkbox
-                    checked={
-                      inStock
-                    }
-                    onChange={(
-                      event
-                    ) =>
+                    checked={inStock}
+                    onChange={(event) =>
                       setInStock(
-                        event.target
-                          .checked
+                        event.target.checked
                       )
                     }
                   />
@@ -382,15 +354,10 @@ const Sidebar = ({
                 className="w-100"
                 control={
                   <Checkbox
-                    checked={
-                      onSale
-                    }
-                    onChange={(
-                      event
-                    ) =>
+                    checked={onSale}
+                    onChange={(event) =>
                       setOnSale(
-                        event.target
-                          .checked
+                        event.target.checked
                       )
                     }
                   />
@@ -422,34 +389,32 @@ const Sidebar = ({
 
             {brands.length > 0 ? (
 
-              brands.map(
-                (brand) => (
+              brands.map((brand) => (
 
-                  <li
-                    key={brand}
-                  >
+                <li
+                  key={brand}
+                >
 
-                    <FormControlLabel
-                      className="w-100"
-                      control={
-                        <Checkbox
-                          checked={selectedBrands.includes(
+                  <FormControlLabel
+                    className="w-100"
+                    control={
+                      <Checkbox
+                        checked={selectedBrands.includes(
+                          brand
+                        )}
+                        onChange={() =>
+                          handleBrandChange(
                             brand
-                          )}
-                          onChange={() =>
-                            handleBrandChange(
-                              brand
-                            )
-                          }
-                        />
-                      }
-                      label={brand}
-                    />
+                          )
+                        }
+                      />
+                    }
+                    label={brand}
+                  />
 
-                  </li>
+                </li>
 
-                )
-              )
+              ))
 
             ) : (
 
