@@ -37,10 +37,8 @@ const allowedOrigins = [
   "http://127.0.0.1:3000",
   "http://127.0.0.1:3001",
 
-  // Vercel frontend URL will be added here later
-  // Example:
-  // "https://your-client.vercel.app",
-  // "https://your-admin.vercel.app",
+  // Vercel frontend
+  "https://ecommerce-koushik-db74.vercel.app",
 ];
 
 app.use(
