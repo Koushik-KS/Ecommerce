@@ -37,28 +37,31 @@ const allowedOrigins = [
   "http://127.0.0.1:3000",
   "http://127.0.0.1:3001",
 
-  // Vercel frontend
+  // Current Vercel Admin frontend
+  "https://ecommerce-aoua.vercel.app",
+
+  // Previous Vercel frontend
   "https://ecommerce-koushik-db74.vercel.app",
 ];
 
 app.use(
   cors({
     origin: function (origin, callback) {
-      // Allow requests without an origin
-      // Example: Postman, server-side requests
+      // Allow requests without an Origin
+      // Example: Postman or server-side requests
       if (!origin) {
         return callback(null, true);
       }
 
+      // Allow registered origins
       if (allowedOrigins.includes(origin)) {
         return callback(null, true);
       }
 
+      // Block unknown origins
       console.warn(`Blocked CORS origin: ${origin}`);
 
-      return callback(
-        new Error("Not allowed by CORS")
-      );
+      return callback(new Error("Not allowed by CORS"));
     },
 
     credentials: true,
@@ -169,7 +172,6 @@ app.use((err, req, res, next) => {
   return res.status(500).json({
     success: false,
     message: "Internal server error.",
-
     error:
       process.env.NODE_ENV === "production"
         ? undefined
@@ -187,10 +189,9 @@ mongoose
     console.log("Database connection ready...");
 
     // Verify Gmail SMTP connection
-    // Keep this for now because it is part
-    // of your existing email service.
     try {
       await verifyEmailConnection();
+
       console.log("Email connection verified...");
     } catch (emailError) {
       console.error(
@@ -213,6 +214,6 @@ mongoose
 // EXPORT EXPRESS APP
 // =====================================================
 
-// Vercel uses this exported Express application
+// Vercel can use this exported Express application
 // as a serverless function.
 module.exports = app;
