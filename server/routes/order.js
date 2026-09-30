@@ -35,23 +35,9 @@ const generateOrderId = () => {
 
   const day = String(date.getDate()).padStart(2, "0");
 
-  const randomNumber = Math.floor(
-    1000 + Math.random() * 9000
-  );
+  const randomNumber = Math.floor(1000 + Math.random() * 9000);
 
   return `ORD-${year}${month}${day}-${randomNumber}`;
-};
-
-// ===============================
-// VALIDATE AMOUNT
-// ===============================
-
-const isValidAmount = (amount) => {
-  return (
-    typeof amount === "number" &&
-    Number.isFinite(amount) &&
-    amount >= 0
-  );
 };
 
 // ===============================
@@ -77,9 +63,7 @@ const normalizeOrderItems = (items) => {
 
     return {
       ...item,
-      productId: productId
-        ? String(productId)
-        : undefined,
+      productId: productId ? String(productId) : undefined,
     };
   });
 };
@@ -105,10 +89,7 @@ const getStoreSettings = async () => {
 
 router.post("/", async (req, res) => {
   try {
-    const {
-      customer,
-      items,
-    } = req.body;
+    const { customer, items } = req.body;
 
     // ==========================================
     // LOAD ADMIN SETTINGS
@@ -150,8 +131,7 @@ router.post("/", async (req, res) => {
     if (orderSettings.cashOnDelivery === false) {
       return res.status(403).json({
         success: false,
-        message:
-          "Cash on Delivery is currently unavailable.",
+        message: "Cash on Delivery is currently unavailable.",
       });
     }
 
@@ -184,12 +164,11 @@ router.post("/", async (req, res) => {
       "pincode",
     ];
 
-    const missingCustomerField =
-      requiredCustomerFields.find(
-        (field) =>
-          !customer[field] ||
-          String(customer[field]).trim() === ""
-      );
+    const missingCustomerField = requiredCustomerFields.find(
+      (field) =>
+        !customer[field] ||
+        String(customer[field]).trim() === ""
+    );
 
     if (missingCustomerField) {
       return res.status(400).json({
@@ -199,7 +178,7 @@ router.post("/", async (req, res) => {
     }
 
     // ==========================================
-    // VALIDATE CUSTOMER MOBILE NUMBER
+    // VALIDATE MOBILE
     // ==========================================
 
     if (!/^[6-9]\d{9}$/.test(String(customer.mobile))) {
@@ -210,7 +189,7 @@ router.post("/", async (req, res) => {
     }
 
     // ==========================================
-    // VALIDATE CUSTOMER EMAIL
+    // VALIDATE EMAIL
     // ==========================================
 
     if (
@@ -225,7 +204,7 @@ router.post("/", async (req, res) => {
     }
 
     // ==========================================
-    // VALIDATE CUSTOMER PINCODE
+    // VALIDATE PINCODE
     // ==========================================
 
     if (!/^\d{6}$/.test(String(customer.pincode))) {
@@ -290,7 +269,7 @@ router.post("/", async (req, res) => {
     }
 
     // ==========================================
-    // VALIDATE ITEM PRICE AND QUANTITY
+    // VALIDATE PRICE AND QUANTITY
     // ==========================================
 
     const invalidPriceOrQuantity =
@@ -322,7 +301,7 @@ router.post("/", async (req, res) => {
     }
 
     // ==========================================
-    // CALCULATE SUBTOTAL ON SERVER
+    // CALCULATE SUBTOTAL
     // ==========================================
 
     const calculatedSubtotal = normalizedItems.reduce(
@@ -344,7 +323,7 @@ router.post("/", async (req, res) => {
     const subtotal = roundAmount(calculatedSubtotal);
 
     // ==========================================
-    // GET DELIVERY SETTINGS
+    // DELIVERY SETTINGS
     // ==========================================
 
     const deliveryChargeAmount = Math.max(
@@ -366,7 +345,7 @@ router.post("/", async (req, res) => {
       deliverySettings.freeDeliveryEnabled !== false;
 
     // ==========================================
-    // VALIDATE MINIMUM ORDER AMOUNT
+    // MINIMUM ORDER AMOUNT
     // ==========================================
 
     if (subtotal < minimumOrderAmount) {
@@ -377,7 +356,7 @@ router.post("/", async (req, res) => {
     }
 
     // ==========================================
-    // CALCULATE DELIVERY CHARGE
+    // DELIVERY CHARGE
     // ==========================================
 
     const isEligibleForFreeDelivery =
@@ -390,7 +369,7 @@ router.post("/", async (req, res) => {
       : roundAmount(deliveryChargeAmount);
 
     // ==========================================
-    // CALCULATE FINAL TOTAL
+    // FINAL TOTAL
     // ==========================================
 
     const total = roundAmount(
@@ -398,13 +377,12 @@ router.post("/", async (req, res) => {
     );
 
     // ==========================================
-    // SELECT DEFAULT ORDER STATUS
+    // DEFAULT ORDER STATUS
     // ==========================================
 
-    const configuredDefaultStatus =
-      String(
-        orderSettings.defaultStatus || "PENDING"
-      ).toUpperCase();
+    const configuredDefaultStatus = String(
+      orderSettings.defaultStatus || "PENDING"
+    ).toUpperCase();
 
     const defaultStatus = allowedStatuses.includes(
       configuredDefaultStatus
@@ -413,7 +391,7 @@ router.post("/", async (req, res) => {
       : "PENDING";
 
     // ==========================================
-    // LOG ORDER CALCULATION
+    // LOG CALCULATION
     // ==========================================
 
     console.log("Order calculation:", {
@@ -443,7 +421,7 @@ router.post("/", async (req, res) => {
     const savedOrder = await order.save();
 
     // ==========================================
-    // SEND ORDER CONFIRMATION EMAIL
+    // SEND CONFIRMATION EMAIL
     // ==========================================
 
     try {
@@ -468,18 +446,14 @@ router.post("/", async (req, res) => {
     }
 
     // ==========================================
-    // CREATE NEW ORDER NOTIFICATION
+    // CREATE ORDER NOTIFICATION
     // ==========================================
 
     try {
       await Notification.create({
         type: "ORDER",
         title: "New order received",
-        message: `New order ${
-          savedOrder.orderId
-        } was placed by ${
-          savedOrder.customer.fullName
-        }.`,
+        message: `New order ${savedOrder.orderId} was placed by ${savedOrder.customer.fullName}.`,
         referenceId: savedOrder.orderId,
         link: `/orders/${savedOrder.orderId}`,
         isRead: false,
@@ -594,8 +568,7 @@ router.patch("/:orderId/status", async (req, res) => {
       });
     }
 
-    const normalizedStatus =
-      String(status).toUpperCase();
+    const normalizedStatus = String(status).toUpperCase();
 
     if (!allowedStatuses.includes(normalizedStatus)) {
       return res.status(400).json({
@@ -606,7 +579,7 @@ router.patch("/:orderId/status", async (req, res) => {
     }
 
     // ==========================================
-    // FIND EXISTING ORDER
+    // FIND ORDER
     // ==========================================
 
     const existingOrder = await Order.findOne({
@@ -623,7 +596,7 @@ router.patch("/:orderId/status", async (req, res) => {
     const previousStatus = existingOrder.status;
 
     // ==========================================
-    // UPDATE ORDER STATUS
+    // UPDATE STATUS
     // ==========================================
 
     existingOrder.status = normalizedStatus;
@@ -662,10 +635,7 @@ router.patch("/:orderId/status", async (req, res) => {
       order: updatedOrder,
     });
   } catch (error) {
-    console.error(
-      "Update order status error:",
-      error
-    );
+    console.error("Update order status error:", error);
 
     return res.status(500).json({
       success: false,

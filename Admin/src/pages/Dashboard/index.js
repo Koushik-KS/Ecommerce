@@ -1,4 +1,10 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import {
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
+
 import axios from "axios";
 
 import DashboardBox from "./components/dashboardBox";
@@ -21,16 +27,19 @@ import Alert from "@mui/material/Alert";
 // BACKEND API URL
 // =====================================================
 
-const BACKEND_URL = (
+// IMPORTANT:
+// In Vercel environment variables use:
+//
+// REACT_APP_API_URL=https://ecommerce-hsm4.onrender.com
+//
+// Do NOT include /api/orders here.
+
+const API_BASE_URL = (
   process.env.REACT_APP_API_URL ||
   "https://ecommerce-hsm4.onrender.com"
 ).replace(/\/+$/, "");
 
-const API_URL = BACKEND_URL.endsWith("/api/orders")
-  ? BACKEND_URL
-  : `${BACKEND_URL}/api/orders`;
-
-console.log("Dashboard Orders API URL:", API_URL);
+const API_URL = `${API_BASE_URL}/api/orders`;
 
 // =====================================================
 // DASHBOARD COMPONENT
@@ -50,11 +59,16 @@ const Dashboard = () => {
       setLoading(true);
       setError("");
 
+      console.log(
+        "Fetching dashboard orders from:",
+        API_URL
+      );
+
       const response = await axios.get(API_URL, {
+        withCredentials: true,
         headers: {
           Accept: "application/json",
         },
-        timeout: 30000,
       });
 
       console.log(
@@ -66,19 +80,19 @@ const Dashboard = () => {
 
       let orderData = [];
 
-      // -------------------------------------------------
+      // =================================================
       // RESPONSE FORMAT 1
       // Direct array
-      // -------------------------------------------------
+      // =================================================
 
       if (Array.isArray(responseData)) {
         orderData = responseData;
       }
 
-      // -------------------------------------------------
+      // =================================================
       // RESPONSE FORMAT 2
       // { orders: [...] }
-      // -------------------------------------------------
+      // =================================================
 
       else if (
         responseData &&
@@ -87,10 +101,10 @@ const Dashboard = () => {
         orderData = responseData.orders;
       }
 
-      // -------------------------------------------------
+      // =================================================
       // RESPONSE FORMAT 3
       // { data: [...] }
-      // -------------------------------------------------
+      // =================================================
 
       else if (
         responseData &&
@@ -99,10 +113,10 @@ const Dashboard = () => {
         orderData = responseData.data;
       }
 
-      // -------------------------------------------------
+      // =================================================
       // RESPONSE FORMAT 4
       // { result: [...] }
-      // -------------------------------------------------
+      // =================================================
 
       else if (
         responseData &&
@@ -111,10 +125,10 @@ const Dashboard = () => {
         orderData = responseData.result;
       }
 
-      // -------------------------------------------------
+      // =================================================
       // RESPONSE FORMAT 5
       // { results: [...] }
-      // -------------------------------------------------
+      // =================================================
 
       else if (
         responseData &&
@@ -123,10 +137,10 @@ const Dashboard = () => {
         orderData = responseData.results;
       }
 
-      // -------------------------------------------------
+      // =================================================
       // RESPONSE FORMAT 6
       // { orderData: [...] }
-      // -------------------------------------------------
+      // =================================================
 
       else if (
         responseData &&
@@ -135,10 +149,10 @@ const Dashboard = () => {
         orderData = responseData.orderData;
       }
 
-      // -------------------------------------------------
+      // =================================================
       // RESPONSE FORMAT 7
       // { data: { orders: [...] } }
-      // -------------------------------------------------
+      // =================================================
 
       else if (
         responseData &&
@@ -148,10 +162,10 @@ const Dashboard = () => {
         orderData = responseData.data.orders;
       }
 
-      // -------------------------------------------------
+      // =================================================
       // RESPONSE FORMAT 8
       // { result: { orders: [...] } }
-      // -------------------------------------------------
+      // =================================================
 
       else if (
         responseData &&
@@ -161,23 +175,9 @@ const Dashboard = () => {
         orderData = responseData.result.orders;
       }
 
-      // -------------------------------------------------
-      // BACKEND ERROR RESPONSE
-      // -------------------------------------------------
-
-      else if (
-        responseData &&
-        responseData.success === false
-      ) {
-        throw new Error(
-          responseData.message ||
-            "Failed to fetch orders."
-        );
-      }
-
-      // -------------------------------------------------
-      // NO VALID ARRAY FOUND
-      // -------------------------------------------------
+      // =================================================
+      // INVALID RESPONSE
+      // =================================================
 
       else {
         console.error(
@@ -186,7 +186,8 @@ const Dashboard = () => {
         );
 
         throw new Error(
-          "Invalid orders response format"
+          responseData?.message ||
+            "Invalid orders response format"
         );
       }
 
@@ -324,7 +325,7 @@ const Dashboard = () => {
   };
 
   // ===================================================
-  // BEST-SELLING PRODUCTS
+  // BEST SELLING PRODUCTS
   // ===================================================
 
   const bestSellingProducts = useMemo(() => {
@@ -383,8 +384,7 @@ const Dashboard = () => {
 
     return Object.values(productSales)
       .sort(
-        (a, b) =>
-          b.quantity - a.quantity
+        (a, b) => b.quantity - a.quantity
       )
       .slice(0, 10);
   }, [orders]);
@@ -491,6 +491,7 @@ const Dashboard = () => {
       {/* Dashboard Header */}
 
       <div className="d-flex align-items-center justify-content-between mb-4">
+
         <div>
           <h2 className="hd">
             Dashboard
@@ -510,6 +511,7 @@ const Dashboard = () => {
             ? "Refreshing..."
             : "Refresh Statistics"}
         </button>
+
       </div>
 
       {/* Error Message */}
@@ -528,6 +530,7 @@ const Dashboard = () => {
       <div className="row dashboardBoxWrapperRow">
 
         <div className="col-md-8">
+
           <div className="dashboardBoxWrapper d-flex flex-wrap">
 
             <DashboardBox
@@ -586,12 +589,15 @@ const Dashboard = () => {
         {/* Order Status Chart */}
 
         <div className="col-md-4 pl-0">
+
           <div className="box graphBox">
 
             <div className="d-flex align-items-center justify-content-between">
+
               <h6 className="text-white mb-0">
                 Order Statistics
               </h6>
+
             </div>
 
             <Chart
@@ -603,11 +609,12 @@ const Dashboard = () => {
             />
 
           </div>
+
         </div>
 
       </div>
 
-      {/* Best-Selling Products */}
+      {/* Best Selling Products */}
 
       <div className="card shadow border-0 p-3 mt-4">
 
@@ -628,12 +635,14 @@ const Dashboard = () => {
           <table className="table table-bordered v-align">
 
             <thead className="thead-dark">
+
               <tr>
                 <th>#</th>
                 <th>PRODUCT</th>
                 <th>QUANTITY SOLD</th>
                 <th>TOTAL SALES</th>
               </tr>
+
             </thead>
 
             <tbody>
@@ -641,12 +650,14 @@ const Dashboard = () => {
               {bestSellingProducts.length === 0 ? (
 
                 <tr>
+
                   <td
                     colSpan="4"
                     className="text-center"
                   >
                     No product sales available.
                   </td>
+
                 </tr>
 
               ) : (
@@ -703,10 +714,12 @@ const Dashboard = () => {
           <table className="table table-bordered">
 
             <thead className="thead-dark">
+
               <tr>
                 <th>STATUS</th>
                 <th>TOTAL ORDERS</th>
               </tr>
+
             </thead>
 
             <tbody>
@@ -748,7 +761,7 @@ const Dashboard = () => {
         </div>
       </div>
 
-      {/* Monthly Revenue Chart */}
+      {/* Monthly Revenue */}
 
       <div className="card shadow border-0 p-3 mt-4">
 

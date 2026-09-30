@@ -31,50 +31,21 @@ const settingsRoutes = require("./routes/settings");
 // =====================================================
 
 const allowedOrigins = [
-  // Local development URLs
+  // Local development
   "http://localhost:3000",
   "http://localhost:3001",
   "http://127.0.0.1:3000",
   "http://127.0.0.1:3001",
 
-  // Current Vercel Admin frontend
+  // Production Vercel frontend
   "https://ecommerce-aoua.vercel.app",
+
+  // Vercel deployment / git branch URL
+  "https://ecommerce-aoua-git-master-koushik-db74.vercel.app",
 
   // Previous Vercel frontend
   "https://ecommerce-koushik-db74.vercel.app",
-
-  // Current Git / Preview deployment
-  "https://ecommerce-aoua-git-master-koushik-db74.vercel.app",
 ];
-
-// =====================================================
-// CORS CHECK
-// =====================================================
-
-const isAllowedOrigin = (origin) => {
-  if (!origin) {
-    return true;
-  }
-
-  // Exact allowed origins
-  if (allowedOrigins.includes(origin)) {
-    return true;
-  }
-
-  // Allow Vercel deployments belonging to this project
-  // Example:
-  // ecommerce-aoua.vercel.app
-  // ecommerce-aoua-git-master-koushik-db74.vercel.app
-  // ecommerce-aoua-xxxxx.vercel.app
-  const vercelProjectPattern =
-    /^https:\/\/ecommerce-aoua(?:-[a-z0-9-]+)?\.vercel\.app$/i;
-
-  if (vercelProjectPattern.test(origin)) {
-    return true;
-  }
-
-  return false;
-};
 
 // =====================================================
 // CORS MIDDLEWARE
@@ -84,22 +55,18 @@ app.use(
   cors({
     origin: function (origin, callback) {
       // Allow requests without Origin
-      // Example: Postman or server-side requests
       if (!origin) {
         return callback(null, true);
       }
 
-      if (isAllowedOrigin(origin)) {
+      // Allow registered origins
+      if (allowedOrigins.includes(origin)) {
         return callback(null, true);
       }
 
-      console.warn(
-        `Blocked CORS origin: ${origin}`
-      );
+      console.warn(`Blocked CORS origin: ${origin}`);
 
-      return callback(
-        new Error("Not allowed by CORS")
-      );
+      return callback(new Error("Not allowed by CORS"));
     },
 
     credentials: true,
@@ -122,7 +89,7 @@ app.use(
 );
 
 // =====================================================
-// BODY PARSER MIDDLEWARE
+// BODY PARSER
 // =====================================================
 
 app.use(
@@ -142,73 +109,49 @@ app.use(
 // CATEGORY ROUTES
 // =====================================================
 
-app.use(
-  "/api/category",
-  categoryRoutes
-);
+app.use("/api/category", categoryRoutes);
 
 // =====================================================
 // PRODUCT ROUTES
 // =====================================================
 
-app.use(
-  "/api/products",
-  productRoutes
-);
+app.use("/api/products", productRoutes);
 
 // =====================================================
 // ORDER ROUTES
 // =====================================================
 
-app.use(
-  "/api/orders",
-  orderRoutes
-);
+app.use("/api/orders", orderRoutes);
 
 // =====================================================
 // MESSAGE ROUTES
 // =====================================================
 
-app.use(
-  "/api/messages",
-  messagesRoutes
-);
+app.use("/api/messages", messagesRoutes);
 
 // =====================================================
 // AUTHENTICATION ROUTES
 // =====================================================
 
-app.use(
-  "/api/auth",
-  authRoutes
-);
+app.use("/api/auth", authRoutes);
 
 // =====================================================
 // REVIEW ROUTES
 // =====================================================
 
-app.use(
-  "/api/reviews",
-  reviewRoutes
-);
+app.use("/api/reviews", reviewRoutes);
 
 // =====================================================
 // NOTIFICATION ROUTES
 // =====================================================
 
-app.use(
-  "/api/notifications",
-  notificationRoutes
-);
+app.use("/api/notifications", notificationRoutes);
 
 // =====================================================
 // SETTINGS ROUTES
 // =====================================================
 
-app.use(
-  "/api/settings",
-  settingsRoutes
-);
+app.use("/api/settings", settingsRoutes);
 
 // =====================================================
 // BASIC API TEST ROUTE
@@ -217,19 +160,7 @@ app.use(
 app.get("/", (req, res) => {
   res.status(200).json({
     success: true,
-    message:
-      "E-commerce API is running successfully.",
-  });
-});
-
-// =====================================================
-// ORDER API TEST ROUTE
-// =====================================================
-
-app.get("/api", (req, res) => {
-  res.status(200).json({
-    success: true,
-    message: "E-commerce API is running.",
+    message: "E-commerce API is running successfully.",
   });
 });
 
@@ -245,23 +176,16 @@ app.use((req, res) => {
 });
 
 // =====================================================
-// ERROR HANDLING MIDDLEWARE
+// ERROR HANDLING
 // =====================================================
 
 app.use((err, req, res, next) => {
-  console.error(
-    "Server error:",
-    err.message
-  );
+  console.error("Server error:", err.message);
 
-  if (
-    err.message ===
-    "Not allowed by CORS"
-  ) {
+  if (err.message === "Not allowed by CORS") {
     return res.status(403).json({
       success: false,
-      message:
-        "CORS policy blocked this request.",
+      message: "CORS policy blocked this request.",
     });
   }
 
@@ -282,25 +206,23 @@ app.use((err, req, res, next) => {
 mongoose
   .connect(process.env.CONNECTION_STRING)
   .then(async () => {
-    console.log(
-      "Database connection ready..."
-    );
+    console.log("Database connection ready...");
 
-    // Verify Gmail SMTP connection
+    // ================================================
+    // VERIFY EMAIL CONNECTION
+    // ================================================
+
     try {
       await verifyEmailConnection();
 
-      console.log(
-        "Email connection verified..."
-      );
+      console.log("Email connection verified...");
     } catch (emailError) {
       console.error(
         "Email connection verification failed:",
         emailError.message
       );
 
-      // Do not stop the API if email verification fails.
-      // Database/API can still work.
+      // Do not stop the API if email fails.
     }
   })
   .catch((err) => {
@@ -313,8 +235,5 @@ mongoose
 // =====================================================
 // EXPORT EXPRESS APP
 // =====================================================
-
-// Vercel can use this exported Express application
-// as a serverless function.
 
 module.exports = app;
