@@ -27,17 +27,10 @@ import Alert from "@mui/material/Alert";
 // BACKEND API URL
 // =====================================================
 
-// IMPORTANT:
-// In Vercel environment variables use:
-//
-// REACT_APP_API_URL=https://ecommerce-hsm4.onrender.com
-//
-// Do NOT include /api/orders here.
-
-const API_BASE_URL = (
-  process.env.REACT_APP_API_URL ||
-  "https://ecommerce-hsm4.onrender.com"
-).replace(/\/+$/, "");
+// Use the actual Render backend URL.
+// Do NOT add /api/orders here.
+const API_BASE_URL =
+  "https://ecommerce-hsm4.onrender.com";
 
 const API_URL = `${API_BASE_URL}/api/orders`;
 
@@ -65,7 +58,6 @@ const Dashboard = () => {
       );
 
       const response = await axios.get(API_URL, {
-        withCredentials: true,
         headers: {
           Accept: "application/json",
         },
@@ -78,108 +70,20 @@ const Dashboard = () => {
 
       const responseData = response.data;
 
-      let orderData = [];
-
       // =================================================
-      // RESPONSE FORMAT 1
-      // Direct array
-      // =================================================
-
-      if (Array.isArray(responseData)) {
-        orderData = responseData;
-      }
-
-      // =================================================
-      // RESPONSE FORMAT 2
-      // { orders: [...] }
+      // BACKEND CURRENT RESPONSE
+      //
+      // {
+      //   success: true,
+      //   count: 10,
+      //   orders: [...]
+      // }
       // =================================================
 
-      else if (
-        responseData &&
-        Array.isArray(responseData.orders)
+      if (
+        !responseData ||
+        !Array.isArray(responseData.orders)
       ) {
-        orderData = responseData.orders;
-      }
-
-      // =================================================
-      // RESPONSE FORMAT 3
-      // { data: [...] }
-      // =================================================
-
-      else if (
-        responseData &&
-        Array.isArray(responseData.data)
-      ) {
-        orderData = responseData.data;
-      }
-
-      // =================================================
-      // RESPONSE FORMAT 4
-      // { result: [...] }
-      // =================================================
-
-      else if (
-        responseData &&
-        Array.isArray(responseData.result)
-      ) {
-        orderData = responseData.result;
-      }
-
-      // =================================================
-      // RESPONSE FORMAT 5
-      // { results: [...] }
-      // =================================================
-
-      else if (
-        responseData &&
-        Array.isArray(responseData.results)
-      ) {
-        orderData = responseData.results;
-      }
-
-      // =================================================
-      // RESPONSE FORMAT 6
-      // { orderData: [...] }
-      // =================================================
-
-      else if (
-        responseData &&
-        Array.isArray(responseData.orderData)
-      ) {
-        orderData = responseData.orderData;
-      }
-
-      // =================================================
-      // RESPONSE FORMAT 7
-      // { data: { orders: [...] } }
-      // =================================================
-
-      else if (
-        responseData &&
-        responseData.data &&
-        Array.isArray(responseData.data.orders)
-      ) {
-        orderData = responseData.data.orders;
-      }
-
-      // =================================================
-      // RESPONSE FORMAT 8
-      // { result: { orders: [...] } }
-      // =================================================
-
-      else if (
-        responseData &&
-        responseData.result &&
-        Array.isArray(responseData.result.orders)
-      ) {
-        orderData = responseData.result.orders;
-      }
-
-      // =================================================
-      // INVALID RESPONSE
-      // =================================================
-
-      else {
         console.error(
           "Unexpected orders API response:",
           responseData
@@ -190,6 +94,8 @@ const Dashboard = () => {
             "Invalid orders response format"
         );
       }
+
+      const orderData = responseData.orders;
 
       console.log(
         "Dashboard orders loaded:",
