@@ -45,22 +45,126 @@ const Dashboard = () => {
 
       const response = await axios.get(API_URL);
 
+      console.log("Dashboard orders API response:", response.data);
+
       const responseData = response.data;
 
       let orderData = [];
 
+      // -------------------------------------------------
+      // RESPONSE FORMAT 1
+      // Direct array
+      // -------------------------------------------------
+
       if (Array.isArray(responseData)) {
         orderData = responseData;
-      } else if (
+      }
+
+      // -------------------------------------------------
+      // RESPONSE FORMAT 2
+      // { orders: [...] }
+      // -------------------------------------------------
+
+      else if (
         responseData &&
         Array.isArray(responseData.orders)
       ) {
         orderData = responseData.orders;
-      } else {
+      }
+
+      // -------------------------------------------------
+      // RESPONSE FORMAT 3
+      // { data: [...] }
+      // -------------------------------------------------
+
+      else if (
+        responseData &&
+        Array.isArray(responseData.data)
+      ) {
+        orderData = responseData.data;
+      }
+
+      // -------------------------------------------------
+      // RESPONSE FORMAT 4
+      // { result: [...] }
+      // -------------------------------------------------
+
+      else if (
+        responseData &&
+        Array.isArray(responseData.result)
+      ) {
+        orderData = responseData.result;
+      }
+
+      // -------------------------------------------------
+      // RESPONSE FORMAT 5
+      // { results: [...] }
+      // -------------------------------------------------
+
+      else if (
+        responseData &&
+        Array.isArray(responseData.results)
+      ) {
+        orderData = responseData.results;
+      }
+
+      // -------------------------------------------------
+      // RESPONSE FORMAT 6
+      // { orderData: [...] }
+      // -------------------------------------------------
+
+      else if (
+        responseData &&
+        Array.isArray(responseData.orderData)
+      ) {
+        orderData = responseData.orderData;
+      }
+
+      // -------------------------------------------------
+      // RESPONSE FORMAT 7
+      // { data: { orders: [...] } }
+      // -------------------------------------------------
+
+      else if (
+        responseData &&
+        responseData.data &&
+        Array.isArray(responseData.data.orders)
+      ) {
+        orderData = responseData.data.orders;
+      }
+
+      // -------------------------------------------------
+      // RESPONSE FORMAT 8
+      // { result: { orders: [...] } }
+      // -------------------------------------------------
+
+      else if (
+        responseData &&
+        responseData.result &&
+        Array.isArray(responseData.result.orders)
+      ) {
+        orderData = responseData.result.orders;
+      }
+
+      // -------------------------------------------------
+      // NO VALID ARRAY FOUND
+      // -------------------------------------------------
+
+      else {
+        console.error(
+          "Unexpected orders API response:",
+          responseData
+        );
+
         throw new Error(
           "Invalid orders response format"
         );
       }
+
+      console.log(
+        "Dashboard orders loaded:",
+        orderData.length
+      );
 
       setOrders(orderData);
     } catch (err) {
@@ -68,6 +172,8 @@ const Dashboard = () => {
         "Dashboard order fetch error:",
         err
       );
+
+      setOrders([]);
 
       setError(
         err.response?.data?.message ||
@@ -85,6 +191,7 @@ const Dashboard = () => {
 
   useEffect(() => {
     window.scrollTo(0, 0);
+
     fetchOrders();
   }, [fetchOrders]);
 
@@ -174,11 +281,13 @@ const Dashboard = () => {
   const chartOptions = {
     backgroundColor: "transparent",
     is3D: true,
+
     legend: {
       textStyle: {
         color: "#ffffff",
       },
     },
+
     chartArea: {
       width: "90%",
       height: "80%",
@@ -289,6 +398,7 @@ const Dashboard = () => {
 
     return [
       ["Month", "Revenue"],
+
       ...Object.keys(monthlyRevenue)
         .sort()
         .map((monthKey) => [
@@ -304,17 +414,22 @@ const Dashboard = () => {
 
   const revenueChartOptions = {
     title: "Monthly Revenue",
+
     curveType: "function",
+
     legend: {
       position: "bottom",
     },
+
     hAxis: {
       title: "Month",
     },
+
     vAxis: {
       title: "Revenue (₹)",
       format: "₹#,##0",
     },
+
     chartArea: {
       width: "80%",
       height: "70%",
