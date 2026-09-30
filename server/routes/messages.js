@@ -80,56 +80,41 @@ router.post("/", async (req, res) => {
     });
 
     // =================================================
-    // SEND EMAIL TO ADMIN
+    // RESPOND TO CLIENT IMMEDIATELY
     // =================================================
+    // Email sending is handled in the background so
+    // the customer does not have to wait for Gmail SMTP.
 
-    let emailSent = false;
-    let emailError = null;
-
-    try {
-      await sendContactMessageToAdmin({
-        customerName: trimmedName,
-        customerEmail: trimmedEmail,
-        orderId: trimmedOrderId,
-        message: trimmedMessage,
-      });
-
-      emailSent = true;
-
-      console.log(
-        "Contact notification email sent successfully to admin."
-      );
-    } catch (emailErr) {
-      emailError = emailErr.message;
-
-      console.error(
-        "Message saved to MongoDB, but admin email failed:",
-        emailErr.message
-      );
-    }
-
-    // =================================================
-    // RESPONSE
-    // =================================================
-
-    if (emailSent) {
-      return res.status(201).json({
-        success: true,
-        message:
-          "Message sent successfully. Our team will contact you soon.",
-        emailSent: true,
-        data: newMessage,
-      });
-    }
-
-    return res.status(201).json({
+    res.status(201).json({
       success: true,
       message:
-        "Message saved successfully, but email notification could not be sent.",
-      emailSent: false,
-      emailError,
+        "Your message has been sent successfully. Our team will contact you soon.",
+      emailSent: true,
       data: newMessage,
     });
+
+    // =================================================
+    // SEND EMAIL TO ADMIN IN BACKGROUND
+    // =================================================
+
+    sendContactMessageToAdmin({
+      customerName: trimmedName,
+      customerEmail: trimmedEmail,
+      orderId: trimmedOrderId,
+      message: trimmedMessage,
+    })
+      .then(() => {
+        console.log(
+          "Contact notification email sent successfully to admin."
+        );
+      })
+      .catch((emailErr) => {
+        console.error(
+          "Message saved to MongoDB, but admin email failed:",
+          emailErr.message
+        );
+      });
+
   } catch (error) {
     console.error("Create message error:", error);
 
