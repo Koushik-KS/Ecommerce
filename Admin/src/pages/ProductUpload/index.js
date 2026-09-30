@@ -14,7 +14,7 @@ import Button from "@mui/material/Button";
 import { FaCloudUploadAlt } from "react-icons/fa";
 
 // =====================================================
-// API URL
+// BACKEND API URL
 // =====================================================
 
 const API_URL = "https://ecommerce-hsm4.onrender.com/api";
@@ -105,14 +105,13 @@ const ProductUpload = () => {
         }
 
         // Support different backend response formats
-        const categoryData =
-          Array.isArray(data)
-            ? data
-            : Array.isArray(data.categories)
-            ? data.categories
-            : Array.isArray(data.data)
-            ? data.data
-            : [];
+        const categoryData = Array.isArray(data)
+          ? data
+          : Array.isArray(data.categories)
+          ? data.categories
+          : Array.isArray(data.data)
+          ? data.data
+          : [];
 
         setCategories(categoryData);
       } catch (error) {
@@ -151,8 +150,7 @@ const ProductUpload = () => {
 
         if (!response.ok) {
           throw new Error(
-            data.message ||
-              "Failed to fetch product details"
+            data.message || "Failed to fetch product details"
           );
         }
 
@@ -170,9 +168,7 @@ const ProductUpload = () => {
 
         setName(product.name || "");
 
-        setDescription(
-          product.description || ""
-        );
+        setDescription(product.description || "");
 
         // Handle brand object or string
         const brandValue =
@@ -182,19 +178,13 @@ const ProductUpload = () => {
 
         setBrand(brandValue || "");
 
-        setRegularPrice(
-          product.regularPrice ?? ""
-        );
+        setRegularPrice(product.regularPrice ?? "");
 
         setPrice(product.price ?? "");
 
-        setCountInStock(
-          product.countInStock ?? ""
-        );
+        setCountInStock(product.countInStock ?? "");
 
-        setRatingsValue(
-          Number(product.rating ?? 0)
-        );
+        setRatingsValue(Number(product.rating ?? 0));
 
         // =================================================
         // CATEGORY
@@ -211,9 +201,7 @@ const ProductUpload = () => {
         // EXISTING IMAGES
         // =================================================
 
-        const existingImages = Array.isArray(
-          product.images
-        )
+        const existingImages = Array.isArray(product.images)
           ? product.images
               .map((image) => {
                 if (typeof image === "string") {
@@ -294,10 +282,7 @@ const ProductUpload = () => {
     setError("");
 
     // Maximum 5 total images
-    if (
-      images.length + selectedFiles.length >
-      5
-    ) {
+    if (images.length + selectedFiles.length > 5) {
       setError(
         `You can upload a maximum of 5 images. ` +
           `You already have ${images.length} image(s).`
@@ -313,9 +298,7 @@ const ProductUpload = () => {
     );
 
     if (invalidFile) {
-      setError(
-        "Please select only image files."
-      );
+      setError("Please select only image files.");
 
       event.target.value = "";
       return;
@@ -374,9 +357,8 @@ const ProductUpload = () => {
       )
     );
 
-    const fileInput = document.getElementById(
-      "product-images"
-    );
+    const fileInput =
+      document.getElementById("product-images");
 
     if (fileInput) {
       fileInput.value = "";
@@ -475,9 +457,8 @@ const ProductUpload = () => {
 
     setImages([]);
 
-    const fileInput = document.getElementById(
-      "product-images"
-    );
+    const fileInput =
+      document.getElementById("product-images");
 
     if (fileInput) {
       fileInput.value = "";
@@ -506,7 +487,7 @@ const ProductUpload = () => {
 
         description: description.trim(),
 
-        images: images,
+        images,
 
         brand: brand.trim(),
 
@@ -520,9 +501,7 @@ const ProductUpload = () => {
 
         rating: Number(ratingsValue || 0),
 
-        numReviews: isEditMode
-          ? undefined
-          : 0,
+        numReviews: isEditMode ? undefined : 0,
 
         isFeatured: false,
       };
@@ -648,7 +627,7 @@ const ProductUpload = () => {
   return (
     <div className="right-content w-100">
 
-      {/* ================================================
+      {/* =================================================
           HEADER
       ================================================= */}
 
@@ -698,7 +677,7 @@ const ProductUpload = () => {
         </Breadcrumbs>
       </div>
 
-      {/* ================================================
+      {/* =================================================
           FORM
       ================================================= */}
 
@@ -800,7 +779,6 @@ const ProductUpload = () => {
                     >
 
                       <MenuItem value="">
-
                         <em>
                           {loadingCategories
                             ? "Loading categories..."
@@ -809,7 +787,6 @@ const ProductUpload = () => {
                             ? "No categories found"
                             : "Select Category"}
                         </em>
-
                       </MenuItem>
 
                       {categories.map(
@@ -923,7 +900,6 @@ const ProductUpload = () => {
                 Number(price) > 0 &&
                 Number(regularPrice) >=
                   Number(price) && (
-
                   <div className="alert alert-info">
 
                     <strong>
@@ -960,11 +936,9 @@ const ProductUpload = () => {
 
                     <Rating
                       name="product-rating"
-                      value={
-                        Number(
-                          ratingsValue
-                        )
-                      }
+                      value={Number(
+                        ratingsValue
+                      )}
                       onChange={(
                         event,
                         newValue
