@@ -42,29 +42,82 @@ const allowedOrigins = [
 
   // Previous Vercel frontend
   "https://ecommerce-koushik-db74.vercel.app",
+
+  // Current Git / Preview deployment
+  "https://ecommerce-aoua-git-master-koushik-db74.vercel.app",
 ];
+
+// =====================================================
+// CORS CHECK
+// =====================================================
+
+const isAllowedOrigin = (origin) => {
+  if (!origin) {
+    return true;
+  }
+
+  // Exact allowed origins
+  if (allowedOrigins.includes(origin)) {
+    return true;
+  }
+
+  // Allow Vercel deployments belonging to this project
+  // Example:
+  // ecommerce-aoua.vercel.app
+  // ecommerce-aoua-git-master-koushik-db74.vercel.app
+  // ecommerce-aoua-xxxxx.vercel.app
+  const vercelProjectPattern =
+    /^https:\/\/ecommerce-aoua(?:-[a-z0-9-]+)?\.vercel\.app$/i;
+
+  if (vercelProjectPattern.test(origin)) {
+    return true;
+  }
+
+  return false;
+};
+
+// =====================================================
+// CORS MIDDLEWARE
+// =====================================================
 
 app.use(
   cors({
     origin: function (origin, callback) {
-      // Allow requests without an Origin
+      // Allow requests without Origin
       // Example: Postman or server-side requests
       if (!origin) {
         return callback(null, true);
       }
 
-      // Allow registered origins
-      if (allowedOrigins.includes(origin)) {
+      if (isAllowedOrigin(origin)) {
         return callback(null, true);
       }
 
-      // Block unknown origins
-      console.warn(`Blocked CORS origin: ${origin}`);
+      console.warn(
+        `Blocked CORS origin: ${origin}`
+      );
 
-      return callback(new Error("Not allowed by CORS"));
+      return callback(
+        new Error("Not allowed by CORS")
+      );
     },
 
     credentials: true,
+
+    methods: [
+      "GET",
+      "POST",
+      "PUT",
+      "PATCH",
+      "DELETE",
+      "OPTIONS",
+    ],
+
+    allowedHeaders: [
+      "Content-Type",
+      "Authorization",
+      "Accept",
+    ],
   })
 );
 
@@ -89,49 +142,73 @@ app.use(
 // CATEGORY ROUTES
 // =====================================================
 
-app.use("/api/category", categoryRoutes);
+app.use(
+  "/api/category",
+  categoryRoutes
+);
 
 // =====================================================
 // PRODUCT ROUTES
 // =====================================================
 
-app.use("/api/products", productRoutes);
+app.use(
+  "/api/products",
+  productRoutes
+);
 
 // =====================================================
 // ORDER ROUTES
 // =====================================================
 
-app.use("/api/orders", orderRoutes);
+app.use(
+  "/api/orders",
+  orderRoutes
+);
 
 // =====================================================
 // MESSAGE ROUTES
 // =====================================================
 
-app.use("/api/messages", messagesRoutes);
+app.use(
+  "/api/messages",
+  messagesRoutes
+);
 
 // =====================================================
 // AUTHENTICATION ROUTES
 // =====================================================
 
-app.use("/api/auth", authRoutes);
+app.use(
+  "/api/auth",
+  authRoutes
+);
 
 // =====================================================
 // REVIEW ROUTES
 // =====================================================
 
-app.use("/api/reviews", reviewRoutes);
+app.use(
+  "/api/reviews",
+  reviewRoutes
+);
 
 // =====================================================
 // NOTIFICATION ROUTES
 // =====================================================
 
-app.use("/api/notifications", notificationRoutes);
+app.use(
+  "/api/notifications",
+  notificationRoutes
+);
 
 // =====================================================
 // SETTINGS ROUTES
 // =====================================================
 
-app.use("/api/settings", settingsRoutes);
+app.use(
+  "/api/settings",
+  settingsRoutes
+);
 
 // =====================================================
 // BASIC API TEST ROUTE
@@ -140,7 +217,19 @@ app.use("/api/settings", settingsRoutes);
 app.get("/", (req, res) => {
   res.status(200).json({
     success: true,
-    message: "E-commerce API is running successfully.",
+    message:
+      "E-commerce API is running successfully.",
+  });
+});
+
+// =====================================================
+// ORDER API TEST ROUTE
+// =====================================================
+
+app.get("/api", (req, res) => {
+  res.status(200).json({
+    success: true,
+    message: "E-commerce API is running.",
   });
 });
 
@@ -160,12 +249,19 @@ app.use((req, res) => {
 // =====================================================
 
 app.use((err, req, res, next) => {
-  console.error("Server error:", err.message);
+  console.error(
+    "Server error:",
+    err.message
+  );
 
-  if (err.message === "Not allowed by CORS") {
+  if (
+    err.message ===
+    "Not allowed by CORS"
+  ) {
     return res.status(403).json({
       success: false,
-      message: "CORS policy blocked this request.",
+      message:
+        "CORS policy blocked this request.",
     });
   }
 
@@ -186,13 +282,17 @@ app.use((err, req, res, next) => {
 mongoose
   .connect(process.env.CONNECTION_STRING)
   .then(async () => {
-    console.log("Database connection ready...");
+    console.log(
+      "Database connection ready..."
+    );
 
     // Verify Gmail SMTP connection
     try {
       await verifyEmailConnection();
 
-      console.log("Email connection verified...");
+      console.log(
+        "Email connection verified..."
+      );
     } catch (emailError) {
       console.error(
         "Email connection verification failed:",
@@ -216,4 +316,5 @@ mongoose
 
 // Vercel can use this exported Express application
 // as a serverless function.
+
 module.exports = app;

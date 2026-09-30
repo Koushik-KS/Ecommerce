@@ -21,9 +21,16 @@ import Alert from "@mui/material/Alert";
 // BACKEND API URL
 // =====================================================
 
-const API_URL =
+const BACKEND_URL = (
   process.env.REACT_APP_API_URL ||
-  "https://ecommerce-hsm4.onrender.com/api/orders";
+  "https://ecommerce-hsm4.onrender.com"
+).replace(/\/+$/, "");
+
+const API_URL = BACKEND_URL.endsWith("/api/orders")
+  ? BACKEND_URL
+  : `${BACKEND_URL}/api/orders`;
+
+console.log("Dashboard Orders API URL:", API_URL);
 
 // =====================================================
 // DASHBOARD COMPONENT
@@ -43,9 +50,17 @@ const Dashboard = () => {
       setLoading(true);
       setError("");
 
-      const response = await axios.get(API_URL);
+      const response = await axios.get(API_URL, {
+        headers: {
+          Accept: "application/json",
+        },
+        timeout: 30000,
+      });
 
-      console.log("Dashboard orders API response:", response.data);
+      console.log(
+        "Dashboard orders API response:",
+        response.data
+      );
 
       const responseData = response.data;
 
@@ -144,6 +159,20 @@ const Dashboard = () => {
         Array.isArray(responseData.result.orders)
       ) {
         orderData = responseData.result.orders;
+      }
+
+      // -------------------------------------------------
+      // BACKEND ERROR RESPONSE
+      // -------------------------------------------------
+
+      else if (
+        responseData &&
+        responseData.success === false
+      ) {
+        throw new Error(
+          responseData.message ||
+            "Failed to fetch orders."
+        );
       }
 
       // -------------------------------------------------
@@ -321,6 +350,7 @@ const Dashboard = () => {
         const price = Number(
           item.price ||
             item.sellingPrice ||
+            item.salePrice ||
             item.product?.price ||
             0
         );
@@ -352,7 +382,10 @@ const Dashboard = () => {
     });
 
     return Object.values(productSales)
-      .sort((a, b) => b.quantity - a.quantity)
+      .sort(
+        (a, b) =>
+          b.quantity - a.quantity
+      )
       .slice(0, 10);
   }, [orders]);
 

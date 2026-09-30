@@ -1,4 +1,3 @@
-
 const express = require("express");
 const router = express.Router();
 
@@ -32,15 +31,9 @@ const generateOrderId = () => {
 
   const year = date.getFullYear();
 
-  const month = String(date.getMonth() + 1).padStart(
-    2,
-    "0"
-  );
+  const month = String(date.getMonth() + 1).padStart(2, "0");
 
-  const day = String(date.getDate()).padStart(
-    2,
-    "0"
-  );
+  const day = String(date.getDate()).padStart(2, "0");
 
   const randomNumber = Math.floor(
     1000 + Math.random() * 9000
@@ -124,7 +117,6 @@ router.post("/", async (req, res) => {
     const settings = await getStoreSettings();
 
     const deliverySettings = settings.delivery || {};
-
     const orderSettings = settings.order || {};
 
     // ==========================================
@@ -385,7 +377,7 @@ router.post("/", async (req, res) => {
     }
 
     // ==========================================
-    // CALCULATE DELIVERY CHARGE ON SERVER
+    // CALCULATE DELIVERY CHARGE
     // ==========================================
 
     const isEligibleForFreeDelivery =
@@ -398,7 +390,7 @@ router.post("/", async (req, res) => {
       : roundAmount(deliveryChargeAmount);
 
     // ==========================================
-    // CALCULATE FINAL TOTAL ON SERVER
+    // CALCULATE FINAL TOTAL
     // ==========================================
 
     const total = roundAmount(
@@ -457,17 +449,11 @@ router.post("/", async (req, res) => {
     try {
       await sendOrderConfirmationEmail({
         customerName: savedOrder.customer.fullName,
-
         customerEmail: savedOrder.customer.email,
-
         orderId: savedOrder.orderId,
-
         items: savedOrder.items,
-
         subtotal: savedOrder.subtotal,
-
         deliveryCharge: savedOrder.deliveryCharge,
-
         total: savedOrder.total,
       });
 
@@ -608,7 +594,8 @@ router.patch("/:orderId/status", async (req, res) => {
       });
     }
 
-    const normalizedStatus = String(status).toUpperCase();
+    const normalizedStatus =
+      String(status).toUpperCase();
 
     if (!allowedStatuses.includes(normalizedStatus)) {
       return res.status(400).json({
@@ -675,7 +662,10 @@ router.patch("/:orderId/status", async (req, res) => {
       order: updatedOrder,
     });
   } catch (error) {
-    console.error("Update order status error:", error);
+    console.error(
+      "Update order status error:",
+      error
+    );
 
     return res.status(500).json({
       success: false,
