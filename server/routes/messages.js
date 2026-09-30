@@ -24,7 +24,10 @@ router.post("/", async (req, res) => {
       message,
     } = req.body;
 
-    // Validate required fields
+    // =================================================
+    // VALIDATE REQUIRED FIELDS
+    // =================================================
+
     if (
       !customerName ||
       !customerEmail ||
@@ -60,8 +63,10 @@ router.post("/", async (req, res) => {
       });
     }
 
-    // Order ID exists = order message
-    // No Order ID = contact message
+    // =================================================
+    // DETERMINE MESSAGE TYPE
+    // =================================================
+
     const messageType = trimmedOrderId
       ? "order"
       : "contact";
@@ -82,14 +87,14 @@ router.post("/", async (req, res) => {
     // =================================================
     // RESPOND TO CLIENT IMMEDIATELY
     // =================================================
-    // Email sending is handled in the background so
-    // the customer does not have to wait for Gmail SMTP.
+    // The customer does not have to wait for SMTP.
+    // Email will be attempted in the background.
 
     res.status(201).json({
       success: true,
       message:
-        "Your message has been sent successfully. Our team will contact you soon.",
-      emailSent: true,
+        "Your message has been received successfully. Our team will contact you soon.",
+      emailSent: false,
       data: newMessage,
     });
 
@@ -116,7 +121,10 @@ router.post("/", async (req, res) => {
       });
 
   } catch (error) {
-    console.error("Create message error:", error);
+    console.error(
+      "Create message error:",
+      error
+    );
 
     return res.status(500).json({
       success: false,
@@ -140,7 +148,10 @@ router.post("/review", async (req, res) => {
       rating,
     } = req.body;
 
-    // Validate required fields
+    // =================================================
+    // VALIDATE REQUIRED FIELDS
+    // =================================================
+
     if (
       !productId ||
       !customerName ||
@@ -156,7 +167,10 @@ router.post("/review", async (req, res) => {
       });
     }
 
-    // Validate MongoDB ObjectId
+    // =================================================
+    // VALIDATE PRODUCT ID
+    // =================================================
+
     if (!mongoose.Types.ObjectId.isValid(productId)) {
       return res.status(400).json({
         success: false,
@@ -183,9 +197,12 @@ router.post("/review", async (req, res) => {
       });
     }
 
+    // =================================================
+    // VALIDATE RATING
+    // =================================================
+
     const numericRating = Number(rating);
 
-    // Validate rating
     if (
       !Number.isFinite(numericRating) ||
       numericRating < 1 ||
@@ -196,6 +213,10 @@ router.post("/review", async (req, res) => {
         message: "Rating must be between 1 and 5.",
       });
     }
+
+    // =================================================
+    // SAVE REVIEW
+    // =================================================
 
     const newReview = await Message.create({
       productId,
@@ -212,8 +233,12 @@ router.post("/review", async (req, res) => {
       message: "Review submitted successfully.",
       data: newReview,
     });
+
   } catch (error) {
-    console.error("Create review error:", error);
+    console.error(
+      "Create review error:",
+      error
+    );
 
     return res.status(500).json({
       success: false,
@@ -233,13 +258,20 @@ router.get(
     try {
       const { productId } = req.params;
 
-      // Validate MongoDB ObjectId
+      // =================================================
+      // VALIDATE PRODUCT ID
+      // =================================================
+
       if (!mongoose.Types.ObjectId.isValid(productId)) {
         return res.status(400).json({
           success: false,
           message: "Invalid product ID.",
         });
       }
+
+      // =================================================
+      // GET REVIEWS
+      // =================================================
 
       const reviews = await Message.find({
         productId,
@@ -252,6 +284,7 @@ router.get(
         success: true,
         data: reviews,
       });
+
     } catch (error) {
       console.error(
         "Get product reviews error:",
@@ -281,8 +314,12 @@ router.get("/", async (req, res) => {
       success: true,
       data: messages,
     });
+
   } catch (error) {
-    console.error("Get messages error:", error);
+    console.error(
+      "Get messages error:",
+      error
+    );
 
     return res.status(500).json({
       success: false,
@@ -300,13 +337,20 @@ router.get("/:id", async (req, res) => {
   try {
     const { id } = req.params;
 
-    // Validate MongoDB ObjectId
+    // =================================================
+    // VALIDATE MESSAGE ID
+    // =================================================
+
     if (!mongoose.Types.ObjectId.isValid(id)) {
       return res.status(400).json({
         success: false,
         message: "Invalid message ID.",
       });
     }
+
+    // =================================================
+    // FIND MESSAGE
+    // =================================================
 
     const message = await Message.findById(id);
 
@@ -321,6 +365,7 @@ router.get("/:id", async (req, res) => {
       success: true,
       data: message,
     });
+
   } catch (error) {
     console.error(
       "Get single message error:",
@@ -343,13 +388,20 @@ router.patch("/:id/read", async (req, res) => {
   try {
     const { id } = req.params;
 
-    // Validate MongoDB ObjectId
+    // =================================================
+    // VALIDATE MESSAGE ID
+    // =================================================
+
     if (!mongoose.Types.ObjectId.isValid(id)) {
       return res.status(400).json({
         success: false,
         message: "Invalid message ID.",
       });
     }
+
+    // =================================================
+    // UPDATE MESSAGE
+    // =================================================
 
     const updatedMessage =
       await Message.findByIdAndUpdate(
@@ -375,6 +427,7 @@ router.patch("/:id/read", async (req, res) => {
       message: "Message marked as read.",
       data: updatedMessage,
     });
+
   } catch (error) {
     console.error(
       "Mark message read error:",
@@ -398,7 +451,10 @@ router.patch("/:id/reply", async (req, res) => {
     const { id } = req.params;
     const { reply } = req.body;
 
-    // Validate MongoDB ObjectId
+    // =================================================
+    // VALIDATE MESSAGE ID
+    // =================================================
+
     if (!mongoose.Types.ObjectId.isValid(id)) {
       return res.status(400).json({
         success: false,
@@ -406,8 +462,14 @@ router.patch("/:id/reply", async (req, res) => {
       });
     }
 
-    // Validate reply
-    if (!reply || typeof reply !== "string") {
+    // =================================================
+    // VALIDATE REPLY
+    // =================================================
+
+    if (
+      !reply ||
+      typeof reply !== "string"
+    ) {
       return res.status(400).json({
         success: false,
         message: "Reply is required.",
@@ -423,8 +485,12 @@ router.patch("/:id/reply", async (req, res) => {
       });
     }
 
-    // Find original customer message
-    const existingMessage = await Message.findById(id);
+    // =================================================
+    // FIND ORIGINAL CUSTOMER MESSAGE
+    // =================================================
+
+    const existingMessage =
+      await Message.findById(id);
 
     if (!existingMessage) {
       return res.status(404).json({
@@ -433,30 +499,51 @@ router.patch("/:id/reply", async (req, res) => {
       });
     }
 
-    // Save admin reply in MongoDB
+    // =================================================
+    // SAVE ADMIN REPLY
+    // =================================================
+
     existingMessage.reply = trimmedReply;
     existingMessage.status = "replied";
     existingMessage.repliedAt = new Date();
 
     await existingMessage.save();
 
-    // Email result variables
+    // =================================================
+    // EMAIL RESULT VARIABLES
+    // =================================================
+
     let emailSent = false;
     let emailError = null;
 
-    // Send reply email to customer
+    // =================================================
+    // SEND REPLY EMAIL TO CUSTOMER
+    // =================================================
+
     try {
       await sendAdminReplyEmail({
-        customerName: existingMessage.customerName,
-        customerEmail: existingMessage.customerEmail,
-        originalMessage: existingMessage.message,
-        adminReply: trimmedReply,
-        orderId: existingMessage.orderId || "",
+        customerName:
+          existingMessage.customerName,
+
+        customerEmail:
+          existingMessage.customerEmail,
+
+        originalMessage:
+          existingMessage.message,
+
+        adminReply:
+          trimmedReply,
+
+        orderId:
+          existingMessage.orderId || "",
       });
 
       emailSent = true;
 
-      // Update email notification status
+      // =================================================
+      // UPDATE EMAIL STATUS
+      // =================================================
+
       existingMessage.emailNotificationSent = true;
       existingMessage.emailNotificationError = "";
 
@@ -466,11 +553,16 @@ router.patch("/:id/reply", async (req, res) => {
         "Reply email sent successfully to:",
         existingMessage.customerEmail
       );
+
     } catch (emailErr) {
       emailError = emailErr.message;
 
-      // Save email failure information
+      // =================================================
+      // SAVE EMAIL FAILURE
+      // =================================================
+
       existingMessage.emailNotificationSent = false;
+
       existingMessage.emailNotificationError =
         emailError;
 
@@ -478,19 +570,28 @@ router.patch("/:id/reply", async (req, res) => {
 
       console.error(
         "Reply saved, but email failed:",
-        emailErr
+        emailError
       );
     }
 
+    // =================================================
+    // RESPONSE
+    // =================================================
+
     return res.status(200).json({
       success: true,
+
       message: emailSent
         ? "Reply saved and email sent successfully."
         : "Reply saved, but email could not be sent.",
+
       emailSent,
+
       emailError,
+
       data: existingMessage,
     });
+
   } catch (error) {
     console.error(
       "Reply message error:",
@@ -513,13 +614,20 @@ router.delete("/:id", async (req, res) => {
   try {
     const { id } = req.params;
 
-    // Validate MongoDB ObjectId
+    // =================================================
+    // VALIDATE MESSAGE ID
+    // =================================================
+
     if (!mongoose.Types.ObjectId.isValid(id)) {
       return res.status(400).json({
         success: false,
         message: "Invalid message ID.",
       });
     }
+
+    // =================================================
+    // DELETE MESSAGE
+    // =================================================
 
     const deletedMessage =
       await Message.findByIdAndDelete(id);
@@ -535,6 +643,7 @@ router.delete("/:id", async (req, res) => {
       success: true,
       message: "Message deleted successfully.",
     });
+
   } catch (error) {
     console.error(
       "Delete message error:",
