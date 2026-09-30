@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 
@@ -104,14 +103,17 @@ function Settings() {
         setSettings((previousSettings) => ({
           ...previousSettings,
           ...(response.data.settings || {}),
+
           general: {
             ...previousSettings.general,
             ...(response.data.settings?.general || {}),
           },
+
           delivery: {
             ...previousSettings.delivery,
             ...(response.data.settings?.delivery || {}),
           },
+
           order: {
             ...previousSettings.order,
             ...(response.data.settings?.order || {}),
@@ -124,7 +126,10 @@ function Settings() {
       }
     } catch (err) {
       console.error("Fetch settings error:", err);
-      setError("Unable to load settings. Please check the backend server.");
+
+      setError(
+        "Unable to load settings. Please check the backend server."
+      );
     } finally {
       setLoading(false);
     }
@@ -133,6 +138,7 @@ function Settings() {
   const handleInputChange = (section, field, value) => {
     setSettings((previousSettings) => ({
       ...previousSettings,
+
       [section]: {
         ...previousSettings[section],
         [field]: value,
@@ -152,6 +158,7 @@ function Settings() {
   const handleToggleChange = (section, field) => {
     setSettings((previousSettings) => ({
       ...previousSettings,
+
       [section]: {
         ...previousSettings[section],
         [field]: !previousSettings[section][field],
@@ -180,6 +187,21 @@ function Settings() {
           setSettings((previousSettings) => ({
             ...previousSettings,
             ...response.data.settings,
+
+            general: {
+              ...previousSettings.general,
+              ...(response.data.settings.general || {}),
+            },
+
+            delivery: {
+              ...previousSettings.delivery,
+              ...(response.data.settings.delivery || {}),
+            },
+
+            order: {
+              ...previousSettings.order,
+              ...(response.data.settings.order || {}),
+            },
           }));
         }
       }
@@ -211,7 +233,11 @@ function Settings() {
           value={settings[section]?.[field] ?? ""}
           placeholder={placeholder}
           onChange={(event) =>
-            handleInputChange(section, field, event.target.value)
+            handleInputChange(
+              section,
+              field,
+              event.target.value
+            )
           }
         />
       </div>
@@ -234,26 +260,40 @@ function Settings() {
           value={settings[section]?.[field] ?? 0}
           placeholder={placeholder}
           onChange={(event) =>
-            handleNumberChange(section, field, event.target.value)
+            handleNumberChange(
+              section,
+              field,
+              event.target.value
+            )
           }
         />
       </div>
     );
   };
 
-  const renderToggle = (section, field, title, description) => {
+  const renderToggle = (
+    section,
+    field,
+    title,
+    description
+  ) => {
     return (
       <div className="settings-toggle-row">
         <div className="settings-toggle-info">
           <h4>{title}</h4>
+
           <p>{description}</p>
         </div>
 
         <label className="settings-switch">
           <input
             type="checkbox"
-            checked={Boolean(settings[section]?.[field])}
-            onChange={() => handleToggleChange(section, field)}
+            checked={Boolean(
+              settings[section]?.[field]
+            )}
+            onChange={() =>
+              handleToggleChange(section, field)
+            }
           />
 
           <span className="settings-slider"></span>
@@ -270,7 +310,8 @@ function Settings() {
         </h3>
 
         <p className="section-description">
-          Manage your store information and business contact details.
+          Manage your store information and business
+          contact details.
         </p>
 
         <div className="settings-grid">
@@ -289,13 +330,24 @@ function Settings() {
             "email"
           )}
 
-          {renderTextField(
-            "general",
-            "phone",
-            "Phone Number",
-            "Enter phone number",
-            "tel"
-          )}
+          <div className="settings-field">
+            <label>
+              <FiPhone /> Phone Number
+            </label>
+
+            <input
+              type="tel"
+              value={settings.general.phone ?? ""}
+              placeholder="Enter phone number"
+              onChange={(event) =>
+                handleInputChange(
+                  "general",
+                  "phone",
+                  event.target.value
+                )
+              }
+            />
+          </div>
 
           {renderTextField(
             "general",
@@ -366,8 +418,8 @@ function Settings() {
         </h3>
 
         <p className="section-description">
-          Configure delivery charges, minimum order amounts, and delivery
-          availability.
+          Configure delivery charges, minimum order
+          amounts, and delivery availability.
         </p>
 
         <div className="settings-grid">
@@ -389,12 +441,27 @@ function Settings() {
             "Minimum Order Amount (₹)"
           )}
 
-          {renderTextField(
-            "delivery",
-            "estimatedDeliveryTime",
-            "Estimated Delivery Time",
-            "Example: 30-45 minutes"
-          )}
+          <div className="settings-field">
+            <label>
+              <FiClock /> Estimated Delivery Time
+            </label>
+
+            <input
+              type="text"
+              value={
+                settings.delivery
+                  ?.estimatedDeliveryTime ?? ""
+              }
+              placeholder="Example: 30-45 minutes"
+              onChange={(event) =>
+                handleInputChange(
+                  "delivery",
+                  "estimatedDeliveryTime",
+                  event.target.value
+                )
+              }
+            />
+          </div>
         </div>
 
         <div className="settings-toggle-list">
@@ -424,7 +491,8 @@ function Settings() {
         </h3>
 
         <p className="section-description">
-          Manage order acceptance and available payment options.
+          Manage order acceptance and available payment
+          options.
         </p>
 
         <div className="settings-grid">
@@ -432,7 +500,9 @@ function Settings() {
             <label>Default Order Status</label>
 
             <select
-              value={settings.order.defaultStatus}
+              value={
+                settings.order.defaultStatus
+              }
               onChange={(event) =>
                 handleInputChange(
                   "order",
@@ -441,12 +511,29 @@ function Settings() {
                 )
               }
             >
-              <option value="PENDING">Pending</option>
-              <option value="CONFIRMED">Confirmed</option>
-              <option value="PROCESSING">Processing</option>
-              <option value="SHIPPED">Shipped</option>
-              <option value="DELIVERED">Delivered</option>
-              <option value="CANCELLED">Cancelled</option>
+              <option value="PENDING">
+                Pending
+              </option>
+
+              <option value="CONFIRMED">
+                Confirmed
+              </option>
+
+              <option value="PROCESSING">
+                Processing
+              </option>
+
+              <option value="SHIPPED">
+                Shipped
+              </option>
+
+              <option value="DELIVERED">
+                Delivered
+              </option>
+
+              <option value="CANCELLED">
+                Cancelled
+              </option>
             </select>
           </div>
         </div>
@@ -498,24 +585,29 @@ function Settings() {
 
             <div className="admin-account-meta">
               <p>
-                <FiMail /> <strong>Email:</strong> {admin.email}
+                <FiMail /> <strong>Email:</strong>{" "}
+                {admin.email}
               </p>
 
               <p>
-                <FiShield /> <strong>Role:</strong> {admin.role}
+                <FiShield /> <strong>Role:</strong>{" "}
+                {admin.role}
               </p>
 
               <p>
-                <FiCheckCircle /> <strong>Status:</strong> {admin.status}
+                <FiCheckCircle />{" "}
+                <strong>Status:</strong>{" "}
+                {admin.status}
               </p>
             </div>
           </div>
         </div>
 
         <div className="admin-account-notice">
-          <FiInfo /> Your administrator password is protected and is not
-          displayed on this page. To change the password, use a separate
-          secure password management feature.
+          <FiInfo /> Your administrator password is
+          protected and is not displayed on this page.
+          To change the password, use a separate secure
+          password management feature.
         </div>
       </div>
     );
@@ -553,19 +645,26 @@ function Settings() {
       <div className="settings-header">
         <h2>Settings</h2>
 
-       <p>
-  Manage your e-commerce store settings from one place.
-</p>
+        <p>
+          Manage your e-commerce store settings from
+          one place.
+        </p>
       </div>
 
       {error && (
-        <div className="alert alert-danger" role="alert">
+        <div
+          className="alert alert-danger"
+          role="alert"
+        >
           {error}
         </div>
       )}
 
       {message && (
-        <div className="alert alert-success" role="alert">
+        <div
+          className="alert alert-success"
+          role="alert"
+        >
           {message}
         </div>
       )}
@@ -577,7 +676,9 @@ function Settings() {
               key={item.id}
               type="button"
               className={`settings-nav-item ${
-                activeSection === item.id ? "active" : ""
+                activeSection === item.id
+                  ? "active"
+                  : ""
               }`}
               onClick={() => {
                 setActiveSection(item.id);
@@ -607,7 +708,9 @@ function Settings() {
               >
                 <FiSave />
 
-                {saving ? "Saving..." : "Save Settings"}
+                {saving
+                  ? "Saving..."
+                  : "Save Settings"}
               </button>
             </div>
           )}

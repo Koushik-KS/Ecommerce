@@ -1,5 +1,14 @@
-import { useEffect, useState } from "react";
-import { useParams, Link } from "react-router-dom";
+import {
+  useCallback,
+  useEffect,
+  useState,
+} from "react";
+
+import {
+  useParams,
+  Link,
+} from "react-router-dom";
+
 import axios from "axios";
 
 import CircularProgress from "@mui/material/CircularProgress";
@@ -37,68 +46,80 @@ const OrderDetails = () => {
   const { orderId } = useParams();
 
   const [order, setOrder] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [updatingStatus, setUpdatingStatus] = useState(false);
+
+  const [loading, setLoading] =
+    useState(true);
+
+  const [updatingStatus, setUpdatingStatus] =
+    useState(false);
 
   const [error, setError] = useState("");
-  const [successMessage, setSuccessMessage] = useState("");
+
+  const [successMessage, setSuccessMessage] =
+    useState("");
 
   // =====================================================
   // FETCH SELECTED ORDER
   // =====================================================
 
-  const fetchOrderDetails = async () => {
-    try {
-      setLoading(true);
-      setError("");
+  const fetchOrderDetails = useCallback(
+    async () => {
+      try {
+        setLoading(true);
+        setError("");
 
-      const response = await axios.get(API_URL);
-
-      const responseData = response.data;
-
-      let orderData = [];
-
-      if (Array.isArray(responseData)) {
-        orderData = responseData;
-      } else if (
-        responseData &&
-        Array.isArray(responseData.orders)
-      ) {
-        orderData = responseData.orders;
-      } else {
-        throw new Error(
-          "Invalid orders response format."
+        const response = await axios.get(
+          API_URL
         );
+
+        const responseData = response.data;
+
+        let orderData = [];
+
+        if (Array.isArray(responseData)) {
+          orderData = responseData;
+        } else if (
+          responseData &&
+          Array.isArray(responseData.orders)
+        ) {
+          orderData = responseData.orders;
+        } else {
+          throw new Error(
+            "Invalid orders response format."
+          );
+        }
+
+        const selectedOrder =
+          orderData.find(
+            (item) =>
+              item.orderId === orderId ||
+              item._id === orderId
+          );
+
+        if (!selectedOrder) {
+          setError("Order not found.");
+          setOrder(null);
+          return;
+        }
+
+        setOrder(selectedOrder);
+      } catch (err) {
+        console.error(
+          "Order details error:",
+          err
+        );
+
+        setError(
+          err.response?.data?.message ||
+            err.message ||
+            "Failed to load order details."
+        );
+      } finally {
+        setLoading(false);
       }
-
-      const selectedOrder = orderData.find(
-        (item) =>
-          item.orderId === orderId ||
-          item._id === orderId
-      );
-
-      if (!selectedOrder) {
-        setError("Order not found.");
-        setOrder(null);
-        return;
-      }
-
-      setOrder(selectedOrder);
-    } catch (err) {
-      console.error(
-        "Order details error:",
-        err
-      );
-
-      setError(
-        err.response?.data?.message ||
-          err.message ||
-          "Failed to load order details."
-      );
-    } finally {
-      setLoading(false);
-    }
-  };
+    },
+    [orderId]
+  );
 
   // =====================================================
   // LOAD ORDER
@@ -106,14 +127,17 @@ const OrderDetails = () => {
 
   useEffect(() => {
     fetchOrderDetails();
-  }, [orderId]);
+  }, [fetchOrderDetails]);
 
   // =====================================================
   // UPDATE ORDER STATUS
   // =====================================================
 
-  const handleStatusChange = async (event) => {
-    const newStatus = event.target.value;
+  const handleStatusChange = async (
+    event
+  ) => {
+    const newStatus =
+      event.target.value;
 
     if (!order?.orderId) {
       setError("Order ID is missing.");
@@ -122,7 +146,9 @@ const OrderDetails = () => {
 
     try {
       setUpdatingStatus(true);
+
       setError("");
+
       setSuccessMessage("");
 
       await axios.patch(
@@ -160,7 +186,8 @@ const OrderDetails = () => {
   // =====================================================
 
   const formatCurrency = (amount) => {
-    const numericAmount = Number(amount || 0);
+    const numericAmount =
+      Number(amount || 0);
 
     return `₹${numericAmount.toLocaleString(
       "en-IN"
@@ -178,17 +205,24 @@ const OrderDetails = () => {
 
     const parsedDate = new Date(date);
 
-    if (Number.isNaN(parsedDate.getTime())) {
+    if (
+      Number.isNaN(
+        parsedDate.getTime()
+      )
+    ) {
       return "N/A";
     }
 
-    return parsedDate.toLocaleString("en-IN", {
-      day: "2-digit",
-      month: "short",
-      year: "numeric",
-      hour: "2-digit",
-      minute: "2-digit",
-    });
+    return parsedDate.toLocaleString(
+      "en-IN",
+      {
+        day: "2-digit",
+        month: "short",
+        year: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
+      }
+    );
   };
 
   // =====================================================
@@ -245,7 +279,8 @@ const OrderDetails = () => {
   // CUSTOMER DATA
   // =====================================================
 
-  const customer = order.customer || {};
+  const customer =
+    order.customer || {};
 
   const customerName =
     customer.fullName ||
@@ -337,7 +372,8 @@ const OrderDetails = () => {
 
           <div>
             <h3 className="mb-2">
-              {order.orderId || order._id}
+              {order.orderId ||
+                order._id}
             </h3>
 
             <p className="text-muted mb-0">
@@ -350,7 +386,8 @@ const OrderDetails = () => {
           </div>
 
           <span className="badge bg-primary p-2">
-            {order.status || "PENDING"}
+            {order.status ||
+              "PENDING"}
           </span>
 
         </div>
@@ -379,10 +416,15 @@ const OrderDetails = () => {
               id="orderStatus"
               className="form-select"
               value={
-                order.status || "PENDING"
+                order.status ||
+                "PENDING"
               }
-              onChange={handleStatusChange}
-              disabled={updatingStatus}
+              onChange={
+                handleStatusChange
+              }
+              disabled={
+                updatingStatus
+              }
             >
               {STATUS_OPTIONS.map(
                 (status) => (
@@ -489,11 +531,15 @@ const OrderDetails = () => {
             </thead>
 
             <tbody>
-              {Array.isArray(order.items) &&
+              {Array.isArray(
+                order.items
+              ) &&
               order.items.length > 0 ? (
                 order.items.map(
-                  (item, index) => {
-
+                  (
+                    item,
+                    index
+                  ) => {
                     const productName =
                       item.name ||
                       item.productName ||
@@ -503,12 +549,14 @@ const OrderDetails = () => {
 
                     const quantity =
                       Number(
-                        item.quantity || 1
+                        item.quantity ||
+                          1
                       );
 
                     const price =
                       Number(
-                        item.price || 0
+                        item.price ||
+                          0
                       );
 
                     return (
