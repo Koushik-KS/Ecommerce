@@ -6,8 +6,12 @@ A modern full-stack e-commerce application with separate customer and admin inte
 
 - **Customer Website:** https://ecommerce-koushik-db74.vercel.app/signUp
 - **Admin Dashboard:** https://ecommerce-aoua.vercel.app/login
-- **Backend API:** https://ecommerce-hsm4.onrender.com
+  - **Admin Email:** Koushikshetty102@gmail.com
+  - **Admin Password:** Admin@123
+  - **Note:** These admin credentials are provided for demonstration purposes only. Please do not misuse or share them.
 
+- **Backend API:** https://ecommerce-hsm4.onrender.com
+- 
 ## Features
 
 - Product browsing and search
